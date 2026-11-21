@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Last Layer Drill · OLL & PLL</title>
+<title>CFOP Trainer · Solve & Drill</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -53,7 +53,8 @@ button,input,textarea,select{font:inherit;color:inherit}
 .stage .viewbtn{position:absolute;right:16px;bottom:12px}
 .stage .fail{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
 
-.side{background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:22px 22px 28px;display:flex;flex-direction:column;gap:22px}
+.side{background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:22px 22px 28px}
+.panel-col{display:flex;flex-direction:column;gap:22px;min-height:100%}
 .case-head{display:flex;gap:16px;align-items:flex-start}
 .case-head .titles{flex:1;min-width:0}
 .case-title{font-weight:800;font-stretch:78%;font-size:2.6rem;line-height:1;letter-spacing:-.01em;margin:0}
@@ -107,6 +108,64 @@ dialog::backdrop{background:rgba(10,15,25,.45)}
 .switch:checked::after{transform:translateX(18px)}
 textarea{width:100%;min-height:150px;font-family:var(--mono);font-size:.85rem;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--mat)}
 
+.pad-tabs{display:flex;gap:4px;margin:10px 0 8px}
+.pad-tabs button{border:1px solid var(--line);background:none;border-radius:8px;padding:4px 10px;font-size:.82rem;font-weight:600;color:var(--muted);cursor:pointer}
+.pad-tabs button[aria-selected="true"]{background:var(--ink);border-color:var(--ink);color:var(--panel)}
+.pad{display:grid;grid-template-columns:repeat(6,1fr);gap:5px}
+.pad button{font-family:var(--mono);font-weight:700;font-size:1rem;padding:9px 0;border-radius:8px;border:1px solid var(--line);background:var(--mat);cursor:pointer;touch-action:manipulation}
+.pad button:hover{border-color:var(--muted)}
+.pad button:active{background:var(--accent);color:var(--accent-ink)}
+.buffer{min-height:44px;padding:6px;border:1px dashed var(--line);border-radius:10px}
+.buffer:empty::before{content:"Tap moves below to build an alg";color:var(--muted);font-size:.88rem;padding:6px}
+.buffer li{font-size:1.05rem}
+details.typein{margin-top:10px;font-size:.88rem;color:var(--muted)}
+details.typein summary{cursor:pointer}
+details.typein .row{margin-top:6px;display:flex;gap:6px}
+details.typein input{flex:1;font-family:var(--mono);padding:7px 10px;border-radius:8px;border:1px solid var(--line);background:var(--mat)}
+
+.scramble{font-family:var(--mono);font-size:1.02rem;line-height:1.6;word-spacing:.2em;background:var(--chip);border-radius:10px;padding:10px 12px}
+.colours{display:flex;flex-direction:column;gap:5px}
+.colour{display:flex;align-items:center;gap:9px;text-align:left;border:2px solid var(--line);background:var(--mat);border-radius:10px;padding:7px 9px;cursor:pointer}
+.colour[aria-pressed="true"]{border-color:var(--accent)}
+.colour .sw{width:20px;height:20px;border-radius:5px;border:1.5px solid #141820;flex:none}
+.colour b{display:inline-block;min-width:4.6em;font-size:.92rem}
+.colour small{color:var(--muted);font-size:.78rem;font-variant-numeric:tabular-nums}
+.colour .tag{margin-left:auto;font-size:.74rem;font-weight:700;color:var(--accent);white-space:nowrap}
+.actions .btn{white-space:nowrap}
+.steps{display:flex;flex-direction:column;gap:6px}
+.step{border:1px solid var(--line);border-radius:11px;padding:9px 11px;cursor:pointer;background:var(--mat)}
+.step.current{border-color:var(--accent);box-shadow:inset 3px 0 0 var(--accent)}
+.step.past{opacity:.62}
+.step .top{display:flex;align-items:baseline;gap:8px;margin-bottom:6px}
+.step .top b{font-weight:800;font-stretch:85%}
+.step .top span{color:var(--muted);font-size:.85rem}
+.step .top em{margin-left:auto;font-style:normal;color:var(--muted);font-size:.82rem;font-variant-numeric:tabular-nums}
+.step .moves li{font-size:.98rem;min-width:2em;padding:3px 5px}
+.step .moves:empty::before{content:"No moves needed";color:var(--muted);font-size:.85rem}
+.stepper{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:12px}
+.stepper .btn{padding:9px 4px;white-space:nowrap}
+.step .moves li.active{background:none;color:var(--accent);box-shadow:inset 0 0 0 2px var(--accent);transform:none}
+.step .where{font-size:.84rem;margin:-2px 0 6px;color:var(--ink)}
+.step .where .hid{color:var(--warn)}
+.seg.ahead{display:flex;width:100%}
+.seg.ahead button{flex:1;padding:6px 4px;font-size:.85rem}
+.seg.ahead button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.track{display:flex;flex-direction:column;gap:6px;margin-top:10px;font-size:.86rem}
+.track .t{display:flex;gap:8px;align-items:flex-start;line-height:1.4}
+.track .dot{width:12px;height:12px;border-radius:50%;flex:none;margin-top:4px}
+.track b{font-weight:700}
+.track .hid{color:var(--warn)}
+.track .same{color:var(--muted)}
+.slotpick{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.slotpick button{border:2px solid var(--line);background:var(--mat);border-radius:9px;padding:8px;font-weight:600;cursor:pointer;opacity:.5}
+.slotpick button[aria-pressed="true"]{opacity:1;border-color:var(--accent)}
+.f2lthumb{width:112px;height:112px}
+.pick svg.net{width:84px;height:84px}
+.alt .tag{font-family:var(--sans);font-size:.72rem;font-weight:700;color:var(--accent);white-space:nowrap}
+a.btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center}
+.totals{font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.totals b{color:var(--ink)}
+.working{color:var(--muted);font-size:.9rem}
 @media (max-width: 860px){
   .app{grid-template-columns:1fr;grid-template-rows:auto 52vh auto;height:auto;min-height:100%}
   .side{border-left:0;border-top:1px solid var(--line);overflow:visible}
@@ -121,13 +180,16 @@ textarea{width:100%;min-height:150px;font-family:var(--mono);font-size:.85rem;pa
 <body>
 <div class="app">
   <header class="bar">
-    <div class="brand">Last Layer Drill</div>
+    <div class="brand">CFOP Trainer</div>
     <div class="seg" role="group" aria-label="Practice set">
+      <button id="modeF2l" aria-pressed="false">F2L</button>
       <button id="modeOll" aria-pressed="true">OLL</button>
       <button id="modePll" aria-pressed="false">PLL</button>
+      <button id="modeSolve" aria-pressed="false">Solve</button>
     </div>
     <span class="count" id="count"></span>
     <button class="btn" id="openCases">Choose cases</button>
+    <a class="btn" href="sheet.html" id="sheetLink">Alg sheet</a>
     <button class="btn" id="openSettings">Settings</button>
   </header>
 
@@ -137,6 +199,7 @@ textarea{width:100%;min-height:150px;font-family:var(--mono);font-size:.85rem;pa
   </main>
 
   <aside class="side">
+   <div id="drillPanel" class="panel-col">
     <div class="case-head">
       <div class="titles">
         <h1 class="case-title" id="caseTitle">OLL</h1>
@@ -167,20 +230,132 @@ textarea{width:100%;min-height:150px;font-family:var(--mono);font-size:.85rem;pa
       <button class="btn" id="prev" title="Previous case (←)">Back</button>
     </div>
 
-    <section class="block custom">
-      <h2>Type your own alg (use ' for prime)</h2>
-      <input id="algInput" spellcheck="false" autocomplete="off" placeholder="R U R' U R U2 R'">
+    <div id="drillCustomSlot"></div>
+    <section class="block custom" id="customBlock">
+      <h2>Your own alg for this case</h2>
+      <ol class="moves buffer" id="algBuffer"></ol>
+      <div class="pad-tabs" role="tablist" id="padTabs">
+        <button role="tab" data-tab="0" aria-selected="true">Faces</button>
+        <button role="tab" data-tab="1" aria-selected="false">Wide</button>
+        <button role="tab" data-tab="2" aria-selected="false">Slices &amp; rotations</button>
+      </div>
+      <div class="pad" id="pad"></div>
       <div class="row">
-        <button class="btn" id="saveAlg">Save for this case</button>
+        <button class="btn" id="padBack">Delete last</button>
+        <button class="btn ghost" id="padClear">Clear</button>
+      </div>
+      <div class="row">
+        <button class="btn primary" id="saveAlg">Save for this case</button>
         <button class="btn" id="tryAlg">Set it up once</button>
         <button class="btn ghost" id="clearAlg" hidden>Back to default alg</button>
       </div>
+      <details class="typein"><summary>Paste an alg instead</summary>
+        <div class="row"><input id="algInput" spellcheck="false" autocomplete="off" placeholder="R U R' U R U2 R'"><button class="btn" id="algLoad">Put in pad</button></div>
+      </details>
       <div class="msg" id="algMsg"></div>
     </section>
 
     <div class="keys">
-      <kbd>Space</kbd> animate, then next case &nbsp; <kbd>S</kbd> show/hide solution &nbsp; <kbd>R</kbd> redo setup &nbsp; <kbd>←</kbd> <kbd>→</kbd> back / skip &nbsp; <kbd>1</kbd> OLL <kbd>2</kbd> PLL
+      <kbd>Space</kbd> animate, then next case &nbsp; <kbd>S</kbd> show/hide solution &nbsp; <kbd>R</kbd> redo setup &nbsp; <kbd>←</kbd> <kbd>→</kbd> back / skip &nbsp; <kbd>1</kbd> OLL <kbd>2</kbd> PLL <kbd>3</kbd> Solve
     </div>
+   </div>
+
+   <div id="f2lPanel" class="panel-col" hidden>
+    <div class="case-head">
+      <div class="titles">
+        <h1 class="case-title" id="f2lTitle">F2L</h1>
+        <div class="case-group" id="f2lGroup"></div>
+        <span class="src yiheng" id="f2lSrc"></span>
+      </div>
+      <svg class="thumb f2lthumb" id="f2lThumb" viewBox="0 0 140 140" aria-hidden="true"></svg>
+    </div>
+    <section class="block">
+      <div class="row"><h2 id="f2lScrambleLabel">Scramble</h2></div>
+      <div class="scramble" id="f2lScramble"></div>
+      <div class="row" style="margin-top:8px;justify-content:flex-start;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" id="f2lNext">Next case <kbd>N</kbd></button>
+        <button class="btn" id="f2lPrev">Previous case</button>
+        <button class="btn ghost" id="f2lRedo">Back to the start <kbd>R</kbd></button>
+      </div>
+    </section>
+    <section class="block">
+      <h2>Look ahead: highlight the pairs you'll solve next</h2>
+      <div class="seg ahead" id="f2lAhead" role="group" aria-label="Pairs to highlight">
+        <button data-ahead="0">This pair</button><button data-ahead="1">+1 next</button><button data-ahead="2">+2 next</button><button data-ahead="3">+3 next</button>
+      </div>
+      <div class="track" id="f2lTrack"></div>
+    </section>
+    <section class="block">
+      <div class="row"><h2>Steps</h2><button class="btn ghost" id="f2lToggleSol">Show <kbd>S</kbd></button></div>
+      <div class="steps" id="f2lSteps"></div>
+      <div class="stepper">
+        <button class="btn" id="f2lPrevStep" title="Previous step (↑)">⏮ Step</button>
+        <button class="btn" id="f2lPrevMove" title="Undo one move (←)">◀ Move</button>
+        <button class="btn" id="f2lNextMove" title="One move forward (→)">Move ▶</button>
+        <button class="btn" id="f2lNextStep" title="Next step (↓)">Step ⏭</button>
+      </div>
+      <div class="actions" style="margin-top:8px;grid-template-columns:1fr auto">
+        <button class="btn primary" id="f2lPlay">Play <kbd>Space</kbd></button>
+        <button class="btn" id="f2lPlayAll">Play the rest</button>
+      </div>
+      <div class="alts" id="f2lAlts"></div>
+    </section>
+    <section class="block">
+      <h2>Slots to practise</h2>
+      <div class="slotpick" id="f2lSlots">
+        <button data-slot="FL">Front left</button><button data-slot="FR">Front right</button>
+        <button data-slot="BL">Back left</button><button data-slot="BR">Back right</button>
+      </div>
+      <label class="setting"><div><b>Mix up the other pairs</b><p>Gives a real scramble with the cross solved and this case in place, so you can practise tracking the next pairs. Off: only this pair is out, everything else is solved.</p></div><input type="checkbox" class="switch" id="optF2lReal"></label>
+    </section>
+    <div id="f2lCustomSlot"></div>
+    <div class="keys">
+      <kbd>Space</kbd> play the step &nbsp; <kbd>←</kbd> <kbd>→</kbd> one move &nbsp; <kbd>↑</kbd> <kbd>↓</kbd> step &nbsp; <kbd>N</kbd> next case &nbsp; <kbd>S</kbd> show/hide algs &nbsp; <kbd>4</kbd> F2L <kbd>1</kbd> OLL <kbd>2</kbd> PLL <kbd>3</kbd> Solve
+    </div>
+   </div>
+
+   <div id="solvePanel" class="panel-col" hidden>
+    <section class="block">
+      <div class="row"><h2>Scramble (random state, WCA orientation: white top, green front)</h2></div>
+      <div class="scramble" id="scrambleText">Generating…</div>
+      <div class="row" style="margin-top:8px;justify-content:flex-start;gap:8px;flex-wrap:wrap">
+        <button class="btn primary" id="newScramble">New scramble <kbd>N</kbd></button>
+        <button class="btn" id="ownScrambleBtn">Use my own scramble</button>
+        <button class="btn ghost" id="toScramble">Back to scrambled</button>
+      </div>
+      <div class="row" id="ownScrambleRow" hidden style="margin-top:8px;gap:6px">
+        <input id="ownScramble" spellcheck="false" autocomplete="off" placeholder="Paste a scramble" style="flex:1;font-family:var(--mono);padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--mat)">
+        <button class="btn" id="ownScrambleGo">Solve it</button>
+      </div>
+      <div class="msg" id="scrambleMsg"></div>
+    </section>
+
+    <section class="block">
+      <h2>Cross colour (sorted by cross + F2L moves)</h2>
+      <div class="colours" id="colours"></div>
+    </section>
+
+    <section class="block">
+      <div class="row"><h2>Steps</h2><span class="totals" id="totals"></span></div>
+      <div class="steps" id="steps"></div>
+      <div class="stepper">
+        <button class="btn" id="prevStep" title="Previous step (↑)">⏮ Step</button>
+        <button class="btn" id="prevMove" title="Undo one move (←)">◀ Move</button>
+        <button class="btn" id="nextMove" title="One move forward (→)">Move ▶</button>
+        <button class="btn" id="nextStep" title="Next step (↓)">Step ⏭</button>
+      </div>
+      <div class="actions" style="margin-top:8px;grid-template-columns:1fr auto">
+        <button class="btn primary" id="playStep">Play next step <kbd>Space</kbd></button>
+        <button class="btn" id="playAll">Play the rest</button>
+      </div>
+      <label class="setting"><div><b>Pick pairs I can see from the front</b><p>Never chooses a pair with a piece hidden in a back slot or at the back of the bottom, when another pair is visible. Costs about half a move per solve on average.</p></div><input type="checkbox" class="switch" id="optVisible"></label>
+      <label class="setting"><div><b>Snap back to the front view each step</b><p>Keeps you looking from the front, the way you’d hold it, instead of turning the cube to peek at the back.</p></div><input type="checkbox" class="switch" id="optSnap"></label>
+    </section>
+
+    <div class="keys">
+      <kbd>Space</kbd> play the step &nbsp; <kbd>←</kbd> <kbd>→</kbd> one move back / forward &nbsp; <kbd>↑</kbd> <kbd>↓</kbd> previous / next step &nbsp; <kbd>N</kbd> new scramble &nbsp; <kbd>1</kbd> OLL <kbd>2</kbd> PLL <kbd>3</kbd> Solve
+    </div>
+   </div>
   </aside>
 </div>
 
@@ -217,6 +392,663 @@ textarea{width:100%;min-height:150px;font-family:var(--mono);font-size:.85rem;pa
   </div>
 </dialog>
 
+<script type="text/plain" id="workerSrc">
+// ---------- Cube logic (no rendering) ----------
+const FACES = {
+  U: [0, 1, 0], D: [0, -1, 0], R: [1, 0, 0], L: [-1, 0, 0], F: [0, 0, 1], B: [0, 0, -1]
+};
+const AXIS_INDEX = { x: 0, y: 1, z: 2 };
+
+// base move definitions: axis, layer coords, quarter turns (+1 = counter-clockwise by right-hand rule about +axis)
+const BASE = {
+  R: ['x', [1], -1], L: ['x', [-1], 1], M: ['x', [0], 1],
+  U: ['y', [1], -1], D: ['y', [-1], 1], E: ['y', [0], 1],
+  F: ['z', [1], -1], B: ['z', [-1], 1], S: ['z', [0], -1],
+  r: ['x', [0, 1], -1], l: ['x', [-1, 0], 1],
+  u: ['y', [0, 1], -1], d: ['y', [-1, 0], 1],
+  f: ['z', [0, 1], -1], b: ['z', [-1, 0], 1],
+  x: ['x', [-1, 0, 1], -1], y: ['y', [-1, 0, 1], -1], z: ['z', [-1, 0, 1], -1]
+};
+
+function normalizeAlgText(text) {
+  return String(text)
+    .replace(/[’‘`´′ʼ]/g, "'")
+    .replace(/[()\[\],]/g, ' ')
+    .replace(/\/\/.*$/gm, ' ');
+}
+
+// returns {moves:[{name, base, amount}], error}
+function parseAlg(text) {
+  const src = normalizeAlgText(text);
+  const moves = [];
+  const re = /([RLUDFBMESxyz]w|[RLUDFBMESxyzrludfb])(\d*)('?)(\d*)/y;
+  let i = 0;
+  while (i < src.length) {
+    if (/\s/.test(src[i])) { i++; continue; }
+    re.lastIndex = i;
+    const m = re.exec(src);
+    if (!m) {
+      const bad = src.slice(i).split(/\s/)[0];
+      return { moves, error: `“${bad}” isn’t a move I know` };
+    }
+    let face = m[1];
+    if (face.length === 2) face = face[0].toLowerCase(); // Rw -> r
+    const num = parseInt(m[2] || m[4] || '1', 10);
+    if (!(num >= 1 && num <= 3)) return { moves, error: `“${m[0]}” has an odd turn count` };
+    let amount = num * (m[3] ? -1 : 1);
+    amount = ((amount % 4) + 4) % 4; // 1,2,3
+    if (amount === 0) { i = re.lastIndex; continue; }
+    moves.push({ base: face, amount });
+    i = re.lastIndex;
+  }
+  return { moves, error: null };
+}
+
+function moveToString(mv) {
+  return mv.base + (mv.amount === 1 ? '' : mv.amount === 2 ? '2' : "'");
+}
+function movesToString(moves) { return moves.map(moveToString).join(' '); }
+function invertMoves(moves) {
+  return moves.slice().reverse().map(m => ({ base: m.base, amount: (4 - m.amount) % 4 }));
+}
+function invertAlg(text) {
+  const p = parseAlg(text);
+  return movesToString(invertMoves(p.moves));
+}
+// quarter turns signed for animation (-2..2)
+function moveTurns(mv) {
+  const sign = BASE[mv.base][2];
+  if (mv.amount === 1) return sign;
+  if (mv.amount === 3) return -sign;
+  return 2 * sign;
+}
+
+function rotVec(v, axis, q) {
+  q = ((q % 4) + 4) % 4;
+  let [x, y, z] = v;
+  for (let k = 0; k < q; k++) {
+    if (axis === 'x') [x, y, z] = [x, -z, y];
+    else if (axis === 'y') [x, y, z] = [z, y, -x];
+    else [x, y, z] = [-y, x, z];
+  }
+  return [x, y, z];
+}
+
+function solvedState() {
+  const st = [];
+  for (const f in FACES) {
+    const n = FACES[f];
+    for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) {
+      let p;
+      if (n[0]) p = [n[0], a, b];
+      else if (n[1]) p = [a, n[1], b];
+      else p = [a, b, n[2]];
+      st.push({ p, n: n.slice(), c: f });
+    }
+  }
+  return st;
+}
+
+function applyMove(st, mv) {
+  const [axis, layers, sign] = BASE[mv.base];
+  const ai = AXIS_INDEX[axis];
+  const q = sign * mv.amount;
+  for (const s of st) {
+    if (layers.includes(s.p[ai])) {
+      s.p = rotVec(s.p, axis, q);
+      s.n = rotVec(s.n, axis, q);
+    }
+  }
+  return st;
+}
+function applyMoves(st, moves) { for (const m of moves) applyMove(st, m); return st; }
+
+const key = (p, n) => p.join(',') + '|' + n.join(',');
+
+// color found at each physical (position, normal) slot, recoloured relative to the centres so
+// whole-cube rotations don't matter. Returns map slotKey -> faceName it "should" be.
+function relativeColors(st) {
+  const centre = {};
+  for (const s of st) {
+    const isCentre = s.p.filter(v => v !== 0).length === 1;
+    if (isCentre) centre[s.c] = faceOf(s.n);
+  }
+  const out = {};
+  for (const s of st) out[key(s.p, s.n)] = centre[s.c];
+  return out;
+}
+function faceOf(n) {
+  for (const f in FACES) if (FACES[f].every((v, i) => v === n[i])) return f;
+}
+// state description in standard frame (centres at home): array of 54 face letters in fixed slot order
+const SLOT_ORDER = solvedState().map(s => key(s.p, s.n));
+function frameState(st) {
+  // rotate so centres are home: find a rotation among 24 that puts U-centre up and F-centre front
+  const rots = allRotations();
+  for (const r of rots) {
+    const t = st.map(s => ({ p: s.p.slice(), n: s.n.slice(), c: s.c }));
+    applyMoves(t, r);
+    let ok = true;
+    for (const s of t) {
+      const isCentre = s.p.filter(v => v !== 0).length === 1;
+      if (isCentre && faceOf(s.n) !== s.c) { ok = false; break; }
+    }
+    if (ok) {
+      const m = {};
+      for (const s of t) m[key(s.p, s.n)] = s.c;
+      return SLOT_ORDER.map(k => m[k]);
+    }
+  }
+  throw new Error('no frame');
+}
+let _rots = null;
+function allRotations() {
+  if (_rots) return _rots;
+  const seqs = [];
+  const firsts = [[], [{ base: 'x', amount: 1 }], [{ base: 'x', amount: 2 }], [{ base: 'x', amount: 3 }],
+    [{ base: 'z', amount: 1 }], [{ base: 'z', amount: 3 }]];
+  for (const f of firsts) for (let k = 0; k < 4; k++) {
+    const s = f.slice(); if (k) s.push({ base: 'y', amount: k }); seqs.push(s);
+  }
+  _rots = seqs; return seqs;
+}
+
+function stateAfter(moves) { return frameState(applyMoves(solvedState(), moves)); }
+
+const SOLVED_FRAMED = frameState(solvedState());
+
+// slot indices
+const SLOT_INFO = solvedState().map(s => ({ p: s.p, n: s.n }));
+const F2L_SLOTS = SLOT_INFO.map((s, i) => s.p[1] <= 0 ? i : -1).filter(i => i >= 0);
+const LL_SLOTS = SLOT_INFO.map((s, i) => s.p[1] === 1 ? i : -1).filter(i => i >= 0);
+const U_FACE_SLOTS = SLOT_INFO.map((s, i) => s.n[1] === 1 ? i : -1).filter(i => i >= 0);
+
+function f2lIntact(fs) { return F2L_SLOTS.every(i => fs[i] === SOLVED_FRAMED[i]); }
+
+const U = k => (k ? [{ base: 'U', amount: k }] : []);
+
+// does `moves` (solution) solve the case produced by `caseSetup` (moves), up to AUF?
+// kind 'oll' compares orientation only; 'pll' full state.
+function solvesCase(kind, setupMoves, solMoves) {
+  for (let a = 0; a < 4; a++) {
+    const fs = stateAfter([...setupMoves, ...U(a), ...solMoves]);
+    if (!f2lIntact(fs)) continue;
+    if (kind === 'oll') {
+      if (U_FACE_SLOTS.every(i => fs[i] === 'U')) return true;
+    } else {
+      for (let b = 0; b < 4; b++) {
+        const f2 = stateAfter([...setupMoves, ...U(a), ...solMoves, ...U(b)]);
+        if (f2.every((c, i) => c === SOLVED_FRAMED[i])) return true;
+      }
+    }
+  }
+  return false;
+}
+
+// top-layer description for thumbnails: returns {u:[9 colours row-major from back-left], sides:{B:[3],R:[3],F:[3],L:[3]}}
+function topView(fs) {
+  const get = (p, n) => fs[SLOT_ORDER.indexOf(key(p, n))];
+  const u = [];
+  for (let z = -1; z <= 1; z++) for (let x = -1; x <= 1; x++) u.push(get([x, 1, z], [0, 1, 0]));
+  return {
+    u,
+    B: [-1, 0, 1].map(x => get([x, 1, -1], [0, 0, -1])),
+    F: [-1, 0, 1].map(x => get([x, 1, 1], [0, 0, 1])),
+    L: [-1, 0, 1].map(z => get([-1, 1, z], [-1, 0, 0])),
+    R: [-1, 0, 1].map(z => get([1, 1, z], [1, 0, 0]))
+  };
+}
+
+if (typeof module !== 'undefined') module.exports = {
+  parseAlg, invertAlg, invertMoves, movesToString, moveToString, moveTurns, BASE,
+  solvedState, applyMoves, stateAfter, f2lIntact, solvesCase, topView, SOLVED_FRAMED, U_FACE_SLOTS, U
+};
+
+// ================= Cubie model =================
+// Corners: URF UFL ULB UBR DFR DLF DBL DRB   Edges: UR UF UL UB DR DF DL DB FR FL BL BR
+const FACE_NAMES = ['U', 'R', 'F', 'D', 'L', 'B'];
+const BASIC = {
+  U: { cp: [3, 0, 1, 2, 4, 5, 6, 7], co: [0, 0, 0, 0, 0, 0, 0, 0], ep: [3, 0, 1, 2, 4, 5, 6, 7, 8, 9, 10, 11], eo: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+  R: { cp: [4, 1, 2, 0, 7, 5, 6, 3], co: [2, 0, 0, 1, 1, 0, 0, 2], ep: [8, 1, 2, 3, 11, 5, 6, 7, 4, 9, 10, 0], eo: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+  F: { cp: [1, 5, 2, 3, 0, 4, 6, 7], co: [1, 2, 0, 0, 2, 1, 0, 0], ep: [0, 9, 2, 3, 4, 8, 6, 7, 1, 5, 10, 11], eo: [0, 1, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0] },
+  D: { cp: [0, 1, 2, 3, 5, 6, 7, 4], co: [0, 0, 0, 0, 0, 0, 0, 0], ep: [0, 1, 2, 3, 5, 6, 7, 4, 8, 9, 10, 11], eo: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+  L: { cp: [0, 2, 6, 3, 4, 1, 5, 7], co: [0, 1, 2, 0, 0, 2, 1, 0], ep: [0, 1, 10, 3, 4, 5, 9, 7, 8, 2, 6, 11], eo: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] },
+  B: { cp: [0, 1, 3, 7, 4, 5, 2, 6], co: [0, 0, 1, 2, 0, 0, 2, 1], ep: [0, 1, 2, 11, 4, 5, 6, 10, 8, 9, 3, 7], eo: [0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 1, 1] }
+};
+function cIdentity() { return { cp: [0, 1, 2, 3, 4, 5, 6, 7], co: [0, 0, 0, 0, 0, 0, 0, 0], ep: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11], eo: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }; }
+function cMul(a, b) {
+  const r = { cp: [], co: [], ep: [], eo: [] };
+  for (let i = 0; i < 8; i++) { r.cp[i] = a.cp[b.cp[i]]; r.co[i] = (a.co[b.cp[i]] + b.co[i]) % 3; }
+  for (let i = 0; i < 12; i++) { r.ep[i] = a.ep[b.ep[i]]; r.eo[i] = (a.eo[b.ep[i]] + b.eo[i]) % 2; }
+  return r;
+}
+// 18 moves: face*3 + (0: quarter, 1: half, 2: inverse)
+const MOVES = [];
+for (let f = 0; f < 6; f++) { let m = cIdentity(); for (let k = 0; k < 3; k++) { m = cMul(m, BASIC[FACE_NAMES[f]]); MOVES.push(m); } }
+const MOVE_STR = MOVES.map((_, i) => FACE_NAMES[(i / 3) | 0] + ['', '2', "'"][i % 3]);
+function cApply(s, mi) { return cMul(s, MOVES[mi]); }
+function mvStr(list) { return list.map(i => MOVE_STR[i]).join(' '); }
+function mvInverse(list) { return list.slice().reverse().map(i => { const f = (i / 3) | 0, k = i % 3; return f * 3 + (k === 1 ? 1 : 2 - k); }); }
+function mvParse(str) { // face turns only
+  return str.trim().split(/\s+/).filter(Boolean).map(t => FACE_NAMES.indexOf(t[0]) * 3 + (t[1] === '2' ? 1 : t[1] === "'" ? 2 : 0));
+}
+
+// ---------- facelet (sticker-model) <-> cubie ----------
+const P = { U: [0, 1, 0], D: [0, -1, 0], R: [1, 0, 0], L: [-1, 0, 0], F: [0, 0, 1], B: [0, 0, -1] };
+const CORNER_SLOTS = [[[1, 1, 1], 'URF'], [[-1, 1, 1], 'UFL'], [[-1, 1, -1], 'ULB'], [[1, 1, -1], 'UBR'],
+  [[1, -1, 1], 'DFR'], [[-1, -1, 1], 'DLF'], [[-1, -1, -1], 'DBL'], [[1, -1, -1], 'DRB']];
+const EDGE_SLOTS = [[[1, 1, 0], 'UR'], [[0, 1, 1], 'UF'], [[-1, 1, 0], 'UL'], [[0, 1, -1], 'UB'], [[1, -1, 0], 'DR'], [[0, -1, 1], 'DF'],
+  [[-1, -1, 0], 'DL'], [[0, -1, -1], 'DB'], [[1, 0, 1], 'FR'], [[-1, 0, 1], 'FL'], [[-1, 0, -1], 'BL'], [[1, 0, -1], 'BR']];
+// sticker state (from logic.js) -> cubie, colours read relative to the centres
+function stickersToCubie(st) {
+  const centre = {}, at = {};
+  for (const s of st) {
+    if (s.p.filter(v => v !== 0).length === 1) for (const f in P) if (P[f].every((v, i) => v === s.n[i])) centre[s.c] = f;
+  }
+  for (const s of st) at[s.p.join(',') + '|' + s.n.join(',')] = centre[s.c];
+  const read = (p, faces) => faces.split('').map(f => at[p.join(',') + '|' + P[f].join(',')]);
+  const c = cIdentity();
+  CORNER_SLOTS.forEach(([p, faces], i) => {
+    const col = read(p, faces);
+    const o = col.findIndex(x => x === 'U' || x === 'D');
+    const c1 = col[(o + 1) % 3], c2 = col[(o + 2) % 3];
+    const j = CORNER_SLOTS.findIndex(([, f]) => f[1] === c1 && f[2] === c2);
+    c.cp[i] = j; c.co[i] = o;
+  });
+  EDGE_SLOTS.forEach(([p, faces], i) => {
+    const col = read(p, faces);
+    let j = EDGE_SLOTS.findIndex(([, f]) => f[0] === col[0] && f[1] === col[1]);
+    if (j >= 0) { c.ep[i] = j; c.eo[i] = 0; }
+    else { j = EDGE_SLOTS.findIndex(([, f]) => f[0] === col[1] && f[1] === col[0]); c.ep[i] = j; c.eo[i] = 1; }
+  });
+  return c;
+}
+
+// ================= Two-phase solver (random-state scrambles) =================
+function permRank(a) { const n = a.length; let r = 0; for (let i = 0; i < n; i++) { let c = 0; for (let j = i + 1; j < n; j++) if (a[j] < a[i]) c++; r = r * (n - i) + c; } return r; }
+function permUnrank(r, n) { const d = []; for (let i = n - 1; i >= 0; i--) { d[i] = r % (n - i); r = Math.floor(r / (n - i)); } const av = []; for (let i = 0; i < n; i++) av.push(i); return d.map(x => av.splice(x, 1)[0]); }
+const N_TWIST = 2187, N_FLIP = 2048, N_SLICE = 495, N_CP = 40320, N_EP = 40320, N_SP = 24;
+const P2_MOVES = [0, 1, 2, 9, 10, 11, 4, 7, 13, 16]; // U U2 U' D D2 D' R2 F2 L2 B2
+let TP = null;
+function twistOf(c) { let t = 0; for (let i = 0; i < 7; i++) t = t * 3 + c.co[i]; return t; }
+function flipOf(c) { let t = 0; for (let i = 0; i < 11; i++) t = t * 2 + c.eo[i]; return t; }
+function C(n, k) { if (k > n) return 0; let r = 1; for (let i = 0; i < k; i++) r = r * (n - i) / (i + 1); return Math.round(r); }
+function sliceOf(c) { let a = 0, x = 0; for (let j = 11; j >= 0; j--) if (c.ep[j] >= 8) { a += C(11 - j, x + 1); x++; } return a; }
+function buildTwoPhase() {
+  if (TP) return TP;
+  const twM = new Uint16Array(N_TWIST * 18), flM = new Uint16Array(N_FLIP * 18), slM = new Uint16Array(N_SLICE * 18);
+  for (let t = 0; t < N_TWIST; t++) {
+    const co = []; let x = t, s = 0; for (let i = 6; i >= 0; i--) { co[i] = x % 3; s += co[i]; x = (x / 3) | 0; } co[7] = (3 - s % 3) % 3;
+    for (let m = 0; m < 18; m++) { const M = MOVES[m]; const n = []; for (let i = 0; i < 8; i++) n[i] = (co[M.cp[i]] + M.co[i]) % 3; let r = 0; for (let i = 0; i < 7; i++) r = r * 3 + n[i]; twM[t * 18 + m] = r; }
+  }
+  for (let t = 0; t < N_FLIP; t++) {
+    const eo = []; let x = t, s = 0; for (let i = 10; i >= 0; i--) { eo[i] = x % 2; s += eo[i]; x = x >> 1; } eo[11] = s % 2;
+    for (let m = 0; m < 18; m++) { const M = MOVES[m]; let r = 0; for (let i = 0; i < 11; i++) r = r * 2 + ((eo[M.ep[i]] + M.eo[i]) % 2); flM[t * 18 + m] = r; }
+  }
+  const sliceEp = []; // coordinate -> representative ep
+  for (let a = 0; a < 12; a++) for (let b = a + 1; b < 12; b++) for (let cc = b + 1; cc < 12; cc++) for (let d = cc + 1; d < 12; d++) {
+    const ep = []; let k = 8, o = 0; for (let i = 0; i < 12; i++) ep[i] = (i === a || i === b || i === cc || i === d) ? k++ : o++;
+    sliceEp[sliceOf({ ep })] = ep;
+  }
+  for (let s = 0; s < N_SLICE; s++) for (let m = 0; m < 18; m++) { const M = MOVES[m], ep = sliceEp[s], n = []; for (let i = 0; i < 12; i++) n[i] = ep[M.ep[i]]; slM[s * 18 + m] = sliceOf({ ep: n }); }
+  const cpM = new Uint16Array(N_CP * 10), epM = new Uint16Array(N_EP * 10), spM = new Uint8Array(N_SP * 10);
+  for (let r = 0; r < N_CP; r++) {
+    const p = permUnrank(r, 8);
+    for (let k = 0; k < 10; k++) { const M = MOVES[P2_MOVES[k]]; const n = []; for (let i = 0; i < 8; i++) n[i] = p[M.cp[i]]; cpM[r * 10 + k] = permRank(n); }
+    for (let k = 0; k < 10; k++) { const M = MOVES[P2_MOVES[k]]; const n = []; for (let i = 0; i < 8; i++) n[i] = p[M.ep[i]]; epM[r * 10 + k] = permRank(n); }
+  }
+  for (let r = 0; r < N_SP; r++) {
+    const p = permUnrank(r, 4).map(x => x + 8);
+    for (let k = 0; k < 10; k++) { const M = MOVES[P2_MOVES[k]]; const n = []; for (let i = 8; i < 12; i++) n.push(p[M.ep[i] - 8] - 8); spM[r * 10 + k] = permRank(n); }
+  }
+  const bfs = (size, nMoves, idxMove) => {
+    const t = new Int8Array(size).fill(-1); t[0] = 0; let frontier = [0], d = 0;
+    while (frontier.length) { const next = []; for (const s of frontier) for (let m = 0; m < nMoves; m++) { const n = idxMove(s, m); if (t[n] < 0) { t[n] = d + 1; next.push(n); } } frontier = next; d++; }
+    return t;
+  };
+  const prTS = bfs(N_TWIST * N_SLICE, 18, (s, m) => twM[((s / N_SLICE) | 0) * 18 + m] * N_SLICE + slM[(s % N_SLICE) * 18 + m]);
+  const prFS = bfs(N_FLIP * N_SLICE, 18, (s, m) => flM[((s / N_SLICE) | 0) * 18 + m] * N_SLICE + slM[(s % N_SLICE) * 18 + m]);
+  const prCS = bfs(N_CP * N_SP, 10, (s, m) => cpM[((s / N_SP) | 0) * 10 + m] * N_SP + spM[(s % N_SP) * 10 + m]);
+  const prES = bfs(N_EP * N_SP, 10, (s, m) => epM[((s / N_SP) | 0) * 10 + m] * N_SP + spM[(s % N_SP) * 10 + m]);
+  TP = { twM, flM, slM, cpM, epM, spM, prTS, prFS, prCS, prES };
+  return TP;
+}
+function twoPhaseSolve(cube, maxLen, nodeLimit) {
+  const T = buildTwoPhase();
+  const sol1 = [], sol2 = []; let result = null, nodes = 0;
+  const p2index = P2_MOVES.reduce((o, m, k) => (o[m] = k, o), {});
+  function phase2(cp, ep, sp, depth, last) {
+    if (depth === 0) return cp === 0 && ep === 0 && sp === 0;
+    if (Math.max(T.prCS[cp * N_SP + sp], T.prES[ep * N_SP + sp]) > depth) return false;
+    for (let k = 0; k < 10; k++) {
+      const m = P2_MOVES[k], f = (m / 3) | 0;
+      if (last >= 0 && (f === last || (f % 3 === last % 3 && f < last))) continue;
+      sol2.push(m);
+      if (phase2(T.cpM[cp * 10 + k], T.epM[ep * 10 + k], T.spM[sp * 10 + k], depth - 1, f)) return true;
+      sol2.pop();
+    }
+    return false;
+  }
+  function startPhase2(len1) {
+    let c = cube; for (const m of sol1) c = cApply(c, m);
+    const cp = permRank(c.cp), ep = permRank(c.ep.slice(0, 8)), sp = permRank(c.ep.slice(8).map(x => x - 8));
+    const last = sol1.length ? (sol1[sol1.length - 1] / 3) | 0 : -1;
+    for (let d = 0; d <= maxLen - len1; d++) { sol2.length = 0; if (phase2(cp, ep, sp, d, last)) return true; }
+    return false;
+  }
+  function phase1(tw, fl, sl, depth, last, len1) {
+    if (++nodes > nodeLimit) throw 'limit';
+    if (depth === 0) {
+      if (tw || fl || sl) return false;
+      if (sol1.length) { const lm = sol1[sol1.length - 1]; if (p2index[lm] !== undefined) return false; }
+      return startPhase2(len1);
+    }
+    if (Math.max(T.prTS[tw * N_SLICE + sl], T.prFS[fl * N_SLICE + sl]) > depth) return false;
+    for (let m = 0; m < 18; m++) {
+      const f = (m / 3) | 0;
+      if (last >= 0 && (f === last || (f % 3 === last % 3 && f < last))) continue;
+      sol1.push(m);
+      if (phase1(T.twM[tw * 18 + m], T.flM[fl * 18 + m], T.slM[sl * 18 + m], depth - 1, f, len1)) return true;
+      sol1.pop();
+    }
+    return false;
+  }
+  const tw = twistOf(cube), fl = flipOf(cube), sl = sliceOf(cube);
+  try {
+    for (let d1 = 0; d1 <= maxLen; d1++) {
+      sol1.length = 0;
+      if (phase1(tw, fl, sl, d1, -1, d1)) { result = sol1.concat(sol2); break; }
+    }
+  } catch (e) { if (e !== 'limit') throw e; }
+  return result;
+}
+function randomInt(n) {
+  if (typeof crypto !== 'undefined' && crypto.getRandomValues) { const a = new Uint32Array(1); crypto.getRandomValues(a); return a[0] % n; }
+  return Math.floor(Math.random() * n);
+}
+function shuffle(a) { for (let i = a.length - 1; i > 0; i--) { const j = randomInt(i + 1);[a[i], a[j]] = [a[j], a[i]]; } return a; }
+function parity(p) { let s = 0; for (let i = 0; i < p.length; i++) for (let j = i + 1; j < p.length; j++) if (p[j] < p[i]) s ^= 1; return s; }
+function randomCube() {
+  const c = cIdentity();
+  c.cp = shuffle(c.cp.slice()); c.ep = shuffle(c.ep.slice());
+  if (parity(c.cp) !== parity(c.ep)) [c.ep[0], c.ep[1]] = [c.ep[1], c.ep[0]];
+  let s = 0; for (let i = 0; i < 7; i++) { c.co[i] = randomInt(3); s += c.co[i]; } c.co[7] = (3 - s % 3) % 3;
+  s = 0; for (let i = 0; i < 11; i++) { c.eo[i] = randomInt(2); s += c.eo[i]; } c.eo[11] = s % 2;
+  return c;
+}
+// WCA-style random-state scramble: random reachable state, solved by two-phase, scramble = inverse solution
+function randomStateScramble() {
+  for (; ;) {
+    const c = randomCube();
+    let sol = null;
+    for (const [len, lim] of [[20, 2e5], [21, 1e6], [22, 4e6], [24, 1e8]]) { sol = twoPhaseSolve(c, len, lim); if (sol) break; }
+    if (!sol || sol.length < 2) continue; // WCA rejects states solvable in < 2 moves
+    return mvStr(mvInverse(sol));
+  }
+}
+
+// ================= CFOP search (cross on D) =================
+// track pieces as idx: edge pos*2+ori (0..23), corner pos*3+ori (0..23)
+const EMV = new Uint8Array(18 * 24), CMV = new Uint8Array(18 * 24);
+for (let m = 0; m < 18; m++) {
+  const M = MOVES[m];
+  for (let q = 0; q < 12; q++) { const p = M.ep[q]; for (let o = 0; o < 2; o++) EMV[m * 24 + p * 2 + o] = q * 2 + ((o + M.eo[q]) % 2); }
+  for (let q = 0; q < 8; q++) { const p = M.cp[q]; for (let o = 0; o < 3; o++) CMV[m * 24 + p * 3 + o] = q * 3 + ((o + M.co[q]) % 3); }
+}
+const CROSS_E = [4, 5, 6, 7];               // DR DF DL DB
+const SLOT_NAMES = ['FR', 'FL', 'BL', 'BR']; // slot k: corner 4+k, edge 8+k
+let CROSS_T = null, PAIR_T = null;
+function crossIndex(e) { return ((e[0] * 24 + e[1]) * 24 + e[2]) * 24 + e[3]; }
+function buildCFOPTables() {
+  if (CROSS_T) return;
+  CROSS_T = new Int8Array(24 ** 4).fill(-1);
+  const start = crossIndex([8, 10, 12, 14]);
+  CROSS_T[start] = 0; let fr = [start], d = 0;
+  while (fr.length) {
+    const nx = [];
+    for (const s of fr) {
+      const e = [(s / 13824) | 0, ((s / 576) | 0) % 24, ((s / 24) | 0) % 24, s % 24];
+      for (let m = 0; m < 18; m++) { const n = crossIndex([EMV[m * 24 + e[0]], EMV[m * 24 + e[1]], EMV[m * 24 + e[2]], EMV[m * 24 + e[3]]]); if (CROSS_T[n] < 0) { CROSS_T[n] = d + 1; nx.push(n); } }
+    }
+    fr = nx; d++;
+  }
+  PAIR_T = [];
+  for (let k = 0; k < 4; k++) {
+    const t = new Int8Array(576).fill(-1), s0 = (4 + k) * 3 * 24 + (8 + k) * 2;
+    t[s0] = 0; let f = [s0], dd = 0;
+    while (f.length) { const nx = []; for (const s of f) { const c = (s / 24) | 0, e = s % 24; for (let m = 0; m < 18; m++) { const n = CMV[m * 24 + c] * 24 + EMV[m * 24 + e]; if (t[n] < 0) { t[n] = dd + 1; nx.push(n); } } } f = nx; dd++; }
+    PAIR_T.push(t);
+  }
+}
+// tracked state: [crossE0..3, corner0..3, edge0..3]  (corner k = piece 4+k, edge k = piece 8+k)
+function trackedFromCubie(c) {
+  const st = new Array(12);
+  for (let i = 0; i < 12; i++) {
+    const p = c.ep[i];
+    if (p >= 4 && p <= 7) st[p - 4] = i * 2 + c.eo[i];
+    if (p >= 8) st[8 + (p - 8)] = i * 2 + c.eo[i];
+  }
+  for (let i = 0; i < 8; i++) { const p = c.cp[i]; if (p >= 4) st[4 + (p - 4)] = i * 3 + c.co[i]; }
+  return st;
+}
+function applyTracked(st, m) {
+  const n = st.slice();
+  for (let i = 0; i < 4; i++) n[i] = EMV[m * 24 + st[i]];
+  for (let i = 4; i < 8; i++) n[i] = CMV[m * 24 + st[i]];
+  for (let i = 8; i < 12; i++) n[i] = EMV[m * 24 + st[i]];
+  return n;
+}
+const pairSolved = (st, k) => st[4 + k] === (4 + k) * 3 && st[8 + k] === (8 + k) * 2;
+// ergonomic cost used only to break ties between equally short solutions
+const MOVE_COST = { U: 1, R: 1, L: 1.15, F: 1.5, D: 1.6, B: 2 };
+const seqCost = seq => seq.reduce((s, m) => s + MOVE_COST[FACE_NAMES[(m / 3) | 0]] + (m % 3 === 1 ? 0.2 : 0), 0);
+
+// all optimal crosses (up to cap)
+function crossSolutions(st, cap) {
+  buildCFOPTables();
+  const out = [], path = [];
+  const h0 = CROSS_T[crossIndex(st)];
+  function dfs(e, depth, last) {
+    if (out.length >= cap) return;
+    if (depth === 0) { if (CROSS_T[crossIndex(e)] === 0) out.push(path.slice()); return; }
+    for (let m = 0; m < 18; m++) {
+      const f = (m / 3) | 0;
+      if (last >= 0 && (f === last || (f % 3 === last % 3 && f < last))) continue;
+      const n = [EMV[m * 24 + e[0]], EMV[m * 24 + e[1]], EMV[m * 24 + e[2]], EMV[m * 24 + e[3]]];
+      if (CROSS_T[crossIndex(n)] !== depth - 1) continue; // exact table: stay on a shortest path
+      path.push(m); dfs(n, depth - 1, f); path.pop();
+    }
+  }
+  dfs(st.slice(0, 4), h0, -1);
+  return out;
+}
+// optimal solution(s) for slot k keeping cross + `keep` slots
+function pairSolutions(st, k, keep, cap, maxDepth, budget) {
+  const need = keep.concat([k]);
+  const h = s => {
+    let v = CROSS_T[crossIndex(s)];
+    for (const j of need) { const x = PAIR_T[j][s[4 + j] * 24 + s[8 + j]]; if (x > v) v = x; }
+    return v;
+  };
+  const out = [], path = []; let nodes = 0;
+  function dfs(s, depth, last) {
+    if (++nodes > budget) throw 'budget';
+    const hv = h(s);
+    if (hv > depth) return;
+    if (depth === 0) { out.push(path.slice()); return; }
+    for (let m = 0; m < 18; m++) {
+      const f = (m / 3) | 0;
+      if (last >= 0 && (f === last || (f % 3 === last % 3 && f < last))) continue;
+      path.push(m); dfs(applyTracked(s, m), depth - 1, f); path.pop();
+      if (out.length >= cap) return;
+    }
+  }
+  for (let d = h(st); d <= maxDepth; d++) {
+    dfs(st, d, -1);
+    if (out.length) return out;
+  }
+  return out;
+}
+// greedy: at each step, the remaining pair with the shortest optimal insertion (ties -> ergonomics)
+// pieces you can't see from the front: edge in a back slot (BL=10, BR=11), corner in the back of the D layer (DBL=6, DRB=7)
+const hiddenCount = (s, k) => ([6, 7].includes((s[4 + k] / 3) | 0) ? 1 : 0) + ([10, 11].includes((s[8 + k] / 2) | 0) ? 1 : 0);
+function solveF2L(st, budget, visible) {
+  const steps = []; let s = st; const done = [];
+  for (let k = 0; k < 4; k++) if (pairSolved(s, k)) { done.push(k); steps.push({ slot: SLOT_NAMES[k], moves: [], note: 'already solved' }); }
+  while (done.length < 4) {
+    let best = null;
+    const lb = k => Math.max(CROSS_T[crossIndex(s)], PAIR_T[k][s[4 + k] * 24 + s[8 + k]]);
+    let order = [0, 1, 2, 3].filter(k => !done.includes(k)).sort((a, b) => lb(a) - lb(b));
+    if (visible) { const seen = order.filter(k => hiddenCount(s, k) === 0); if (seen.length) order = seen; }
+    for (const bud of [budget, budget * 12]) {
+      for (const k of order) {
+        const maxD = best ? best.moves.length : 16;
+        if (lb(k) > maxD) continue;
+        let sols = [];
+        try { sols = pairSolutions(s, k, done, 60, maxD, bud); } catch (e) { if (e !== 'budget') throw e; }
+        for (const q of sols) {
+          const hid = hiddenCount(s, k);
+          if (!best || q.length < best.moves.length || (q.length === best.moves.length && (hid < best.hid || (hid === best.hid && seqCost(q) < seqCost(best.moves))))) best = { k, moves: q, hid };
+        }
+      }
+      if (best) break;
+    }
+    if (!best) return null;
+    for (const m of best.moves) s = applyTracked(s, m);
+    done.push(best.k);
+    steps.push({ slot: SLOT_NAMES[best.k], moves: best.moves });
+  }
+  return steps;
+}
+
+// ---------- full CFOP for one cross colour ----------
+// rotation (in my notation) that puts face `f` of the scrambled cube on the bottom
+const BOTTOM_ROT = { D: '', U: 'x2', F: "x'", B: 'x', R: 'z', L: "z'" };
+// llAlgs: {oll:[{id, alg}], pll:[{id, alg}]}  (parsed with logic.js)
+function solveCFOP(scramble, face, llAlgs, opts) {
+  opts = opts || {};
+  const rot = BOTTOM_ROT[face];
+  const base = applyMoves(solvedState(), parseAlg(scramble + ' ' + rot).moves);
+  const cub = stickersToCubie(base);
+  const st0 = trackedFromCubie(cub);
+  const crosses = crossSolutions(st0, opts.crossCap || 4);
+  let best = null;
+  for (const cr of crosses) {
+    let s = st0; for (const m of cr) s = applyTracked(s, m);
+    const f2l = solveF2L(s, opts.budget || 3e6, !!opts.visible);
+    if (!f2l) continue;
+    const len = cr.length + f2l.reduce((a, p) => a + p.moves.length, 0);
+    if (!best || len < best.len || (len === best.len && seqCost(cr) < seqCost(best.cross))) best = { cross: cr, f2l, len };
+  }
+  if (!best) return null;
+  const f2lText = [mvStr(best.cross), ...best.f2l.map(p => mvStr(p.moves))].join(' ');
+  // last layer with the drill algs
+  const stLL = applyMoves(solvedState(), parseAlg(scramble + ' ' + rot + ' ' + f2lText).moves);
+  const ll = solveLL(stLL, llAlgs);
+  return {
+    face, rotation: rot, crossLen: best.cross.length,
+    cross: mvStr(best.cross),
+    pairs: best.f2l.map(p => ({ slot: p.slot, moves: mvStr(p.moves), note: p.note || '' })),
+    oll: ll.oll, pll: ll.pll
+  };
+}
+const AUF = ['', 'U', 'U2', "U'"];
+function cloneSt(st) { return st.map(s => ({ p: s.p.slice(), n: s.n.slice(), c: s.c })); }
+// colours relative to the centres, read in the physical frame (no re-orienting)
+function physState(st) {
+  const centre = {}, at = {};
+  for (const s of st) if (s.p.filter(v => v !== 0).length === 1) for (const f in P) if (P[f].every((v, i) => v === s.n[i])) centre[s.c] = f;
+  for (const s of st) at[key(s.p, s.n)] = centre[s.c];
+  return SLOT_ORDER.map(k => at[k]);
+}
+function solveLL(st, llAlgs) {
+  const frameState = physState;
+  const fs0 = frameState(cloneSt(st));
+  let oll = null;
+  if (U_FACE_SLOTS.every(i => fs0[i] === 'U')) oll = { id: 'skip', alg: '', auf: '' };
+  else {
+    outer: for (const c of llAlgs.oll) for (let a = 0; a < 4; a++) {
+      const t = applyMoves(cloneSt(st), parseAlg(AUF[a] + ' ' + c.alg).moves);
+      const fs = frameState(t);
+      if (f2lIntact(fs) && U_FACE_SLOTS.every(i => fs[i] === 'U')) { oll = { id: c.id, alg: c.alg, auf: AUF[a] }; break outer; }
+    }
+  }
+  const st2 = oll && oll.id !== 'skip' ? applyMoves(cloneSt(st), parseAlg(oll.auf + ' ' + oll.alg).moves) : cloneSt(st);
+  let pll = null;
+  const solvedEq = fs => fs.every((c, i) => c === SOLVED_FRAMED[i]);
+  for (let b = 0; b < 4 && !pll; b++) { const t = applyMoves(cloneSt(st2), parseAlg(AUF[b]).moves); if (solvedEq(frameState(t))) pll = { id: 'skip', alg: '', auf: '', post: AUF[b] }; }
+  if (!pll) {
+    outer2: for (const c of llAlgs.pll) for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) {
+      const t = applyMoves(cloneSt(st2), parseAlg(AUF[a] + ' ' + c.alg + ' ' + AUF[b]).moves);
+      if (solvedEq(frameState(t))) { pll = { id: c.id, alg: c.alg, auf: AUF[a], post: AUF[b] }; break outer2; }
+    }
+  }
+  return { oll, pll };
+}
+
+// ---------- F2L look-ahead practice ----------
+// state = clean case (cross + target pair fixed exactly), every other piece random; then a two-phase scramble for it
+function f2lScramble(setup, k, alg, visible, real) {
+  buildCFOPTables();
+  const base = stickersToCubie(applyMoves(solvedState(), parseAlg(setup).moves));
+  let scramble = setup;
+  if (real) {
+    const c = { cp: base.cp.slice(), co: base.co.slice(), ep: base.ep.slice(), eo: base.eo.slice() };
+    const fixedC = new Set([4 + k]), fixedE = new Set([4, 5, 6, 7, 8 + k]);
+    const fcp = [], fcpc = [], fep = [], fepc = [];
+    for (let i = 0; i < 8; i++) if (!fixedC.has(base.cp[i])) { fcp.push(i); fcpc.push(base.cp[i]); }
+    for (let i = 0; i < 12; i++) if (!fixedE.has(base.ep[i])) { fep.push(i); fepc.push(base.ep[i]); }
+    shuffle(fcpc); shuffle(fepc);
+    fcp.forEach((p, j) => { c.cp[p] = fcpc[j]; c.co[p] = randomInt(3); });
+    fep.forEach((p, j) => { c.ep[p] = fepc[j]; c.eo[p] = randomInt(2); });
+    let s = c.co.reduce((a, b) => a + b, 0); c.co[fcp[0]] = (c.co[fcp[0]] + 3 - s % 3) % 3;
+    s = c.eo.reduce((a, b) => a + b, 0); if (s % 2) c.eo[fep[0]] ^= 1;
+    if (parity(c.cp) !== parity(c.ep)) { const t = c.ep[fep[0]]; c.ep[fep[0]] = c.ep[fep[1]]; c.ep[fep[1]] = t; }
+    let sol = null;
+    for (const [len, lim] of [[21, 1e6], [22, 4e6], [24, 1e8]]) { sol = twoPhaseSolve(c, len, lim); if (sol) break; }
+    scramble = mvStr(mvInverse(sol));
+  }
+  let rest = [];
+  if (real) {
+    const after = applyMoves(solvedState(), parseAlg(scramble + ' ' + alg).moves);
+    const steps = solveF2L(trackedFromCubie(stickersToCubie(after)), 3e6, visible) || [];
+    rest = steps.filter(p => p.slot !== SLOT_NAMES[k]).map(p => ({ slot: p.slot, moves: mvStr(p.moves), note: p.note || '' }));
+  }
+  return { scramble, rest };
+}
+
+if (typeof module !== 'undefined') module.exports = { f2lScramble,
+  MOVES, MOVE_STR, cIdentity, cApply, cMul, mvStr, mvParse, mvInverse, stickersToCubie, twoPhaseSolve, randomCube,
+  randomStateScramble, buildTwoPhase, buildCFOPTables, trackedFromCubie, applyTracked, crossSolutions, solveF2L, solveCFOP, BOTTOM_ROT
+};
+
+let latest = 0;
+self.onmessage = e => {
+  const d = e.data;
+  if (d.type === 'scramble') {
+    let s = null, err = null;
+    try { s = randomStateScramble(); } catch (x) { err = String(x); }
+    self.postMessage({ type: 'scramble', req: d.req, scramble: s, error: err });
+  } else if (d.type === 'f2l') {
+    let r = null, err = null;
+    try { r = f2lScramble(d.setup, d.k, d.alg, !!d.visible, true); } catch (x) { err = String(x); }
+    self.postMessage({ type: 'f2l', req: d.req, scramble: r && r.scramble, rest: r ? r.rest : [], error: err });
+  } else if (d.type === 'solve') {
+    latest = d.id;
+    const faces = d.faces.slice();
+    const next = () => {
+      if (d.id !== latest) return;
+      const f = faces.shift();
+      if (!f) { self.postMessage({ type: 'done', id: d.id }); return; }
+      let r = null;
+      try { r = solveCFOP(d.scramble, f, d.ll, { crossCap: 4, budget: 3e6, visible: !!d.visible }); } catch (x) { r = null; }
+      self.postMessage({ type: 'result', id: d.id, face: f, result: r });
+      setTimeout(next, 0);
+    };
+    setTimeout(next, 0);
+  }
+};
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 <script>
 // ---------- Cube logic (no rendering) ----------
@@ -517,6 +1349,64 @@ const PLL_CASES = [
 /*ALGS_END*/
 if (typeof module !== 'undefined') module.exports = { OLL_CASES, PLL_CASES };
 
+/*F2L_START*/
+const F2L_CASES = [{"n":1,"group":"Both on top, white facing up","slots":{"FR":{"setup":"F' L' U2 L F","opt":5,"algs":[{"alg":"F' L' U2 L F","tag":"Best"},{"alg":"F' L' U L U F","tag":"Also good"},{"alg":"U2 F' L F' L' F2","tag":"Also good"}]},"FL":{"setup":"L' U L U2 L' U' L","opt":5,"algs":[{"alg":"L' U L U2 L' U' L","tag":"Best"},{"alg":"L' B' U2 B L","tag":"Fewest moves"},{"alg":"U2 R' U L' U' R L","tag":"Also good"}]},"BL":{"setup":"B' R' U2 R B","opt":5,"algs":[{"alg":"B' R' U2 R B","tag":"Best"},{"alg":"B' R' U R U B","tag":"Also good"},{"alg":"U2 B' R B' R' B2","tag":"Also good"}]},"BR":{"setup":"R' F' U2 F R","opt":5,"algs":[{"alg":"R' F' U2 F R","tag":"Best"},{"alg":"R' U R U2 R' U' R","tag":"R and U only"},{"alg":"U2 L' U R' U' R L","tag":"Also good"}]}}},{"n":2,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U' R' U2 R U R'","opt":5,"algs":[{"alg":"R U' R' U2 R U R'","tag":"Best"},{"alg":"R B U2 B' R'","tag":"Fewest moves"},{"alg":"U2 L U' R U R' L'","tag":"Also good"}]},"FL":{"setup":"F R U2 R' F'","opt":5,"algs":[{"alg":"F R U2 R' F'","tag":"Best"},{"alg":"F R U' R' U' F'","tag":"Also good"},{"alg":"U2 F R' F R F2","tag":"Also good"}]},"BL":{"setup":"L F U2 F' L'","opt":5,"algs":[{"alg":"L F U2 F' L'","tag":"Best"},{"alg":"L U' L' U2 L U L'","tag":"L and U only"},{"alg":"U2 R U' L U R' L'","tag":"Also good"}]},"BR":{"setup":"B L U2 L' B'","opt":5,"algs":[{"alg":"B L U2 L' B'","tag":"Best"},{"alg":"B L U' L' U' B'","tag":"Also good"},{"alg":"U2 B L' B L B2","tag":"Also good"}]}}},{"n":3,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U' R' U R U2 R'","opt":7,"algs":[{"alg":"R U2 R' U' R U R'","tag":"Best"},{"alg":"U2 R2 U2 F R F' U2 R2","tag":"Also good"},{"alg":"U' R' U2 R2 U R2 U R2 U R'","tag":"Also good"}]},"FL":{"setup":"F U' F' U F U2 F'","opt":7,"algs":[{"alg":"F U2 F' U' F U F'","tag":"Best"},{"alg":"U2 F2 U2 L F L' U2 F2","tag":"Also good"},{"alg":"U2 F2 R2 B' R' B R' F2","tag":"Also good"}]},"BL":{"setup":"L U' L' U L U2 L'","opt":7,"algs":[{"alg":"L U2 L' U' L U L'","tag":"Best"},{"alg":"U' L' U2 L2 U L2 U L2 U L'","tag":"Also good"},{"alg":"U2 R L U2 R' U' R U' R' L'","tag":"Also good"}]},"BR":{"setup":"B U' B' U B U2 B'","opt":7,"algs":[{"alg":"B U2 B' U' B U B'","tag":"Best"},{"alg":"U2 B2 U2 R B R' U2 B2","tag":"Also good"},{"alg":"U2 B2 L2 F' L' F L' B2","tag":"Also good"}]}}},{"n":4,"group":"Both on top, white facing up","slots":{"FR":{"setup":"F' U F U' F' U2 F","opt":7,"algs":[{"alg":"F' U2 F U F' U' F","tag":"Best"},{"alg":"U2 F2 U2 R' F' R U2 F2","tag":"Also good"},{"alg":"U2 F2 L2 B L B' L F2","tag":"Also good"}]},"FL":{"setup":"L' U L U' L' U2 L","opt":7,"algs":[{"alg":"L' U2 L U L' U' L","tag":"Best"},{"alg":"U2 L2 U2 F' L' F U2 L2","tag":"Also good"},{"alg":"U L U2 L2 U' L2 U' L2 U' L","tag":"Also good"}]},"BL":{"setup":"B' U B U' B' U2 B","opt":7,"algs":[{"alg":"B' U2 B U B' U' B","tag":"Best"},{"alg":"U2 B2 U2 L' B' L U2 B2","tag":"Also good"},{"alg":"U2 B2 R2 F R F' R B2","tag":"Also good"}]},"BR":{"setup":"R' U R U' R' U2 R","opt":7,"algs":[{"alg":"R' U2 R U R' U' R","tag":"Best"},{"alg":"U R U2 R2 U' R2 U' R2 U' R","tag":"Also good"},{"alg":"R' U2 L F R' F' R2 L'","tag":"Also good"}]}}},{"n":5,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U R' U' R U2 R' U'","opt":7,"algs":[{"alg":"U R U2 R' U R U' R'","tag":"Best"},{"alg":"U R U2 R2 F R F'","tag":"Fewest moves"},{"alg":"U R U2 R' U2 R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U' R U2 R' U2 F' U2","opt":7,"algs":[{"alg":"U2 F U2 R U2 R' U F'","tag":"Best"},{"alg":"U F U R' F R F2","tag":"Fewest moves"},{"alg":"U F U2 F2 L F L'","tag":"Also good"}]},"BL":{"setup":"L U L' U' L U2 L' U'","opt":7,"algs":[{"alg":"U L U2 L' U L U' L'","tag":"Best"},{"alg":"U L U F' L F L2","tag":"Fewest moves"},{"alg":"U L U2 L' U2 L U2 L'","tag":"Also good"}]},"BR":{"setup":"B U' L U2 L' U2 B' U2","opt":7,"algs":[{"alg":"U2 B U2 L U2 L' U B'","tag":"Best"},{"alg":"U B U2 B2 R B R'","tag":"Fewest moves"},{"alg":"U B U L' B L B2","tag":"Also good"}]}}},{"n":6,"group":"Both on top, white facing up","slots":{"FR":{"setup":"F' U L' U2 L U2 F U2","opt":7,"algs":[{"alg":"U2 F' U2 L' U2 L U' F","tag":"Best"},{"alg":"U' F' U2 F2 R' F' R","tag":"Fewest moves"},{"alg":"U' F' U' L F' L' F2","tag":"Also good"}]},"FL":{"setup":"L' U2 L U2 L' U2 L U","opt":7,"algs":[{"alg":"U' L' U2 L U2 L' U2 L","tag":"Best"},{"alg":"U' L' U2 L2 F' L' F","tag":"Fewest moves"},{"alg":"U' L' U2 L U' L' U L","tag":"Also good"}]},"BL":{"setup":"B' U R' U2 R U2 B U2","opt":7,"algs":[{"alg":"U2 B' U2 R' U2 R U' B","tag":"Best"},{"alg":"U' B' U' R B' R' B2","tag":"Fewest moves"},{"alg":"U' B' U2 B2 L' B' L","tag":"Also good"}]},"BR":{"setup":"R' U2 R U2 R' U2 R U","opt":7,"algs":[{"alg":"U' R' U2 R U2 R' U2 R","tag":"Best"},{"alg":"U' R' U' F R' F' R2","tag":"Fewest moves"},{"alg":"U' R' U2 R U' R' U R","tag":"Also good"}]}}},{"n":7,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U R' F R U R' U' F'","opt":8,"algs":[{"alg":"F U R U' R' F' R U' R'","tag":"Best"},{"alg":"U2 R B U B2 R B R2","tag":"Fewest moves"},{"alg":"U F' L' U L F R U R'","tag":"Also good"}]},"FL":{"setup":"L2 U' L U' L' U2 L2 U2","opt":8,"algs":[{"alg":"U2 L2 U2 L U L' U L2","tag":"Best"},{"alg":"L U L' U L U2 L2 U2 L","tag":"Also good"},{"alg":"L2 U' L U' L' U2 L U L","tag":"Also good"}]},"BL":{"setup":"L2 F U F' U' L' U2 L' U'","opt":8,"algs":[{"alg":"U L U2 L U F U' F' L2","tag":"Best"},{"alg":"U2 L F U F2 L F L2","tag":"Fewest moves"},{"alg":"U2 L U L U F U' F' L2","tag":"Also good"}]},"BR":{"setup":"R2 U' R U' R' U2 R2 U2","opt":8,"algs":[{"alg":"U2 R2 U2 R U R' U R2","tag":"Best"},{"alg":"R U R' U R U2 R2 U2 R","tag":"Also good"},{"alg":"R2 U' R U' R' U2 R U R","tag":"Also good"}]}}},{"n":8,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R2 U R' U R U2 R2 U2","opt":8,"algs":[{"alg":"U2 R2 U2 R' U' R U' R2","tag":"Best"},{"alg":"R2 U R' U R U2 R' U' R'","tag":"Also good"},{"alg":"R' U' R U' R' U2 R2 U2 R'","tag":"Also good"}]},"FL":{"setup":"L' U' L F' L' U' L U F","opt":8,"algs":[{"alg":"F' U' L' U L F L' U L","tag":"Best"},{"alg":"F U F R' F' R U2 F'","tag":"Fewest moves"},{"alg":"U' F R U' R' F' L' U' L","tag":"Also good"}]},"BL":{"setup":"L2 U L' U L U2 L2 U2","opt":8,"algs":[{"alg":"U2 L2 U2 L' U' L U' L2","tag":"Best"},{"alg":"L2 U L' U L U2 L' U' L'","tag":"Also good"},{"alg":"L' U' L U' L' U2 L2 U2 L'","tag":"Also good"}]},"BR":{"setup":"R2 F' U' F U R U R U2","opt":8,"algs":[{"alg":"U2 R' U' R' U' F' U F R2","tag":"Best"},{"alg":"U2 R' F' U' F2 R' F' R2","tag":"Fewest moves"},{"alg":"U' R' U2 R' U' F' U F R2","tag":"Also good"}]}}},{"n":9,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U' R'","opt":3,"algs":[{"alg":"R U R'","tag":"Best"},{"alg":"R L' U R' U' L","tag":"Also good"},{"alg":"R U2 R' U R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U' F'","opt":3,"algs":[{"alg":"F U F'","tag":"Best"}]},"BL":{"setup":"L U' L'","opt":3,"algs":[{"alg":"L U L'","tag":"Best"},{"alg":"R' L U L' U' R","tag":"Also good"},{"alg":"L U2 L' U L U2 L'","tag":"Also good"}]},"BR":{"setup":"B U' B'","opt":3,"algs":[{"alg":"B U B'","tag":"Best"}]}}},{"n":10,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U F","opt":3,"algs":[{"alg":"F' U' F","tag":"Best"}]},"FL":{"setup":"L' U L","opt":3,"algs":[{"alg":"L' U' L","tag":"Best"},{"alg":"R L' U' L U R'","tag":"Also good"},{"alg":"L' U L U L' U L","tag":"Also good"}]},"BL":{"setup":"B' U B","opt":3,"algs":[{"alg":"B' U' B","tag":"Best"}]},"BR":{"setup":"R' U R","opt":3,"algs":[{"alg":"R' U' R","tag":"Best"},{"alg":"R' L U' R U L'","tag":"Also good"},{"alg":"R' U R U R' U R","tag":"Also good"}]}}},{"n":11,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U R' U'","opt":4,"algs":[{"alg":"U R U' R'","tag":"Best"},{"alg":"U2 R U2 R'","tag":"Also good"},{"alg":"R' F R F'","tag":"Also good"}]},"FL":{"setup":"F U F' U'","opt":4,"algs":[{"alg":"U F U' F'","tag":"Best"},{"alg":"U2 F U2 F'","tag":"Also good"},{"alg":"F' L F L'","tag":"Also good"}]},"BL":{"setup":"L U L' U'","opt":4,"algs":[{"alg":"U L U' L'","tag":"Best"},{"alg":"U2 L U2 L'","tag":"Also good"},{"alg":"R' U L U' R L'","tag":"Also good"}]},"BR":{"setup":"B U B' U'","opt":4,"algs":[{"alg":"U B U' B'","tag":"Best"},{"alg":"U2 B U2 B'","tag":"Also good"},{"alg":"B' R B R'","tag":"Also good"}]}}},{"n":12,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U2 F U2","opt":4,"algs":[{"alg":"U2 F' U2 F","tag":"Best"},{"alg":"U' F' U F","tag":"Also good"},{"alg":"F R' F' R","tag":"Also good"}]},"FL":{"setup":"L' U2 L U2","opt":4,"algs":[{"alg":"U2 L' U2 L","tag":"Best"},{"alg":"U' L' U L","tag":"Also good"},{"alg":"L F' L' F","tag":"Also good"}]},"BL":{"setup":"B' U2 B U2","opt":4,"algs":[{"alg":"U2 B' U2 B","tag":"Best"},{"alg":"U' B' U B","tag":"Also good"},{"alg":"B L' B' L","tag":"Also good"}]},"BR":{"setup":"R' U2 R U2","opt":4,"algs":[{"alg":"U2 R' U2 R","tag":"Best"},{"alg":"U' R' U R","tag":"Also good"},{"alg":"L U' R' U R L'","tag":"Also good"}]}}},{"n":13,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R2 U B U' B' R2","opt":6,"algs":[{"alg":"R2 B U B' U' R2","tag":"Best"},{"alg":"U2 F' L' U' L U2 F","tag":"Also good"}]},"FL":{"setup":"L' U2 L U' L' U L U'","opt":6,"algs":[{"alg":"U L' U' L U L' U2 L","tag":"Best"},{"alg":"F2 R U R' U' F2","tag":"Fewest moves"},{"alg":"U L' U' L U2 L' U L","tag":"Also good"}]},"BL":{"setup":"L2 U F U' F' L2","opt":6,"algs":[{"alg":"L2 F U F' U' L2","tag":"Best"},{"alg":"U2 B' R' U' R U2 B","tag":"Also good"}]},"BR":{"setup":"R' U2 R U' R' U R U'","opt":6,"algs":[{"alg":"U R' U' R U R' U2 R","tag":"Best"},{"alg":"B2 L U L' U' B2","tag":"Fewest moves"},{"alg":"U R' U' R U2 R' U R","tag":"Also good"}]}}},{"n":14,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R2 B U B' U' R2","opt":6,"algs":[{"alg":"R2 U B U' B' R2","tag":"Best"},{"alg":"F' U L' U' L U2 F","tag":"Also good"},{"alg":"R2 B2 D B D' B R2","tag":"Also good"}]},"FL":{"setup":"L' U L U L' U L U'","opt":6,"algs":[{"alg":"U L' U' L U' L' U' L","tag":"Best"},{"alg":"F2 U R U' R' F2","tag":"Fewest moves"},{"alg":"U2 L' U L U L' U' L","tag":"Also good"}]},"BL":{"setup":"L2 F U F' U' L2","opt":6,"algs":[{"alg":"L2 U F U' F' L2","tag":"Best"},{"alg":"B' U R' U' R U2 B","tag":"Also good"},{"alg":"L2 F2 D F D' F L2","tag":"Also good"}]},"BR":{"setup":"R' U R U R' U R U'","opt":6,"algs":[{"alg":"U R' U' R U' R' U' R","tag":"Best"},{"alg":"B2 U L U' L' B2","tag":"Fewest moves"},{"alg":"U2 R' U R U R' U' R","tag":"Also good"}]}}},{"n":15,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U' R' U R U R' U2","opt":6,"algs":[{"alg":"U2 R U' R' U' R U R'","tag":"Best"},{"alg":"F2 U' L' U L F2","tag":"Fewest moves"},{"alg":"U' R U R' U R U R'","tag":"Also good"}]},"FL":{"setup":"L2 B' U' B U L2","opt":6,"algs":[{"alg":"L2 U' B' U B L2","tag":"Best"},{"alg":"F U' R U R' U2 F'","tag":"Also good"},{"alg":"L2 B2 D' B' D B' L2","tag":"Also good"}]},"BL":{"setup":"L U' L' U L U L' U2","opt":6,"algs":[{"alg":"U2 L U' L' U' L U L'","tag":"Best"},{"alg":"B2 U' R' U R B2","tag":"Fewest moves"},{"alg":"U' L U L' U L U L'","tag":"Also good"}]},"BR":{"setup":"R2 F' U' F U R2","opt":6,"algs":[{"alg":"R2 U' F' U F R2","tag":"Best"},{"alg":"B U' L U L' U2 B'","tag":"Also good"},{"alg":"R2 F2 D' F' D F' R2","tag":"Also good"}]}}},{"n":16,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U R' U2 R U' R' U","opt":6,"algs":[{"alg":"U' R U R' U2 R U' R'","tag":"Best"},{"alg":"F2 L' U' L U F2","tag":"Fewest moves"},{"alg":"U' R U R' U' R U2 R'","tag":"Also good"}]},"FL":{"setup":"L2 U' B' U B L2","opt":6,"algs":[{"alg":"L2 B' U' B U L2","tag":"Best"},{"alg":"U2 F R U R' U2 F'","tag":"Also good"}]},"BL":{"setup":"L U L' U2 L U' L' U","opt":6,"algs":[{"alg":"U' L U L' U2 L U' L'","tag":"Best"},{"alg":"B2 R' U' R U B2","tag":"Fewest moves"},{"alg":"U' L U L' U' L U2 L'","tag":"Also good"}]},"BR":{"setup":"R2 U' F' U F R2","opt":6,"algs":[{"alg":"R2 F' U' F U R2","tag":"Best"},{"alg":"U2 B L U L' U2 B'","tag":"Also good"}]}}},{"n":17,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U' R' U2 F' U' F","opt":7,"algs":[{"alg":"F' U F U2 R U R'","tag":"Best"},{"alg":"R U' R U2 R2 U' R2 U' R2","tag":"R and U only"},{"alg":"F' U L' U L U2 F","tag":"Also good"}]},"FL":{"setup":"F U' R U' R' U2 F'","opt":7,"algs":[{"alg":"F U2 R U R' U F'","tag":"Best"},{"alg":"L' U L U2 F U F'","tag":"Also good"},{"alg":"L' U B' U B U2 L","tag":"Also good"}]},"BL":{"setup":"L U' F U' F' U2 L'","opt":7,"algs":[{"alg":"L U2 F U F' U L'","tag":"Best"},{"alg":"L U' L U2 L2 U' L2 U' L2","tag":"L and U only"},{"alg":"L F R U' R' F' L'","tag":"Also good"}]},"BR":{"setup":"R' U2 F' U' F U' R","opt":7,"algs":[{"alg":"R' U F' U F U2 R","tag":"Best"},{"alg":"R' U R U2 B U B'","tag":"Also good"},{"alg":"B U2 L U L' U B'","tag":"Also good"}]}}},{"n":18,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R' U' R2 U' R2 U2 R","opt":7,"algs":[{"alg":"R' U2 R2 U R2 U R","tag":"Best"},{"alg":"R2 U2 R' U' R U' R' U' R'","tag":"Also good"},{"alg":"R' U2 R2 U R' U' R' U2 R","tag":"Also good"}]},"FL":{"setup":"F U2 R U2 R' U F'","opt":7,"algs":[{"alg":"F U' R U2 R' U2 F'","tag":"Best"},{"alg":"U L' U2 L U' F U F'","tag":"Also good"},{"alg":"F' U2 F2 U F2 U F","tag":"Also good"}]},"BL":{"setup":"L' U' L2 U' L2 U2 L","opt":7,"algs":[{"alg":"L' U2 L2 U L2 U L","tag":"Best"},{"alg":"L U' F U2 F' U2 L'","tag":"Also good"},{"alg":"L2 U2 L' U' L U' L' U' L'","tag":"Also good"}]},"BR":{"setup":"B U2 L U2 L' U B'","opt":7,"algs":[{"alg":"B U' L U2 L' U2 B'","tag":"Best"},{"alg":"U R' U2 R U' B U B'","tag":"Also good"},{"alg":"B' U' D' R2 U R2 D B","tag":"Also good"}]}}},{"n":19,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U2 L' U2 L U' F","opt":7,"algs":[{"alg":"F' U L' U2 L U2 F","tag":"Best"},{"alg":"U' R U2 R' U F' U' F","tag":"Also good"},{"alg":"F U2 F2 U' F2 U' F'","tag":"Also good"}]},"FL":{"setup":"L U L2 U L2 U2 L'","opt":7,"algs":[{"alg":"L U2 L2 U' L2 U' L'","tag":"Best"},{"alg":"L U2 L2 U' L U L U2 L'","tag":"Also good"},{"alg":"L2 U2 L U L' U L U L","tag":"Also good"}]},"BL":{"setup":"B' U2 R' U2 R U' B","opt":7,"algs":[{"alg":"B' U R' U2 R U2 B","tag":"Best"},{"alg":"U' L U2 L' U B' U' B","tag":"Also good"},{"alg":"B U D L2 U' L2 D' B'","tag":"Also good"}]},"BR":{"setup":"R U R2 U R2 U2 R'","opt":7,"algs":[{"alg":"R U2 R2 U' R2 U' R'","tag":"Best"},{"alg":"R' U F' U2 F U2 R","tag":"Also good"},{"alg":"R U2 R2 U' R U R U2 R'","tag":"Also good"}]}}},{"n":20,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U F U2 R U R'","opt":7,"algs":[{"alg":"R U' R' U2 F' U' F","tag":"Best"},{"alg":"F' U2 L' U' L U' F","tag":"Also good"},{"alg":"R U' B U' B' U2 R'","tag":"Also good"}]},"FL":{"setup":"F U2 R U R' U F'","opt":7,"algs":[{"alg":"F U' R U' R' U2 F'","tag":"Best"},{"alg":"L' U L' U2 L2 U L2 U L2","tag":"L and U only"},{"alg":"F U' F' U2 L' U' L","tag":"Also good"}]},"BL":{"setup":"L U2 F U F' U L'","opt":7,"algs":[{"alg":"L U' F U' F' U2 L'","tag":"Best"},{"alg":"B' U2 R' U' R U' B","tag":"Also good"},{"alg":"L U' L' U2 B' U' B","tag":"Also good"}]},"BR":{"setup":"R' U F' U F U2 R","opt":7,"algs":[{"alg":"R' U2 F' U' F U' R","tag":"Best"},{"alg":"R' U R' U2 R2 U R2 U R2","tag":"R and U only"},{"alg":"R' F' L' U L F R","tag":"Also good"}]}}},{"n":21,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R2 U2 F R2 F' U2 R2","opt":7,"algs":[{"alg":"R2 U2 F R2 F' U2 R2","tag":"Best"},{"alg":"F' U' L' U2 L U' F","tag":"Also good"},{"alg":"B' R' U' R2 U R' B","tag":"Also good"}]},"FL":{"setup":"L' U2 L U' L' U2 L U'","opt":7,"algs":[{"alg":"U L' U2 L U L' U2 L","tag":"Best"},{"alg":"L' U' B' U2 B U' L","tag":"Fewest moves"},{"alg":"U L' U2 L U2 L' U L","tag":"Also good"}]},"BL":{"setup":"F' L U' L2 U L F","opt":7,"algs":[{"alg":"F' L' U' L2 U L' F","tag":"Best"},{"alg":"B' U' R' U2 R U' B","tag":"Also good"},{"alg":"L2 U2 B L2 B' U2 L2","tag":"Also good"}]},"BR":{"setup":"R' U2 R U' R' U2 R U'","opt":7,"algs":[{"alg":"U R' U2 R U R' U2 R","tag":"Best"},{"alg":"R' U' F' U2 F U' R","tag":"Fewest moves"},{"alg":"U R' U2 R U2 R' U R","tag":"Also good"}]}}},{"n":22,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U R' U2 R U2 R' U","opt":7,"algs":[{"alg":"U' R U2 R' U2 R U' R'","tag":"Best"},{"alg":"R U B U2 B' U R'","tag":"Fewest moves"},{"alg":"U' R U2 R' U' R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U' R U2 R' U' F'","opt":7,"algs":[{"alg":"F U R U2 R' U F'","tag":"Best"},{"alg":"L2 U2 F' L2 F U2 L2","tag":"Also good"},{"alg":"B L U L2 U' L B'","tag":"Also good"}]},"BL":{"setup":"L U L' U2 L U2 L' U","opt":7,"algs":[{"alg":"U' L U2 L' U2 L U' L'","tag":"Best"},{"alg":"L U F U2 F' U L'","tag":"Fewest moves"},{"alg":"U' L U2 L' U' L U2 L'","tag":"Also good"}]},"BR":{"setup":"F R' U R2 U' R' F'","opt":7,"algs":[{"alg":"F R U R2 U' R F'","tag":"Best"},{"alg":"R2 U2 B' R2 B U2 R2","tag":"Also good"},{"alg":"B U L U2 L' U B'","tag":"Also good"}]}}},{"n":23,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U F2 R' F' R2 U' R'","opt":8,"algs":[{"alg":"R U R2 F R F2 U' F","tag":"Best"},{"alg":"R U R' F' U L' U2 L F","tag":"Also good"},{"alg":"U F' U F U' F' U' F","tag":"Also good"}]},"FL":{"setup":"L' U L U L' U' L U'","opt":8,"algs":[{"alg":"U L' U L U' L' U' L","tag":"Best"},{"alg":"U2 L2 U' L U' L' U2 L2","tag":"Also good"},{"alg":"U L2 D' L U' L' D L2","tag":"Also good"}]},"BL":{"setup":"L2 F' L' F2 U F' U L'","opt":8,"algs":[{"alg":"L U' F U' F2 L F L2","tag":"Best"},{"alg":"L U L' B' U R' U2 R B","tag":"Also good"},{"alg":"L U L2 B L B2 U' B","tag":"Also good"}]},"BR":{"setup":"R' U R U R' U' R U'","opt":8,"algs":[{"alg":"U R' U R U' R' U' R","tag":"Best"},{"alg":"U2 R2 U' R U' R' U2 R2","tag":"Also good"},{"alg":"U R2 D' R U' R' D R2","tag":"Also good"}]}}},{"n":24,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R2 U2 R' U' R U' R2 U2","opt":8,"algs":[{"alg":"U2 R2 U R' U R U2 R2","tag":"Best"},{"alg":"U' R U' R' U R U R'","tag":"Also good"},{"alg":"U' R2 D R' U R D' R2","tag":"Also good"}]},"FL":{"setup":"F U' F2 L F L2 U L","opt":8,"algs":[{"alg":"L' U' L2 F' L' F2 U F'","tag":"Best"},{"alg":"L' U' L F U' R U2 R' F'","tag":"Also good"},{"alg":"U' F U' F' U F U F'","tag":"Also good"}]},"BL":{"setup":"L2 U2 L' U' L U' L2 U2","opt":8,"algs":[{"alg":"U2 L2 U L' U L U2 L2","tag":"Best"},{"alg":"U' L U' L' U L U L'","tag":"Also good"},{"alg":"U' L2 D L' U L D' L2","tag":"Also good"}]},"BR":{"setup":"R2 F R F2 U' F U' R","opt":8,"algs":[{"alg":"R' U F' U F2 R' F' R2","tag":"Best"},{"alg":"R' U' R B U' L U2 L' B'","tag":"Also good"},{"alg":"R' U' R2 B' R' B2 U B'","tag":"Also good"}]}}},{"n":25,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"F' U2 F R U R'","opt":6,"algs":[{"alg":"R U' R' F' U2 F","tag":"Best"},{"alg":"F' U F R U2 R'","tag":"Also good"},{"alg":"U R U2 R' F' U' F","tag":"Also good"}]},"FL":{"setup":"F U2 F' L' U' L","opt":6,"algs":[{"alg":"L' U L F U2 F'","tag":"Best"},{"alg":"F U' F' L' U2 L","tag":"Also good"},{"alg":"U' L' U2 L F U F'","tag":"Also good"}]},"BL":{"setup":"B' U2 B L U L'","opt":6,"algs":[{"alg":"L U' L' B' U2 B","tag":"Best"},{"alg":"B' U B L U2 L'","tag":"Also good"},{"alg":"L U' L F' L' F L'","tag":"Also good"}]},"BR":{"setup":"B U2 B' R' U' R","opt":6,"algs":[{"alg":"R' U R B U2 B'","tag":"Best"},{"alg":"B U' B' R' U2 R","tag":"Also good"},{"alg":"R' U R' F R F' R","tag":"Also good"}]}}},{"n":26,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R2 U2 R2 U' R2 U' R2","opt":7,"algs":[{"alg":"R2 U R2 U R2 U2 R2","tag":"Best"},{"alg":"U2 R2 U2 R2 U' R2 U' R2","tag":"Also good"},{"alg":"U2 L' U R2 U' L U R2","tag":"Also good"}]},"FL":{"setup":"L2 U2 L2 U L2 U L2","opt":7,"algs":[{"alg":"L2 U' L2 U' L2 U2 L2","tag":"Best"},{"alg":"U2 L2 U2 L2 U L2 U L2","tag":"Also good"},{"alg":"U2 R U' L2 U R' U' L2","tag":"Also good"}]},"BL":{"setup":"L2 U2 L2 U' L2 U' L2","opt":7,"algs":[{"alg":"L2 U L2 U L2 U2 L2","tag":"Best"},{"alg":"U2 L2 U2 L2 U' L2 U' L2","tag":"Also good"},{"alg":"U2 R' U L2 U' R U L2","tag":"Also good"}]},"BR":{"setup":"R2 U2 R2 U R2 U R2","opt":7,"algs":[{"alg":"R2 U' R2 U' R2 U2 R2","tag":"Best"},{"alg":"U2 R2 U2 R2 U R2 U R2","tag":"Also good"},{"alg":"U2 L U' R2 U L' U' R2","tag":"Also good"}]}}},{"n":27,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R U' R' U2 R U' R' U'","opt":7,"algs":[{"alg":"U R U R' U2 R U R'","tag":"Best"},{"alg":"L D' L' U L D L'","tag":"Fewest moves"},{"alg":"U' R U2 R' U R U R'","tag":"Also good"}]},"FL":{"setup":"L' U2 L U' L' U' L U'","opt":7,"algs":[{"alg":"U L' U L U L' U2 L","tag":"Best"},{"alg":"U F U2 R U2 R' F'","tag":"Fewest moves"},{"alg":"U L' U L U2 L' U L","tag":"Also good"}]},"BL":{"setup":"L U' L' U2 L U' L' U'","opt":7,"algs":[{"alg":"U L U L' U2 L U L'","tag":"Best"},{"alg":"R D' R' U R D R'","tag":"Fewest moves"},{"alg":"U' L U2 L' U L U L'","tag":"Also good"}]},"BR":{"setup":"R' U2 R U' R' U' R U'","opt":7,"algs":[{"alg":"U R' U R U R' U2 R","tag":"Best"},{"alg":"U2 R' F' U2 F U2 R","tag":"Fewest moves"},{"alg":"U R' U R U2 R' U R","tag":"Also good"}]}}},{"n":28,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R U R' U2 R U R' U","opt":7,"algs":[{"alg":"U' R U' R' U2 R U' R'","tag":"Best"},{"alg":"U' F' U2 L' U2 L F","tag":"Fewest moves"},{"alg":"U' R U' R' U' R U2 R'","tag":"Also good"}]},"FL":{"setup":"L' U L U L' U2 L U'","opt":7,"algs":[{"alg":"U L' U2 L U' L' U' L","tag":"Best"},{"alg":"R' D R U' R' D' R","tag":"Fewest moves"},{"alg":"U' L' U' L U2 L' U' L","tag":"Also good"}]},"BL":{"setup":"L U L' U2 L U L' U","opt":7,"algs":[{"alg":"U' L U' L' U2 L U' L'","tag":"Best"},{"alg":"R' D2 R U2 R' D2 R","tag":"Fewest moves"},{"alg":"U' L U' L' U' L U2 L'","tag":"Also good"}]},"BR":{"setup":"R' U R U R' U2 R U'","opt":7,"algs":[{"alg":"U R' U2 R U' R' U' R","tag":"Best"},{"alg":"L' D L U' L' D' L","tag":"Fewest moves"},{"alg":"U' R' U' R U2 R' U' R","tag":"Also good"}]}}},{"n":29,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R U' R' U F' U F U'","opt":8,"algs":[{"alg":"U F' U' F U' R U R'","tag":"Best"},{"alg":"U2 F' U F U R U R'","tag":"Also good"},{"alg":"U2 F' U' F U R U' R'","tag":"Also good"}]},"FL":{"setup":"F U' F' U L' U L U'","opt":8,"algs":[{"alg":"U L' U' L U' F U F'","tag":"Best"},{"alg":"U2 L' U L U F U F'","tag":"Also good"},{"alg":"U2 L' U' L U F U' F'","tag":"Also good"}]},"BL":{"setup":"L U' L' U B' U B U'","opt":8,"algs":[{"alg":"U B' U' B U' L U L'","tag":"Best"},{"alg":"U2 B' U B U L U L'","tag":"Also good"},{"alg":"U2 B' U' B U L U' L'","tag":"Also good"}]},"BR":{"setup":"R' U R' F R F' R U'","opt":8,"algs":[{"alg":"U R' F R' F' R U' R","tag":"Best"},{"alg":"U R' U' R U' B U B'","tag":"Also good"},{"alg":"U2 R' U R U B U B'","tag":"Also good"}]}}},{"n":30,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"F' U2 F U2 R U' R' U2","opt":8,"algs":[{"alg":"U2 R U R' U2 F' U2 F","tag":"Best"},{"alg":"U2 R U R' U' F' U F","tag":"Also good"},{"alg":"U2 R U R' F R' F' R","tag":"Also good"}]},"FL":{"setup":"L' U2 L U2 F U' F' U2","opt":8,"algs":[{"alg":"U2 F U F' U2 L' U2 L","tag":"Best"},{"alg":"U2 F U F' U' L' U L","tag":"Also good"},{"alg":"U2 F U' F' U' L' U' L","tag":"Also good"}]},"BL":{"setup":"L U' L F' L' F L' U","opt":8,"algs":[{"alg":"U' L F' L F L' U L'","tag":"Best"},{"alg":"U2 L U L' U2 B' U2 B","tag":"Also good"},{"alg":"U2 L U L' U' B' U B","tag":"Also good"}]},"BR":{"setup":"R' U2 R U2 B U' B' U2","opt":8,"algs":[{"alg":"U2 B U B' U2 R' U2 R","tag":"Best"},{"alg":"U2 B U B' U' R' U R","tag":"Also good"},{"alg":"U2 B U' B' U' R' U' R","tag":"Also good"}]}}},{"n":31,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"R U R' U' R U R'","opt":6,"algs":[{"alg":"R U' R' U R U' R'","tag":"Best"},{"alg":"R U' R2 F R F'","tag":"Fewest moves"},{"alg":"R U' R' U2 R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U2 F' L' U2 L","opt":6,"algs":[{"alg":"L' U2 L F U2 F'","tag":"Best"},{"alg":"U' F R U2 R' U F'","tag":"Also good"},{"alg":"L' U2 L U' F U' F'","tag":"Also good"}]},"BL":{"setup":"L U L' U' L U L'","opt":6,"algs":[{"alg":"L U' L' U L U' L'","tag":"Best"},{"alg":"L U2 F' L F L2","tag":"Fewest moves"},{"alg":"L U' L' U2 L U2 L'","tag":"Also good"}]},"BR":{"setup":"B U2 B' R' U2 R","opt":6,"algs":[{"alg":"R' U2 R B U2 B'","tag":"Best"},{"alg":"R' U2 R' F R F' R","tag":"Also good"},{"alg":"R' U2 R U' B U' B'","tag":"Also good"}]}}},{"n":32,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"R U' R' U R U' R'","opt":7,"algs":[{"alg":"R U R' U' R U R'","tag":"Best"},{"alg":"U' R U2 R' U2 R U R'","tag":"Also good"},{"alg":"U' R U2 L U' R' U L'","tag":"Also good"}]},"FL":{"setup":"F R U2 R' U F' U","opt":7,"algs":[{"alg":"U' F U' R U2 R' F'","tag":"Best"},{"alg":"U2 L' U L F U F'","tag":"Also good"},{"alg":"U' F U' R U' R' U' F'","tag":"Also good"}]},"BL":{"setup":"L U' L' U L U' L'","opt":7,"algs":[{"alg":"L U L' U' L U L'","tag":"Best"},{"alg":"U' L U2 L' U2 L U L'","tag":"Also good"},{"alg":"U' L U2 R U' L' U R'","tag":"Also good"}]},"BR":{"setup":"B U' B' R' U' R U2","opt":7,"algs":[{"alg":"U2 R' U R B U B'","tag":"Best"},{"alg":"U' B U' L U2 L' B'","tag":"Also good"},{"alg":"R B' R' B U2 R' U2 R","tag":"Also good"}]}}},{"n":33,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"F' U2 F R U2 R' U'","opt":7,"algs":[{"alg":"U R U2 R' F' U2 F","tag":"Best"},{"alg":"U2 F' L' U2 L U' F","tag":"Also good"},{"alg":"U R U R' U F' U2 F","tag":"Also good"}]},"FL":{"setup":"L' U2 L U2 L' U' L U'","opt":7,"algs":[{"alg":"U L' U L U2 L' U2 L","tag":"Best"},{"alg":"U F U2 F' L' U2 L","tag":"Fewest moves"},{"alg":"U L' U L U' L' U L","tag":"Also good"}]},"BL":{"setup":"B' U R' U2 R B U2","opt":7,"algs":[{"alg":"U2 B' R' U2 R U' B","tag":"Best"},{"alg":"U L U2 L' B' U2 B","tag":"Also good"},{"alg":"U L U2 L F' L' F L'","tag":"Also good"}]},"BR":{"setup":"R' U2 R U2 R' U' R U'","opt":7,"algs":[{"alg":"U R' U R U2 R' U2 R","tag":"Best"},{"alg":"U R' U2 F R' F' R2","tag":"Fewest moves"},{"alg":"U R' U R U' R' U R","tag":"Also good"}]}}},{"n":34,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"F' U F U2 R U2 R'","opt":7,"algs":[{"alg":"R U2 R' U2 F' U' F","tag":"Best"},{"alg":"R U2 B U' B' U2 R'","tag":"Also good"},{"alg":"U2 R U R' U' F' U' F","tag":"Also good"}]},"FL":{"setup":"F U2 R U R' U2 F'","opt":7,"algs":[{"alg":"F U2 R U' R' U2 F'","tag":"Best"},{"alg":"L U L U L2 U' L' U' L'","tag":"L and U only"},{"alg":"F U2 F' U2 L' U' L","tag":"Also good"}]},"BL":{"setup":"L U2 F U F' U2 L'","opt":7,"algs":[{"alg":"L U2 F U' F' U2 L'","tag":"Best"},{"alg":"L U2 L' U2 B' U' B","tag":"Also good"},{"alg":"U L' U2 F' L F U2 L","tag":"Also good"}]},"BR":{"setup":"F R2 U R U' R2 F'","opt":7,"algs":[{"alg":"F R2 U R' U' R2 F'","tag":"Best"},{"alg":"R U R U R2 U' R' U' R'","tag":"R and U only"},{"alg":"B U2 B' U2 R' U' R","tag":"Also good"}]}}},{"n":35,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"F' U F R U R' U","opt":7,"algs":[{"alg":"U' R U' R' F' U' F","tag":"Best"},{"alg":"U2 F' U L' U2 L F","tag":"Also good"},{"alg":"U2 F' U L' U L U F","tag":"Also good"}]},"FL":{"setup":"L' U L U' L' U L U'","opt":7,"algs":[{"alg":"U L' U' L U L' U' L","tag":"Best"},{"alg":"U' F U' F' L' U' L","tag":"Fewest moves"},{"alg":"U2 L' U2 L U2 L' U' L","tag":"Also good"}]},"BL":{"setup":"B' R' U2 R U' B U2","opt":7,"algs":[{"alg":"U2 B' U R' U2 R B","tag":"Best"},{"alg":"U' L U' L' B' U' B","tag":"Also good"},{"alg":"U2 B' U R' U R U B","tag":"Also good"}]},"BR":{"setup":"R' U R U' R' U R U'","opt":7,"algs":[{"alg":"U R' U' R U R' U' R","tag":"Best"},{"alg":"U2 R' U F' U2 F R","tag":"Fewest moves"},{"alg":"U2 R' U2 R U2 R' U' R","tag":"Also good"}]}}},{"n":36,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"R2 U R' U R' U' R2 U' R2","opt":7,"algs":[{"alg":"R2 U R2 U R U' R U' R2","tag":"Best"},{"alg":"R' U2 B' R' B U2 R","tag":"Fewest moves"},{"alg":"R' U' R' U' R' U R U R","tag":"Also good"}]},"FL":{"setup":"L U2 B L B' U2 L'","opt":7,"algs":[{"alg":"L U2 B L' B' U2 L'","tag":"Best"},{"alg":"F' U2 R' F' R U2 F","tag":"Also good"},{"alg":"U2 F U2 R U2 R' U2 F'","tag":"Also good"}]},"BL":{"setup":"F' L2 U' L U L2 F","opt":7,"algs":[{"alg":"F' L2 U' L' U L2 F","tag":"Best"},{"alg":"L2 U L2 U L U' L U' L2","tag":"L and U only"},{"alg":"L' U2 F' L' F U2 L","tag":"Also good"}]},"BR":{"setup":"R U2 F R F' U2 R'","opt":7,"algs":[{"alg":"R U2 F R' F' U2 R'","tag":"Best"},{"alg":"U R' U2 F' U F U2 R","tag":"Also good"},{"alg":"U2 F R2 U R2 U' R2 F'","tag":"Also good"}]}}},{"n":37,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R U' R' F' L' U2 L F","opt":8,"algs":[{"alg":"F' L' U2 L F R U R'","tag":"Best"},{"alg":"R U' R U B U' B' R2","tag":"Also good"},{"alg":"R F U R U' R' F' U' R'","tag":"Also good"}]},"FL":{"setup":"F R U2 R' F' L' U' L","opt":8,"algs":[{"alg":"L' U L F R U2 R' F'","tag":"Best"},{"alg":"L2 B' U' B U L U' L","tag":"Also good"},{"alg":"F U2 R U R2 F R F2","tag":"Also good"}]},"BL":{"setup":"L2 F U F' U' L' U L'","opt":8,"algs":[{"alg":"L U' L U F U' F' L2","tag":"Best"},{"alg":"B' R' U2 R B L U L'","tag":"Also good"}]},"BR":{"setup":"R' U R' U' F' U F R2","opt":8,"algs":[{"alg":"R2 F' U' F U R U' R","tag":"Best"}]}}},{"n":38,"group":"Both pieces in the slot","slots":{"FR":{"setup":"F' L' U2 L F R U R'","opt":8,"algs":[{"alg":"R U' R' F' L' U2 L F","tag":"Best"},{"alg":"R2 B U B' U' R' U R'","tag":"Also good"},{"alg":"R U F R U R' U' F' R'","tag":"Also good"}]},"FL":{"setup":"L' U L F R U2 R' F'","opt":8,"algs":[{"alg":"F R U2 R' F' L' U' L","tag":"Best"},{"alg":"L' U L' U' B' U B L2","tag":"Also good"},{"alg":"F2 R U R' U' F' U F'","tag":"Also good"}]},"BL":{"setup":"L U' L U F U' F' L2","opt":8,"algs":[{"alg":"L2 F U F' U' L' U L'","tag":"Best"},{"alg":"L U' L' B' R' U2 R B","tag":"Also good"}]},"BR":{"setup":"R2 F' U' F U R U' R","opt":8,"algs":[{"alg":"R' U R' U' F' U F R2","tag":"Best"}]}}},{"n":39,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R2 U2 R' U' R U' R' U2 R'","opt":9,"algs":[{"alg":"R U2 R U R' U R U2 R2","tag":"Best"}]},"FL":{"setup":"L' U2 L' U' L U' L' U2 L2","opt":9,"algs":[{"alg":"L2 U2 L U L' U L U2 L","tag":"Best"}]},"BL":{"setup":"L2 U2 L' U' L U' L' U2 L'","opt":9,"algs":[{"alg":"L U2 L U L' U L U2 L2","tag":"Best"}]},"BR":{"setup":"R' U2 R' U' R U' R' U2 R2","opt":9,"algs":[{"alg":"R2 U2 R U R' U R U2 R","tag":"Best"}]}}},{"n":40,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R2 U2 F R2 F' U2 R' U R'","opt":9,"algs":[{"alg":"R U' R U2 F R2 F' U2 R2","tag":"Best"},{"alg":"R2 U2 F R2 F' U2 R' U R'","tag":"Also good"}]},"FL":{"setup":"L' U L' U2 F' L2 F U2 L2","opt":9,"algs":[{"alg":"L2 U2 F' L2 F U2 L U' L","tag":"Best"},{"alg":"L' U L' U2 F' L2 F U2 L2","tag":"Also good"}]},"BL":{"setup":"L2 U2 B L2 B' U2 L' U L'","opt":9,"algs":[{"alg":"L U' L U2 B L2 B' U2 L2","tag":"Best"},{"alg":"L2 U2 B L2 B' U2 L' U L'","tag":"Also good"},{"alg":"F' L U' L2 U L F L U L'","tag":"Also good"}]},"BR":{"setup":"R' U R' U2 B' R2 B U2 R2","opt":9,"algs":[{"alg":"R2 U2 B' R2 B U2 R U' R","tag":"Best"},{"alg":"R' U R' U2 B' R2 B U2 R2","tag":"Also good"},{"alg":"R' U R F R U R2 U' R F'","tag":"Also good"}]}}},{"n":41,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R U2 R U R' U R U2 R2","opt":9,"algs":[{"alg":"R2 U2 R' U' R U' R' U2 R'","tag":"Best"}]},"FL":{"setup":"L2 U2 L U L' U L U2 L","opt":9,"algs":[{"alg":"L' U2 L' U' L U' L' U2 L2","tag":"Best"}]},"BL":{"setup":"L U2 L U L' U L U2 L2","opt":9,"algs":[{"alg":"L2 U2 L' U' L U' L' U2 L'","tag":"Best"}]},"BR":{"setup":"R2 U2 R U R' U R U2 R","opt":9,"algs":[{"alg":"R' U2 R' U' R U' R' U2 R2","tag":"Best"}]}}}];
+/*F2L_END*/
+if (typeof module !== 'undefined') module.exports = { F2L_CASES };
+
+// ---------- diagrams (shared by the trainer and the alg sheet) ----------
+const DRAW_HEX = { U:'#FFD500', D:'#FFFFFF', F:'#009E60', B:'#0051BA', R:'#FF5800', L:'#C41E3A' };
+const DRAW_GREY = '#7E8794';
+const F2L_SLOT_HOME = { FR:[[1,-1,1],[1,0,1]], FL:[[-1,-1,1],[-1,0,1]], BL:[[-1,-1,-1],[-1,0,-1]], BR:[[1,-1,-1],[1,0,-1]] };
+// Unfolded view from above: top face in the middle, the four sides folded out around it.
+// Only the pair's two pieces and the centres are coloured; everything else is grey.
+function f2lNetSVG(moves, slot, pal, grey) {
+  pal = pal || DRAW_HEX; grey = grey || DRAW_GREY;
+  const st = applyMoves(solvedState(), moves), at = {}, byPos = {};
+  for (const s of st) { at[s.p + '|' + s.n] = s.c; (byPos[s.p] = byPos[s.p] || []).push(s.c); }
+  const solvedSets = {}; for (const s of solvedState()) (solvedSets[s.p] = solvedSets[s.p] || []).push(s.c);
+  const target = F2L_SLOT_HOME[slot].map(h => solvedSets[h].slice().sort().join(''));
+  const col = (p, n) => {
+    const c = at[p + '|' + n];
+    if (p.filter(v => v !== 0).length === 1) return pal[c];
+    return target.includes(byPos[p].slice().sort().join('')) ? pal[c] : grey;
+  };
+  const S = 13, C = 14.5, O = 3 * C + 6, out = [];
+  const r = (x, y, f) => out.push(`<rect x="${x.toFixed(1)}" y="${y.toFixed(1)}" width="${S}" height="${S}" rx="2.4" fill="${f}" stroke="#141820" stroke-width="1.2"/>`);
+  for (let x = -1; x <= 1; x++) for (let z = -1; z <= 1; z++) r(O + (x + 1) * C, O + (z + 1) * C, col([x, 1, z], [0, 1, 0]));
+  for (let a = -1; a <= 1; a++) for (let y = 1; y >= -1; y--) {
+    const k = 1 - y; // 0 = row next to the top face
+    r(O + (a + 1) * C, O + 3 * C + 3 + k * C, col([a, y, 1], [0, 0, 1]));        // front (below)
+    r(O + (a + 1) * C, O - 3 - (k + 1) * C, col([a, y, -1], [0, 0, -1]));        // back (above)
+    r(O - 3 - (k + 1) * C, O + (a + 1) * C, col([-1, y, a], [-1, 0, 0]));        // left
+    r(O + 3 * C + 3 + k * C, O + (a + 1) * C, col([1, y, a], [1, 0, 0]));        // right
+  }
+  const size = 2 * O + 3 * C;
+  // mark the target slot with a small corner bracket
+  const [cx, , cz] = F2L_SLOT_HOME[slot][0];
+  const mx = cx > 0 ? size - 4 : 4, my = cz > 0 ? size - 4 : 4, dx = cx > 0 ? -14 : 14, dy = cz > 0 ? -14 : 14;
+  out.push(`<path d="M${mx + dx} ${my} L${mx} ${my} L${mx} ${my + dy}" fill="none" stroke="#3D7BFF" stroke-width="3" stroke-linecap="round"/>`);
+  return { svg: out.join(''), size };
+}
+function llThumbSVG(kind, moves, pal, grey) {
+  pal = pal || DRAW_HEX; grey = grey || DRAW_GREY;
+  const st = applyMoves(solvedState(), moves), m = {};
+  for (const s of st) m[s.p.join(',') + '|' + s.n.join(',')] = s.c;
+  const g = (p, n) => m[p.join(',') + '|' + n.join(',')];
+  const col = c => kind === 'oll' ? (c === 'U' ? pal.U : grey) : pal[c];
+  const S = 28, G = 2, O = 16; let out = '';
+  const r = (x, y, w, h, f) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${f}" stroke="#141820" stroke-width="1.5"/>`;
+  for (let z = -1; z <= 1; z++) for (let x = -1; x <= 1; x++) out += r(O + (x + 1) * (S + G) + 1, O + (z + 1) * (S + G) + 1, S, S, col(g([x, 1, z], [0, 1, 0])));
+  for (let i = 0; i < 3; i++) {
+    const a = i - 1;
+    out += r(O + i * (S + G) + 1, 3, S, 10, col(g([a, 1, -1], [0, 0, -1])));
+    out += r(O + i * (S + G) + 1, 107, S, 10, col(g([a, 1, 1], [0, 0, 1])));
+    out += r(3, O + i * (S + G) + 1, 10, S, col(g([-1, 1, a], [-1, 0, 0])));
+    out += r(107, O + i * (S + G) + 1, 10, S, col(g([1, 1, a], [1, 0, 0])));
+  }
+  return out;
+}
+
 </script>
 <script>
 (function(){
@@ -529,9 +1419,10 @@ const store = {
   get(k, d){ try{ const v = localStorage.getItem('lld.'+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem('lld.'+k, JSON.stringify(v)); }catch(e){} }
 };
-const settings = Object.assign({ animate:true, show:false, random:true, auf:false, noRot:false, speed:6, mode:'oll' }, store.get('settings', {}));
-const customAlgs = Object.assign({ oll:{}, pll:{} }, store.get('custom', {}));
-const enabled = Object.assign({ oll:null, pll:null }, store.get('enabled', {}));
+const settings = Object.assign({ f2lReal:true, f2lAhead:1, f2lSlots:['FR','FL','BL','BR'], visible:true, snap:true, view:'drill', animate:true, show:false, random:true, auf:false, noRot:false, speed:6, mode:'oll' }, store.get('settings', {}));
+const customAlgs = Object.assign({ oll:{}, pll:{}, f2l:{} }, store.get('custom', {}));
+if (!customAlgs.f2l) customAlgs.f2l = {};
+const enabled = Object.assign({ oll:null, pll:null, f2l:null }, store.get('enabled', {}));
 const saveSettings = () => store.set('settings', settings);
 
 /* ---------- case data ---------- */
@@ -590,7 +1481,9 @@ function thumbSVG(kind, moves){
 
 /* ---------- 3D cube ---------- */
 const HAS3 = typeof THREE !== 'undefined';
-let renderer, scene, camera, root, cubies = [], webglOK = HAS3;
+let renderer, scene, camera, root, cubies = [], webglOK = HAS3, mats = {};
+const PALETTES = { drill: HEX, solve: { U:'#FFFFFF', D:'#FFD500', F:'#009E60', B:'#0051BA', R:'#C41E3A', L:'#FF5800' } };
+function setPalette(name){ if (!webglOK) return; for (const f in mats) mats[f].color.set(PALETTES[name][f]); }
 const DEFAULT_VIEW = HAS3 ? new THREE.Quaternion().setFromEuler(new THREE.Euler(0.5, -0.62, 0, 'XYZ')) : null;
 function initScene(){
   const host = $('stage');
@@ -608,7 +1501,7 @@ function initScene(){
   const body = new THREE.BoxGeometry(0.97, 0.97, 0.97);
   const bodyMat = new THREE.MeshLambertMaterial({ color: 0x15171c });
   const stickerGeo = roundedSquare(0.84, 0.13);
-  const mats = {}; for (const f in HEX) mats[f] = new THREE.MeshLambertMaterial({ color: new THREE.Color(HEX[f]) });
+  for (const f in HEX) mats[f] = new THREE.MeshLambertMaterial({ color: new THREE.Color(HEX[f]) });
   const faceDefs = [ ['R',[1,0,0],[0,Math.PI/2,0]], ['L',[-1,0,0],[0,-Math.PI/2,0]], ['U',[0,1,0],[-Math.PI/2,0,0]],
                      ['D',[0,-1,0],[Math.PI/2,0,0]], ['F',[0,0,1],[0,0,0]], ['B',[0,0,-1],[0,Math.PI,0]] ];
   for (let x=-1;x<=1;x++) for (let y=-1;y<=1;y++) for (let z=-1;z<=1;z++){
@@ -671,6 +1564,14 @@ function layerOf(mv){
   const [axis, layers] = BASE[mv.base];
   return { axis, list: cubies.filter(c => layers.includes(Math.round(c.position.getComponent(AX[axis])))) };
 }
+let halos = [];
+function clearHalos(){ for (const h of halos) h.parent && h.parent.remove(h); halos = []; }
+function addHalo(home, colour){
+  if (!webglOK) return;
+  const c = cubies.find(q => q.userData.home.every((v, i) => v === home[i])); if (!c) return;
+  const m = new THREE.Mesh(new THREE.BoxGeometry(1.14, 1.14, 1.14), new THREE.MeshBasicMaterial({ color: colour || 0x3D7BFF, transparent: true, opacity: 0.42, side: THREE.BackSide, depthWrite: false }));
+  c.add(m); halos.push(m);
+}
 function turnInstant(mv){
   if (!webglOK) return;
   const { axis, list } = layerOf(mv);
@@ -700,6 +1601,7 @@ function turnAnimated(mv, ms){
   });
 }
 function resetCube(){
+  clearHalos();
   for (const c of cubies){ const h = c.userData.home; c.position.set(h[0],h[1],h[2]); c.quaternion.identity(); }
 }
 
@@ -769,9 +1671,9 @@ function replay(){ loadCase(current.case, { alg: current.algText, auf: current.a
 
 /* ---------- rendering the panel ---------- */
 function render(keepMoveClasses){
+  if (!current) return;
   const c = current.case;
-  $('modeOll').setAttribute('aria-pressed', mode === 'oll');
-  $('modePll').setAttribute('aria-pressed', mode === 'pll');
+  updateSeg();
   const p = pool();
   $('count').textContent = `${p.length} of ${CASES[mode].length} cases on · ${drilled} drilled`;
   if (current.customOnce){
@@ -811,21 +1713,49 @@ const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>'
 
 /* ---------- custom algs ---------- */
 function msg(el, text, kind){ el.textContent = text; el.className = 'msg ' + (kind || ''); }
+let buffer = [], padTab = 0;
+const PAD_TABS = [['R','L','U','D','F','B'], ['r','l','u','d','f','b'], ['M','E','S','x','y','z']];
+function renderPad(){
+  const faces = PAD_TABS[padTab];
+  $('pad').innerHTML = ['', "'", '2'].map(s => faces.map(f => `<button data-move="${f}${s}" aria-label="${f}${s}">${f}${s}</button>`).join('')).join('');
+  [...$('padTabs').children].forEach((b, i) => b.setAttribute('aria-selected', i === padTab));
+}
+function renderBuffer(){ $('algBuffer').innerHTML = buffer.map(m => `<li>${esc(m)}</li>`).join(''); const r = checkText(buffer.join(' ')); if (r) msg($('algMsg'), r.text, r.ok ? 'ok' : 'err'); }
+$('padTabs').addEventListener('click', e => { const b = e.target.closest('[data-tab]'); if (b){ padTab = +b.dataset.tab; renderPad(); } });
+$('pad').addEventListener('click', e => { const b = e.target.closest('[data-move]'); if (!b) return; buffer.push(b.dataset.move); msg($('algMsg'), ''); renderBuffer(); });
+$('padBack').addEventListener('click', () => { if (!buffer.length) msg($('algMsg'), ''); });
+$('padClear').addEventListener('click', () => msg($('algMsg'), ''));
+$('padBack').onclick = () => { buffer.pop(); renderBuffer(); };
+$('padClear').onclick = () => { buffer = []; renderBuffer(); };
+$('algLoad').onclick = () => {
+  const p = parseAlg($('algInput').value);
+  if (p.error) return msg($('algMsg'), p.error + '.', 'err');
+  buffer = p.moves.map(moveToString); renderBuffer(); $('algInput').value = '';
+  msg($('algMsg'), 'Loaded into the pad. Check it, then save it.', 'ok');
+};
+renderPad(); renderBuffer();
 function saveTyped(){
-  const text = $('algInput').value.trim(), m = $('algMsg');
-  if (!text) return msg(m, 'Type an alg first.', 'err');
+  const text = buffer.join(' '), m = $('algMsg');
+  if (!text) return msg(m, 'Tap some moves first.', 'err');
+  if (view === 'f2l'){
+    const q = parseAlg(text); if (q.error) return msg(m, q.error + '.', 'err');
+    if (!fv.c || !f2lSolves(fv.c, fv.slot, q.moves)) return msg(m, `That alg doesn’t solve ${fv.c.title} in the ${SLOT_NICE[fv.slot]} while keeping the cross and the other slots. Nothing was saved.`, 'err');
+    customAlgs.f2l[f2lKey(fv.c, fv.slot)] = movesToString(q.moves); store.set('custom', customAlgs);
+    loadF2L(fv.c, fv.slot); buffer = []; renderBuffer();
+    return msg(m, `Saved. ${fv.c.title} in the ${SLOT_NICE[fv.slot]} now uses your alg, here and on the alg sheet.`, 'ok');
+  }
   const p = parseAlg(text);
   if (p.error) return msg(m, p.error + '. Use R L U D F B, r l u d f b, M E S, x y z with \' or 2.', 'err');
   if (current.customOnce) return msg(m, 'Pick a normal case first (press → for the next one).', 'err');
   const c = current.case;
   if (!solvesCase(c.kind, c.canonSetup, p.moves)) return msg(m, `That alg doesn’t solve ${c.title} (checked from all four angles). Nothing was saved.`, 'err');
   customAlgs[c.kind][c.id] = movesToString(p.moves); store.set('custom', customAlgs);
-  msg(m, `Saved. ${c.title} now uses your alg.`, 'ok');
-  loadCase(c);
+  loadCase(c); buffer = []; renderBuffer();
+  msg(m, `Saved. ${c.title} now uses your alg, here and in Solve mode.`, 'ok');
 }
 function tryTyped(){
-  const text = $('algInput').value.trim(), m = $('algMsg');
-  if (!text) return msg(m, 'Type an alg first.', 'err');
+  const text = buffer.join(' '), m = $('algMsg');
+  if (!text) return msg(m, 'Tap some moves first.', 'err');
   const p = parseAlg(text);
   if (p.error) return msg(m, p.error + '. Use R L U D F B, r l u d f b, M E S, x y z with \' or 2.', 'err');
   if (current && !current.customOnce) history.push(current.case);
@@ -833,6 +1763,7 @@ function tryTyped(){
   msg(m, 'Set up. Space plays it; Space again returns to the drill.', 'ok');
 }
 function clearCustom(){
+  if (view === 'f2l'){ delete customAlgs.f2l[f2lKey(fv.c, fv.slot)]; store.set('custom', customAlgs); msg($('algMsg'), `${fv.c.title} is back to the default alg.`, 'ok'); loadF2L(fv.c, fv.slot); return; }
   const c = current.case; delete customAlgs[c.kind][c.id]; store.set('custom', customAlgs);
   msg($('algMsg'), `${c.title} is back to the default alg.`, 'ok'); loadCase(c);
 }
@@ -858,27 +1789,37 @@ function importSheet(){
 }
 
 /* ---------- dialogs ---------- */
+const pickKey = () => view === 'f2l' ? 'f2l' : mode;
+const pickList = () => view === 'f2l' ? F2L : CASES[mode];
 function buildCasePicker(){
-  const groups = [];
-  for (const c of CASES[mode]){ let g = groups.find(x => x.name === c.group); if (!g) groups.push(g = { name:c.group, items:[] }); g.items.push(c); }
-  $('casesBody').innerHTML = groups.map(g => `<div class="group-name">${esc(g.name)} <button class="btn ghost" data-group="${esc(g.name)}">toggle group</button></div><div class="grid">` +
-    g.items.map(c => `<button class="pick" data-id="${c.id}" aria-pressed="${enabled[mode].includes(c.id)}"><svg viewBox="0 0 120 120">${thumbSVG(c.kind, invertMoves(parseAlg(algFor(c)).moves))}</svg><b>${esc(mode==='oll' ? c.id : c.id)}</b></button>`).join('') + '</div>').join('');
+  const groups = [], key = pickKey();
+  for (const c of pickList()){ let g = groups.find(x => x.name === c.group); if (!g) groups.push(g = { name:c.group, items:[] }); g.items.push(c); }
+  const pic = c => {
+    if (view === 'f2l'){ const n = f2lNetSVG(parseAlg(c.slots.FR.setup).moves, 'FR', HEX, GREY); return `<svg class="net" viewBox="0 0 ${n.size} ${n.size}">${n.svg}</svg>`; }
+    return `<svg viewBox="0 0 120 120">${thumbSVG(c.kind, invertMoves(parseAlg(algFor(c)).moves))}</svg>`;
+  };
+  $('casesBody').innerHTML = (view === 'f2l' ? '<p class="masknote" style="margin-top:0">Pictures show the front-right slot from above: the top face in the middle with the four sides folded out. The other slots are the same cases turned to that slot.</p>' : '') +
+    groups.map(g => `<div class="group-name">${esc(g.name)} <button class="btn ghost" data-group="${esc(g.name)}">toggle group</button></div><div class="grid">` +
+    g.items.map(c => `<button class="pick" data-id="${c.id}" aria-pressed="${enabled[key].includes(c.id)}">${pic(c)}<b>${esc(c.id)}</b></button>`).join('') + '</div>').join('');
 }
 function openCases(){ buildCasePicker(); $('casesDlg').showModal(); }
-function saveEnabled(){ store.set('enabled', enabled); render(); }
+function saveEnabled(){ store.set('enabled', enabled); if (view === 'drill') render(); }
 $('casesBody').addEventListener('click', e => {
-  const b = e.target.closest('.pick'), g = e.target.closest('[data-group]');
-  if (b){ const id = b.dataset.id, list = enabled[mode], i = list.indexOf(id);
+  const b = e.target.closest('.pick'), g = e.target.closest('[data-group]'), key = pickKey();
+  if (b){ const id = b.dataset.id, list = enabled[key], i = list.indexOf(id);
     if (i >= 0) list.splice(i,1); else list.push(id); b.setAttribute('aria-pressed', i < 0); saveEnabled(); }
-  if (g){ const ids = CASES[mode].filter(c => c.group === g.dataset.group).map(c => c.id);
-    const allOn = ids.every(id => enabled[mode].includes(id));
-    enabled[mode] = allOn ? enabled[mode].filter(id => !ids.includes(id)) : [...new Set([...enabled[mode], ...ids])];
+  if (g){ const ids = pickList().filter(c => c.group === g.dataset.group).map(c => c.id);
+    const allOn = ids.every(id => enabled[key].includes(id));
+    enabled[key] = allOn ? enabled[key].filter(id => !ids.includes(id)) : [...new Set([...enabled[key], ...ids])];
     saveEnabled(); buildCasePicker(); }
 });
-$('pickAll').onclick = () => { enabled[mode] = CASES[mode].map(c => c.id); saveEnabled(); buildCasePicker(); };
-$('pickNone').onclick = () => { enabled[mode] = []; saveEnabled(); buildCasePicker(); };
+$('pickAll').onclick = () => { enabled[pickKey()] = pickList().map(c => c.id); saveEnabled(); buildCasePicker(); };
+$('pickNone').onclick = () => { enabled[pickKey()] = []; saveEnabled(); buildCasePicker(); };
 document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => b.closest('dialog').close());
-$('casesDlg').addEventListener('close', idle(() => { if (!current || !enabled[mode].includes(current.case.id)) { seqIndex = -1; if (pool().length) nextCase(); } }));
+$('casesDlg').addEventListener('close', idle(() => {
+  if (view === 'f2l'){ if (!fv.c || !enabled.f2l.includes(fv.c.id)) { if (f2lPool().length) nextF2L(); } return; }
+  if (view !== 'drill') return;
+  if (!current || !enabled[mode].includes(current.case.id)) { seqIndex = -1; if (pool().length) nextCase(); } }));
 
 function syncSettingsUI(){
   $('optAnimate').checked = settings.animate; $('optShow').checked = settings.show;
@@ -905,17 +1846,39 @@ function exportPage(){
   const block = '/*' + 'ALGS_START*/\nconst OLL_CASES = ' + JSON.stringify(rows('oll')) + ';\nconst PLL_CASES = ' + JSON.stringify(rows('pll')) + ';\n/*' + 'ALGS_END*/';
   const re = new RegExp('/\\*ALGS_START\\*/[\\s\\S]*?/\\*ALGS_END\\*/');
   if (!re.test(PRISTINE)) return msg($('importMsg'), 'Couldn’t find the alg data inside this page, so nothing was downloaded.', 'err');
-  const html = PRISTINE.replace(re, () => block);
+  let html = PRISTINE.replace(re, () => block);
+  if (typeof F2L_CASES !== 'undefined'){
+    const f2lRows = F2L_CASES.map(c => {
+      const slots = {};
+      for (const s of ['FR','FL','BL','BR']){
+        const mine = customAlgs.f2l && customAlgs.f2l[c.n + '-' + s], algs = c.slots[s].algs.slice();
+        if (mine && !algs.some(a => a.alg === mine)) algs.unshift({ alg: mine, tag: 'Yours' });
+        else if (mine){ const i = algs.findIndex(a => a.alg === mine); algs.unshift(algs.splice(i, 1)[0]); }
+        slots[s] = { setup: c.slots[s].setup, opt: c.slots[s].opt, algs };
+      }
+      return { n: c.n, group: c.group, slots };
+    });
+    const fre = new RegExp('/\\*F2L_START\\*/[\\s\\S]*?/\\*F2L_END\\*/');
+    html = html.replace(fre, () => '/*' + 'F2L_START*/\nconst F2L_CASES = ' + JSON.stringify(f2lRows) + ';\n/*' + 'F2L_END*/');
+  }
   const name = decodeURIComponent((location.pathname.split('/').pop() || 'index.html')) || 'index.html';
   const a = document.createElement('a');
   a.href = URL.createObjectURL(new Blob([html], { type:'text/html' })); a.download = /\.html?$/.test(name) ? name : 'index.html';
   document.body.appendChild(a); a.click(); a.remove();
-  const n = Object.keys(customAlgs.oll).length + Object.keys(customAlgs.pll).length;
+  const n = Object.keys(customAlgs.oll).length + Object.keys(customAlgs.pll).length + Object.keys(customAlgs.f2l || {}).length;
   msg($('importMsg'), `Downloaded ${a.download} with ${n} of your algs built in as the defaults. Upload it to GitHub in place of the old file.`, 'ok');
 }
 $('exportBtn').onclick = exportPage;
 function checkText(text){
-  if (!text.trim() || !current || current.customOnce) return null;
+  if (!text.trim()) return null;
+  if (view === 'f2l'){
+    if (!fv.c) return null;
+    const q = parseAlg(text); if (q.error) return { ok:false, text: q.error + '.' };
+    return f2lSolves(fv.c, fv.slot, q.moves)
+      ? { ok:true, text: `✓ Solves ${fv.c.title} in the ${SLOT_NICE[fv.slot]} (${q.moves.length} moves). Press “Save for this case” to keep it.` }
+      : { ok:false, text: `Doesn’t solve ${fv.c.title} in the ${SLOT_NICE[fv.slot]} yet (it has to keep the cross and the other three slots).` };
+  }
+  if (!current || current.customOnce) return null;
   const p = parseAlg(text); if (p.error) return { ok:false, text: p.error + '.' };
   const c = current.case;
   return solvesCase(c.kind, c.canonSetup, p.moves)
@@ -929,7 +1892,31 @@ function setMode(m, silent){
   mode = m; settings.mode = m; saveSettings(); seqIndex = -1;
   if (!silent){ history = []; nextCase(); }
 }
-const switchMode = idle(m => { if (mode !== m) setMode(m); });
+let view = ['solve', 'f2l'].includes(settings.view) ? settings.view : 'drill';
+function updateSeg(){
+  $('modeOll').setAttribute('aria-pressed', view === 'drill' && mode === 'oll');
+  $('modePll').setAttribute('aria-pressed', view === 'drill' && mode === 'pll');
+  $('modeSolve').setAttribute('aria-pressed', view === 'solve');
+  $('modeF2l').setAttribute('aria-pressed', view === 'f2l');
+  $('count').hidden = view !== 'drill'; $('openCases').hidden = view === 'solve';
+}
+function applyView(){
+  $('drillPanel').hidden = view !== 'drill'; $('solvePanel').hidden = view !== 'solve'; $('f2lPanel').hidden = view !== 'f2l';
+  W = view === 'f2l' ? fv : view === 'solve' ? sv : null;
+  setPalette(view === 'solve' ? 'solve' : 'drill');
+  (view === 'f2l' ? $('f2lCustomSlot') : $('drillCustomSlot')).after($('customBlock'));
+  $('tryAlg').hidden = view === 'f2l'; buffer = []; renderBuffer(); msg($('algMsg'), '');
+  clearHalos(); updateSeg();
+}
+const switchMode = idle(m => {
+  if (m === 'solve' || m === 'f2l'){ if (view === m) return; view = m; settings.view = m; saveSettings(); applyView(); if (m === 'solve') enterSolve(); else enterF2L(); return; }
+  const wasSolve = view !== 'drill';
+  view = 'drill'; settings.view = 'drill'; saveSettings(); applyView();
+  if (mode !== m) setMode(m);
+  else if (wasSolve){ if (current) loadCase(current.case, { alg: current.algText, auf: current.auf, customOnce: current.customOnce }); else nextCase(); }
+});
+$('modeSolve').onclick = () => switchMode('solve');
+$('modeF2l').onclick = () => switchMode('f2l');
 $('modeOll').onclick = () => switchMode('oll');
 $('modePll').onclick = () => switchMode('pll');
 $('mainAction').onclick = mainAction;
@@ -940,8 +1927,7 @@ $('toggleSol').onclick = () => { settings.show = !settings.show; saveSettings();
 $('saveAlg').onclick = idle(saveTyped);
 $('tryAlg').onclick = idle(tryTyped);
 $('clearAlg').onclick = idle(clearCustom);
-$('algInput').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); idle(tryTyped)(); } });
-$('algInput').addEventListener('input', () => { const r = checkText($('algInput').value); if (r) msg($('algMsg'), r.text, r.ok ? 'ok' : 'err'); else msg($('algMsg'), ''); });
+$('algInput').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); $('algLoad').click(); } });
 $('alts').addEventListener('click', e => {
   const b = e.target.closest('[data-alt]'); if (!b) return;
   if (playing) return;
@@ -949,13 +1935,42 @@ $('alts').addEventListener('click', e => {
   msg($('algMsg'), `${c.title} now uses that alg.`, 'ok');
 });
 // mouse clicks shouldn't leave focus on a button (Space would press it again)
-document.addEventListener('click', e => { const b = e.target.closest('button'); if (b && e.detail > 0) b.blur(); });
+document.addEventListener('click', e => { const b = e.target.closest('button, label'); if (b && e.detail > 0) setTimeout(() => { const a = document.activeElement; if (a && a !== document.body && !['text', 'search'].includes(a.type) && a.tagName !== 'TEXTAREA') a.blur(); }, 0); });
 
 document.addEventListener('keydown', e => {
   if (document.querySelector('dialog[open]')) return;
-  const tag = (e.target.tagName || '').toLowerCase();
-  if (tag === 'input' || tag === 'textarea' || e.metaKey || e.ctrlKey || e.altKey) return;
+  const tag = (e.target.tagName || '').toLowerCase(), typ = (e.target.type || '').toLowerCase();
+  if (tag === 'textarea' || (tag === 'input' && !['checkbox', 'radio', 'button'].includes(typ)) || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (tag === 'input' && (e.key === ' ' || e.key.startsWith('Arrow'))) e.target.blur();
   const k = e.key;
+  if (k === '3' && !e.repeat){ switchMode('solve'); return; }
+  if (k === '4' && !e.repeat){ switchMode('f2l'); return; }
+  if (view === 'f2l'){
+    if (k === ' ' || e.code === 'Space'){ e.preventDefault(); if (!e.repeat) solveSpace(); return; }
+    if (k === 'ArrowRight'){ e.preventDefault(); moveFwd(); return; }
+    if (k === 'ArrowLeft'){ e.preventDefault(); moveBack(); return; }
+    if (k === 'ArrowDown'){ e.preventDefault(); if (!e.repeat) stepFwd(); return; }
+    if (k === 'ArrowUp'){ e.preventDefault(); if (!e.repeat) stepBack(); return; }
+    if (e.repeat) return;
+    if (k === 'n' || k === 'N') idle(nextF2L)();
+    else if (k === 's' || k === 'S'){ settings.show = !settings.show; saveSettings(); renderF2L(); }
+    else if (k === 'r' || k === 'R') enqueue(() => setPos(0));
+    else if (k === '1') switchMode('oll');
+    else if (k === '2') switchMode('pll');
+    return;
+  }
+  if (view === 'solve'){
+    if (k === ' ' || e.code === 'Space'){ e.preventDefault(); if (!e.repeat) solveSpace(); return; }
+    if (k === 'ArrowRight'){ e.preventDefault(); moveFwd(); return; }
+    if (k === 'ArrowLeft'){ e.preventDefault(); moveBack(); return; }
+    if (k === 'ArrowDown'){ e.preventDefault(); if (!e.repeat) stepFwd(); return; }
+    if (k === 'ArrowUp'){ e.preventDefault(); if (!e.repeat) stepBack(); return; }
+    if (e.repeat) return;
+    if (k === 'n' || k === 'N') idle(newScramble)();
+    else if (k === '1') switchMode('oll');
+    else if (k === '2') switchMode('pll');
+    return;
+  }
   if (k === ' ' || e.code === 'Space'){ e.preventDefault(); if (!e.repeat) mainAction(); return; }
   if (e.repeat) return;
   if (k === 's' || k === 'S'){ settings.show = !settings.show; saveSettings(); render(true); }
@@ -966,9 +1981,369 @@ document.addEventListener('keydown', e => {
   else if (k === '2') switchMode('pll');
 });
 
+/* ---------- Solve mode ---------- */
+const COLOUR_NAME = { U:'White', D:'Yellow', F:'Green', B:'Blue', R:'Red', L:'Orange' };
+const SLOT_LABEL = { FR:'front right', FL:'front left', BL:'back left (back slot)', BR:'back right (back slot)' };
+const FACES = ['D','U','F','B','R','L'];
+const sv = { scramble:null, results:{}, face:null, userPicked:false, steps:[], flat:[], starts:[], ends:[], pos:0, lastStep:-1, id:0, req:0, all:false };
+let worker = null, workerBroken = false;
+function getWorker(){
+  if (worker || workerBroken) return worker;
+  try {
+    const url = URL.createObjectURL(new Blob([$('workerSrc').textContent], { type:'text/javascript' }));
+    worker = new Worker(url);
+    worker.onmessage = onWorker;
+    worker.onerror = () => { msg($('scrambleMsg'), 'The solver stopped unexpectedly. Reload the page to restart it.', 'err'); };
+  } catch (e) {
+    workerBroken = true;
+    msg($('scrambleMsg'), 'This browser blocked the background solver, so Solve mode can’t run here. Try opening the page from GitHub Pages instead of a local file.', 'err');
+  }
+  return worker;
+}
+function onWorker(e){
+  const d = e.data;
+  if (d.type === 'scramble'){
+    if (d.req !== sv.req) return;
+    if (!d.scramble){ msg($('scrambleMsg'), 'Couldn’t make a scramble: ' + d.error, 'err'); return; }
+    startSolve(d.scramble);
+  } else if (d.type === 'result' && d.id === sv.id){
+    sv.results[d.face] = d.result || 'failed';
+    if (!sv.userPicked && !sv.pos && !playing){ const b = bestFace(); if (b && b !== sv.face) selectFace(b, false); }
+    renderSolve();
+  } else if (d.type === 'done' && d.id === sv.id){ sv.finished = true; renderSolve(); }
+  else if (d.type === 'f2l'){
+    if (d.req !== fv.req) return;
+    if (!d.scramble){ fv.scramble = fv.c.slots[fv.slot].setup; buildF2LSteps([]); return; }
+    fv.scramble = d.scramble; buildF2LSteps(d.rest);
+  }
+}
+const turnCount = ms => ms.filter(m => !'xyz'.includes(m.base)).length;
+function scoreOf(r){
+  const mv = s => parseAlg(s || '').moves;
+  const cf = turnCount(mv(r.cross)) + r.pairs.reduce((a, p) => a + turnCount(mv(p.moves)), 0);
+  const ll = turnCount(mv([r.oll && r.oll.auf, r.oll && r.oll.alg, r.pll && r.pll.auf, r.pll && r.pll.alg, r.pll && r.pll.post].join(' ')));
+  return { cf, ll, total: cf + ll };
+}
+function bestFace(){
+  let best = null, bs = null;
+  for (const f of FACES){ const r = sv.results[f]; if (!r || r === 'failed') continue; const s = scoreOf(r);
+    if (!best || s.cf < bs.cf || (s.cf === bs.cf && s.total < bs.total)){ best = f; bs = s; } }
+  return best;
+}
+function llAlgList(){
+  return { oll: CASES.oll.ordered.map(c => ({ id:c.id, alg:algFor(c) })), pll: CASES.pll.ordered.map(c => ({ id:c.id, alg:algFor(c) })) };
+}
+let W = null;   // the walk on screen: Solve (sv) or F2L (fv)
+function flatten(o){
+  o.flat = []; o.starts = []; o.ends = [];
+  o.steps.forEach(st => { o.starts.push(o.flat.length); st.moves.forEach(m => o.flat.push(m)); o.ends.push(o.flat.length); });
+}
+function stepAt(p, o){ o = o || W; for (let i = 0; i < o.steps.length; i++) if (o.ends[i] > p) return i; return o.steps.length; }
+function setPos(p, o){
+  o = o || W; if (!o || !o.scramble) return;
+  o.pos = p; if (o !== W) return;
+  resetCube();
+  parseAlg(o.scramble).moves.forEach(turnInstant);
+  for (let j = 0; j < p && j < o.flat.length; j++) turnInstant(o.flat[j]);
+  o.render();
+}
+function jumpTo(i){ setPos(i >= W.steps.length ? W.flat.length : (W.starts[i] || 0)); }
+// where the pair's pieces are right now, seen from how you're holding the cube
+const SLOT_HOME = { FR:[[1,-1,1],[1,0,1]], FL:[[-1,-1,1],[-1,0,1]], BL:[[-1,-1,-1],[-1,0,-1]], BR:[[1,-1,-1],[1,0,-1]] };
+function moveVec(v, moves){
+  for (const m of moves){ const [axis, layers, sign] = BASE[m.base]; const ai = { x:0, y:1, z:2 }[axis]; if (layers.includes(v[ai])) v = rotVec(v, axis, sign * m.amount); }
+  return v;
+}
+function placeName(p){
+  const [x, y, z] = p;
+  const fb = z === 1 ? 'front' : z === -1 ? 'back' : '', lr = x === 1 ? 'right' : x === -1 ? 'left' : '';
+  const where = [fb, lr].filter(Boolean).join('-') || 'centre';
+  if (y === 0) return where + ' slot';
+  return (y === 1 ? 'top layer, ' : 'bottom layer, ') + where;
+}
+const isHidden = p => p[2] === -1 && p[1] <= 0;
+function pairPieces(step, at){
+  const r = sv.results[sv.face]; if (!r || !step.slot) return null;
+  const inv = invertMoves(parseAlg(r.rotation).moves);
+  const [ch, eh] = SLOT_HOME[step.slot].map(t => moveVec(t.slice(), inv));       // piece identities (solved positions)
+  const done = [...parseAlg(sv.scramble).moves, ...sv.flat.slice(0, at)];
+  return { cornerHome: ch, edgeHome: eh, corner: moveVec(ch.slice(), done), edge: moveVec(eh.slice(), done) };
+}
+function newScramble(){
+  const w = getWorker(); if (!w) return;
+  sv.req++; sv.id++; sv.scramble = null; sv.results = {}; sv.face = null; sv.steps = []; sv.flat = []; sv.pos = 0; sv.finished = false;
+  $('scrambleText').textContent = 'Generating a random-state scramble…'; msg($('scrambleMsg'), '');
+  if (W === sv) clearHalos(); renderSolve();
+  w.postMessage({ type:'scramble', req: sv.req });
+}
+function startSolve(scr){
+  const w = getWorker(); if (!w) return;
+  sv.scramble = scr; sv.results = {}; sv.face = null; sv.userPicked = false; sv.steps = []; sv.flat = []; sv.pos = 0; sv.finished = false; sv.id++;
+  $('scrambleText').textContent = scr;
+  sv.pos = 0; if (W === sv) setPos(0, sv);
+  w.postMessage({ type:'solve', id: sv.id, scramble: scr, faces: FACES, ll: llAlgList(), visible: !!settings.visible });
+}
+function buildSteps(r){
+  const mv = s => parseAlg(s || '').moves;
+  const name = COLOUR_NAME[r.face];
+  const steps = [{ title:'Inspection', sub: r.rotation ? `turn the cube so ${name.toLowerCase()} is on the bottom` : `${name.toLowerCase()} is already on the bottom`, moves: mv(r.rotation) }];
+  steps.push({ title:'Cross', sub: `${name.toLowerCase()} cross`, moves: mv(r.cross) });
+  r.pairs.forEach((p, i) => steps.push({ title:`Pair ${i + 1}`, sub: SLOT_LABEL[p.slot] + (p.note ? ', already solved' : ''), moves: mv(p.moves), slot: p.slot }));
+  if (!r.oll || r.oll.id === 'skip') steps.push({ title:'OLL skip', sub:'already oriented', moves: [] });
+  else { const c = CASES.oll.find(x => x.id === r.oll.id); steps.push({ title:`OLL ${r.oll.id}`, sub: c ? c.group : '', moves: mv(r.oll.auf + ' ' + r.oll.alg), aufFirst: !!r.oll.auf }); }
+  if (!r.pll) steps.push({ title:'PLL', sub:'not found', moves: [] });
+  else if (r.pll.id === 'skip') steps.push({ title:'PLL skip', sub: r.pll.post ? 'just line up the top' : 'already solved', moves: mv(r.pll.post), aufLast: !!r.pll.post });
+  else steps.push({ title:`${r.pll.id} perm`, sub: '', moves: mv(r.pll.auf + ' ' + r.pll.alg + ' ' + r.pll.post), aufFirst: !!r.pll.auf, aufLast: !!r.pll.post });
+  return steps;
+}
+function selectFace(f, byUser){
+  const r = sv.results[f]; if (!r || r === 'failed') return;
+  sv.face = f; if (byUser) sv.userPicked = true;
+  sv.steps = buildSteps(r); flatten(sv); sv.lastStep = -1; setPos(0, sv); if (W !== sv) renderSolve();
+}
+function renderSolve(){
+  const order = FACES.slice().sort((a, b) => {
+    const ra = sv.results[a], rb = sv.results[b];
+    const ok = r => r && r !== 'failed';
+    if (!ok(ra) || !ok(rb)) return ok(ra) ? -1 : ok(rb) ? 1 : 0;
+    const sa = scoreOf(ra), sb = scoreOf(rb); return sa.cf - sb.cf || sa.total - sb.total;
+  });
+  const best = bestFace();
+  let bestTotal = null;
+  for (const f of FACES){ const r = sv.results[f]; if (r && r !== 'failed' && (!bestTotal || scoreOf(r).total < scoreOf(sv.results[bestTotal]).total)) bestTotal = f; }
+  $('colours').innerHTML = order.map(f => {
+    const r = sv.results[f];
+    const info = !sv.scramble ? '' : !r ? 'working…' : r === 'failed' ? 'no result' : (() => { const s = scoreOf(r); return `cross ${r.crossLen} · F2L ${s.cf - r.crossLen} · total ${s.total}`; })();
+    const tag = sv.finished ? [f === best ? 'Fewest cross + F2L' : '', f === bestTotal && bestTotal !== best ? 'Shortest overall' : ''].filter(Boolean).join(' · ') : '';
+    return `<button class="colour" data-face="${f}" aria-pressed="${sv.face === f}"><span class="sw" style="background:${PALETTES.solve[f]}"></span><span><b>${COLOUR_NAME[f]}</b><small>${info}</small></span>${tag ? '<span class="tag">' + tag + '</span>' : ''}</button>`;
+  }).join('');
+  if (W === sv) clearHalos();
+  if (!sv.steps.length){
+    $('steps').innerHTML = `<div class="working">${sv.scramble ? 'Finding the shortest cross and F2L for every colour…' : 'Waiting for a scramble…'}</div>`;
+    $('totals').innerHTML = ''; $('playStep').innerHTML = 'Play next step <kbd>Space</kbd>'; return;
+  }
+  const cur = stepAt(sv.pos, sv);
+  if (cur !== sv.lastStep){ if (settings.snap && W === sv) resetView(); sv.lastStep = cur; }
+  $('steps').innerHTML = sv.steps.map((s, i) => {
+    const n = turnCount(s.moves);
+    const chips = s.moves.map((m, j) => {
+      const g = sv.starts[i] + j, cls = [];
+      if ((s.aufFirst && j === 0) || (s.aufLast && j === s.moves.length - 1)) cls.push('auf');
+      if (g < sv.pos) cls.push('past'); else if (g === sv.pos) cls.push('active');
+      return `<li class="${cls.join(' ')}">${moveToString(m)}</li>`;
+    }).join('');
+    let where = '';
+    if (i === cur && s.slot && s.moves.length){
+      const pp = pairPieces(s, sv.starts[i]);
+      if (pp){
+        if (W === sv){ addHalo(pp.cornerHome); addHalo(pp.edgeHome); }
+        const tag = p => isHidden(p) ? ' <span class="hid">(hidden from the front)</span>' : '';
+        where = `<div class="where">Before you start: corner ${placeName(pp.corner)}${tag(pp.corner)} · edge ${placeName(pp.edge)}${tag(pp.edge)}</div>`;
+      }
+    }
+    const done = sv.ends[i] <= sv.pos && s.moves.length;
+    return `<div class="step ${i === cur ? 'current' : ''} ${done ? 'past' : ''}" data-step="${i}"><div class="top"><b>${esc(s.title)}</b><span>${esc(s.sub)}</span><em>${!s.moves.length ? '' : n === 0 ? 'rotation only' : n + (n === 1 ? ' move' : ' moves')}</em></div>${where}<ol class="moves">${chips}</ol></div>`;
+  }).join('');
+  const sc = scoreOf(sv.results[sv.face]);
+  $('totals').innerHTML = `cross + F2L <b>${sc.cf}</b> · total <b>${sc.total}</b>`;
+  const label = cur >= sv.steps.length ? 'New scramble' : (sv.pos > sv.starts[cur] ? 'Finish ' : 'Play ') + esc(sv.steps[cur].title);
+  $('playStep').innerHTML = label + ' <kbd>Space</kbd>';
+  const curEl = document.querySelector('.step.current'); if (curEl && curEl.scrollIntoView) curEl.scrollIntoView({ block:'nearest' });
+}
+// every move and jump goes through one queue, so fast key presses play in order
+let solveQ = Promise.resolve();
+function enqueue(fn){
+  const p = solveQ.then(fn).catch(err => console.error(err));
+  solveQ = p; playing = p;
+  p.then(() => { if (solveQ === p){ playing = null; fastForward = false; } });
+  return p;
+}
+const moveMs = m => (reduceMotion ? 0 : 1000 / settings.speed) * (m.amount === 2 ? 1.45 : 1);
+const inverseMove = m => ({ base: m.base, amount: (4 - m.amount) % 4 });
+function moveFwd(){ enqueue(async () => { if (!W || !W.flat || W.pos >= W.flat.length) return; const o = W, m = o.flat[o.pos]; await turnAnimated(m, moveMs(m)); o.pos++; o.render(); }); }
+function moveBack(){ enqueue(async () => { if (!W || !W.flat || W.pos <= 0) return; const o = W, m = inverseMove(o.flat[o.pos - 1]); await turnAnimated(m, moveMs(m)); o.pos--; o.render(); }); }
+function stepFwd(){ enqueue(() => { if (!W || !W.steps.length) return; const i = stepAt(W.pos); if (i < W.steps.length) setPos(W.ends[i]); }); }
+function stepBack(){ enqueue(() => {
+  if (!W || !W.steps.length) return;
+  const i = stepAt(W.pos);
+  if (i < W.steps.length && W.pos > W.starts[i]) return setPos(W.starts[i]);
+  for (let j = Math.min(i, W.steps.length) - 1; j >= 0; j--) if (W.steps[j].moves.length) return setPos(W.starts[j]);
+  setPos(0);
+}); }
+function playStep(){ return enqueue(async () => {
+  const o = W; if (!o || !o.steps.length) return;
+  const i = stepAt(o.pos);
+  if (i >= o.steps.length){ o.all = false; o.next(); return; }
+  while (o.pos < o.ends[i] && W === o){ const m = o.flat[o.pos]; await turnAnimated(m, moveMs(m)); o.pos++; o.render(); }
+  if (o.all && o.pos < o.flat.length && W === o) playStep(); else o.all = false;
+}); }
+function solveSpace(){ if (playing){ fastForward = true; if (W) W.all = false; return; } playStep(); }
+function enterSolve(){ if (sv.scramble) setPos(sv.pos || 0); else newScramble(); }
+function enterF2L(){ if (fv.c && fv.scramble) setPos(fv.pos || 0); else if (fv.c) renderF2L(); else nextF2L(); }
+$('newScramble').onclick = idle(newScramble);
+$('playStep').onclick = solveSpace;
+$('playAll').onclick = () => { if (playing) return; sv.all = true; playStep(); };
+sv.render = renderSolve; sv.next = newScramble;
+$('prevMove').onclick = moveBack; $('nextMove').onclick = moveFwd;
+$('prevStep').onclick = stepBack; $('nextStep').onclick = stepFwd;
+$('toScramble').onclick = () => enqueue(() => setPos(0));
+$('colours').addEventListener('click', idle(e => { const b = e.target.closest('[data-face]'); if (b) selectFace(b.dataset.face, true); }));
+$('steps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (b) enqueue(() => jumpTo(+b.dataset.step)); });
+$('optVisible').checked = !!settings.visible; $('optSnap').checked = !!settings.snap;
+$('optVisible').addEventListener('change', idle(e => { settings.visible = e.target.checked; saveSettings(); if (sv.scramble) startSolve(sv.scramble); }));
+$('optSnap').addEventListener('change', e => { settings.snap = e.target.checked; saveSettings(); if (settings.snap) resetView(); });
+$('ownScrambleBtn').onclick = () => { $('ownScrambleRow').hidden = !$('ownScrambleRow').hidden; if (!$('ownScrambleRow').hidden) $('ownScramble').focus(); };
+const goOwn = idle(() => {
+  const p = parseAlg($('ownScramble').value);
+  if (p.error || !p.moves.length) return msg($('scrambleMsg'), (p.error || 'Paste a scramble first') + '.', 'err');
+  if (p.moves.some(m => 'xyzMESrludfb'.includes(m.base))) return msg($('scrambleMsg'), 'Scrambles use face turns only (R L U D F B), in WCA orientation: white top, green front.', 'err');
+  if (!getWorker()) return;
+  sv.req++; msg($('scrambleMsg'), ''); $('ownScrambleRow').hidden = true; $('ownScramble').value = '';
+  startSolve(movesToString(p.moves));
+});
+$('ownScrambleGo').onclick = goOwn;
+$('ownScramble').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); goOwn(); } });
+
+/* ---------- F2L mode ---------- */
+const F2L = F2L_CASES.map(c => ({ ...c, id: String(c.n), title: 'F2L ' + c.n }));
+const SLOTS4 = ['FR','FL','BL','BR'];
+const SLOT_NICE = { FR:'front-right slot', FL:'front-left slot', BL:'back-left slot', BR:'back-right slot' };
+const AHEAD_HEX = [0x3D7BFF, 0xB14CFF, 0x00B39B, 0xFF4FA3], AHEAD_CSS = ['#3D7BFF', '#B14CFF', '#00B39B', '#FF4FA3'];
+if (!Array.isArray(enabled.f2l)) enabled.f2l = F2L.map(c => c.id);
+if (!Array.isArray(settings.f2lSlots) || !settings.f2lSlots.length) settings.f2lSlots = SLOTS4.slice();
+const fv = { scramble:null, steps:[], flat:[], starts:[], ends:[], pos:0, lastStep:-1, all:false, req:0, c:null, slot:null, alg:'', history:[], loading:false };
+fv.render = () => renderF2L(); fv.next = () => nextF2L();
+const f2lKey = (c, slot) => c.id + '-' + slot;
+const f2lAlgFor = (c, slot) => customAlgs.f2l[f2lKey(c, slot)] || c.slots[slot].algs[0].alg;
+function f2lPre(c, slot, moves){ const setup = parseAlg(c.slots[slot].setup).moves; for (let u = 0; u < 4; u++) if (f2lIntact(stateAfter([...setup, ...U(u), ...moves]))) return u; return -1; }
+const f2lSolves = (c, slot, moves) => f2lPre(c, slot, moves) >= 0;
+const f2lPool = () => F2L.filter(c => enabled.f2l.includes(c.id));
+function nextF2L(){
+  const p = f2lPool(), slots = settings.f2lSlots;
+  if (!p.length){ openCases(); return; }
+  let c, slot, tries = 0;
+  do { c = p[Math.floor(Math.random() * p.length)]; slot = slots[Math.floor(Math.random() * slots.length)]; }
+  while (p.length * slots.length > 1 && c === fv.c && slot === fv.slot && ++tries < 20);
+  if (fv.c) fv.history.push([fv.c, fv.slot]);
+  loadF2L(c, slot);
+}
+function prevF2L(){ const h = fv.history.pop(); if (h) loadF2L(h[0], h[1]); }
+function loadF2L(c, slot){
+  fv.c = c; fv.slot = slot; fv.req++;
+  const alg = f2lAlgFor(c, slot), pre = Math.max(0, f2lPre(c, slot, parseAlg(alg).moves));
+  fv.alg = (pre ? ['', 'U', 'U2', "U'"][pre] + ' ' : '') + alg;
+  fv.steps = []; fv.flat = []; fv.pos = 0; fv.lastStep = -1;
+  const w = settings.f2lReal ? getWorker() : null;
+  if (!w){ fv.scramble = c.slots[slot].setup; buildF2LSteps([]); return; }
+  fv.scramble = null; fv.loading = true;
+  if (W === fv){ resetCube(); renderF2L(); }
+  w.postMessage({ type:'f2l', req: fv.req, setup: c.slots[slot].setup, k: SLOTS4.indexOf(slot), alg: fv.alg, visible: !!settings.visible });
+}
+function buildF2LSteps(rest){
+  fv.loading = false;
+  fv.steps = [{ title: fv.c.title, sub: SLOT_NICE[fv.slot], moves: parseAlg(fv.alg).moves, slot: fv.slot, main: true },
+    ...rest.map((p, i) => ({ title: `Pair ${i + 2}`, sub: SLOT_NICE[p.slot] + (p.note ? ', already solved' : ''), moves: parseAlg(p.moves).moves, slot: p.slot }))];
+  flatten(fv); fv.lastStep = -1;
+  if (W === fv) setPos(0, fv); else renderF2L();
+}
+function whereText(a, b){
+  const h = p => isHidden(p) ? ' <span class="hid">(hidden from the front)</span>' : '';
+  if (a.join() === b.join()) return `${placeName(a)}${h(a)} <span class="same">(stays there)</span>`;
+  return `${placeName(a)}${h(a)} → ${placeName(b)}${h(b)}`;
+}
+function renderF2L(){
+  const c = fv.c; if (!c) return;
+  const slotAlgs = c.slots[fv.slot].algs, custom = customAlgs.f2l[f2lKey(c, fv.slot)];
+  const used = slotAlgs.find(a => a.alg === (custom || slotAlgs[0].alg));
+  $('f2lTitle').textContent = c.title;
+  $('f2lGroup').textContent = c.group + ' · ' + SLOT_NICE[fv.slot];
+  $('f2lSrc').textContent = custom && !used ? 'Your saved alg' : (used ? used.tag : 'Best');
+  const net = f2lNetSVG(parseAlg(c.slots[fv.slot].setup).moves, fv.slot, HEX, GREY);
+  $('f2lThumb').setAttribute('viewBox', `0 0 ${net.size} ${net.size}`); $('f2lThumb').innerHTML = net.svg;
+  $('f2lScrambleLabel').textContent = settings.f2lReal ? 'Scramble (white cross solved, green in front, other pairs mixed up)' : 'Setup: do this on a solved cube (white on the bottom, green in front)';
+  $('f2lScramble').textContent = fv.loading ? 'Making a scramble…' : (fv.scramble || '');
+  [...$('f2lAhead').children].forEach((b, i) => b.setAttribute('aria-pressed', i === settings.f2lAhead));
+  [...$('f2lSlots').children].forEach(b => b.setAttribute('aria-pressed', settings.f2lSlots.includes(b.dataset.slot)));
+  $('optF2lReal').checked = !!settings.f2lReal;
+  $('f2lToggleSol').innerHTML = (settings.show ? 'Hide' : 'Show') + ' <kbd>S</kbd>';
+  if (view === 'f2l') $('clearAlg').hidden = !custom;
+  if (W === fv) clearHalos();
+  if (!fv.steps.length){ $('f2lSteps').innerHTML = '<div class="working">Making a scramble with the cross solved…</div>'; $('f2lTrack').innerHTML = ''; $('f2lAlts').innerHTML = ''; return; }
+  const cur = stepAt(fv.pos, fv);
+  if (cur !== fv.lastStep){ if (settings.snap && W === fv) resetView(); fv.lastStep = cur; }
+  // look-ahead: this pair + the next N pairs that still need moves
+  const scr = parseAlg(fv.scramble).moves, track = [];
+  if (cur < fv.steps.length){
+    const ids = [cur]; for (let i = cur + 1; i < fv.steps.length && ids.length <= settings.f2lAhead; i++) if (fv.steps[i].moves.length) ids.push(i);
+    const before = [...scr, ...fv.flat.slice(0, fv.starts[cur])], after = [...scr, ...fv.flat.slice(0, fv.ends[cur])];
+    ids.forEach((i, j) => {
+      const s = fv.steps[i]; if (!s.slot) return;
+      const [ch, eh] = F2L_SLOT_HOME[s.slot];
+      if (W === fv){ addHalo(ch, AHEAD_HEX[j]); addHalo(eh, AHEAD_HEX[j]); }
+      const c0 = moveVec(ch.slice(), before), e0 = moveVec(eh.slice(), before), c1 = moveVec(ch.slice(), after), e1 = moveVec(eh.slice(), after);
+      const name = j === 0 ? `This pair (${s.sub})` : `${s.title} (${s.sub})`;
+      track.push(`<div class="t"><span class="dot" style="background:${AHEAD_CSS[j]}"></span><div><b>${esc(name)}</b><br>Corner: ${j === 0 ? placeName(c0) + (isHidden(c0) ? ' <span class="hid">(hidden from the front)</span>' : '') : whereText(c0, c1)}<br>Edge: ${j === 0 ? placeName(e0) + (isHidden(e0) ? ' <span class="hid">(hidden from the front)</span>' : '') : whereText(e0, e1)}</div></div>`);
+    });
+    if (settings.f2lAhead && ids.length > 1) track.push(`<div class="masknote">Arrows show where the next pairs’ pieces go while you solve ${esc(fv.steps[cur].title)}.</div>`);
+  }
+  $('f2lTrack').innerHTML = track.join('');
+  $('f2lSteps').innerHTML = fv.steps.map((s, i) => {
+    const n = turnCount(s.moves), masked = !settings.show && fv.pos <= fv.starts[i] && s.moves.length;
+    const chips = s.moves.map((m, j) => { const g = fv.starts[i] + j; return `<li class="${g < fv.pos ? 'past' : g === fv.pos ? 'active' : ''}">${moveToString(m)}</li>`; }).join('');
+    const done = fv.ends[i] <= fv.pos && s.moves.length;
+    return `<div class="step ${i === cur ? 'current' : ''} ${done ? 'past' : ''}" data-step="${i}"><div class="top"><b>${esc(s.title)}</b><span>${esc(s.sub)}</span><em>${s.moves.length ? n + (n === 1 ? ' move' : ' moves') : ''}</em></div><ol class="moves ${masked ? 'masked' : ''}">${chips}</ol></div>`;
+  }).join('') + (settings.f2lReal ? '' : '<div class="masknote">Turn on “Mix up the other pairs” to practise looking ahead.</div>');
+  const label = cur >= fv.steps.length ? 'Next case' : (fv.pos > fv.starts[cur] ? 'Finish ' : 'Play ') + esc(fv.steps[cur].title);
+  $('f2lPlay').innerHTML = label + ' <kbd>Space</kbd>';
+  // other algs for this case
+  const shown = settings.show || fv.pos > 0;
+  $('f2lAlts').innerHTML = shown ? slotAlgs.filter(a => a.alg !== (custom || slotAlgs[0].alg)).map(a =>
+    `<div class="alt"><span>${esc(a.alg)}</span><small class="tag">${esc(a.tag)}</small><button class="btn ghost" data-f2lalt="${esc(a.alg)}">Use this</button></div>`).join('') : '';
+}
+$('f2lNext').onclick = idle(nextF2L);
+$('f2lPrev').onclick = idle(prevF2L);
+$('f2lRedo').onclick = () => enqueue(() => setPos(0));
+$('f2lPlay').onclick = solveSpace;
+$('f2lPlayAll').onclick = () => { if (playing) return; fv.all = true; playStep(); };
+$('f2lPrevMove').onclick = moveBack; $('f2lNextMove').onclick = moveFwd;
+$('f2lPrevStep').onclick = stepBack; $('f2lNextStep').onclick = stepFwd;
+$('f2lToggleSol').onclick = () => { settings.show = !settings.show; saveSettings(); renderF2L(); };
+$('f2lSteps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (b) enqueue(() => jumpTo(+b.dataset.step)); });
+$('f2lAhead').addEventListener('click', e => { const b = e.target.closest('[data-ahead]'); if (!b) return; settings.f2lAhead = +b.dataset.ahead; saveSettings(); renderF2L(); });
+$('f2lSlots').addEventListener('click', idle(e => {
+  const b = e.target.closest('[data-slot]'); if (!b) return;
+  const s = b.dataset.slot, list = settings.f2lSlots, i = list.indexOf(s);
+  if (i >= 0){ if (list.length === 1) return; list.splice(i, 1); } else list.push(s);
+  saveSettings(); if (!list.includes(fv.slot)) nextF2L(); else renderF2L();
+}));
+$('optF2lReal').addEventListener('change', idle(e => { settings.f2lReal = e.target.checked; saveSettings(); if (fv.c) loadF2L(fv.c, fv.slot); }));
+$('f2lAlts').addEventListener('click', idle(e => {
+  const b = e.target.closest('[data-f2lalt]'); if (!b) return;
+  customAlgs.f2l[f2lKey(fv.c, fv.slot)] = b.dataset.f2lalt; store.set('custom', customAlgs); loadF2L(fv.c, fv.slot);
+  msg($('algMsg'), `${fv.c.title} in the ${SLOT_NICE[fv.slot]} now uses that alg.`, 'ok');
+}));
+
 /* ---------- start ---------- */
 initScene();
-nextCase();
+const deep = (() => {
+  const h = decodeURIComponent(location.hash.slice(1)); let m;
+  if ((m = h.match(/^(oll|pll)-(.+)$/i))) return { kind: m[1].toLowerCase(), id: m[2] };
+  if ((m = h.match(/^f2l-(\d+)(?:-(FR|FL|BL|BR))?$/i))) return { kind: 'f2l', id: m[1], slot: (m[2] || 'FR').toUpperCase() };
+  if (h === 'solve') return { kind: 'solve' };
+  return null;
+})();
+if (deep && (deep.kind === 'oll' || deep.kind === 'pll')){
+  const c = CASES[deep.kind].find(x => x.id.toLowerCase() === deep.id.toLowerCase());
+  view = 'drill'; mode = deep.kind; settings.mode = mode; applyView();
+  if (c) loadCase(c); else nextCase();
+} else if (deep && deep.kind === 'f2l'){
+  view = 'f2l'; applyView();
+  const c = F2L.find(x => x.id === deep.id); if (c) loadF2L(c, deep.slot); else nextF2L();
+} else if (deep && deep.kind === 'solve'){ view = 'solve'; applyView(); enterSolve(); }
+else {
+  applyView();
+  if (view === 'solve') enterSolve(); else if (view === 'f2l') enterF2L(); else nextCase();
+}
 })();
 </script>
 </body>

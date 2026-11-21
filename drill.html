@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Last Layer Drill · OLL & PLL</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,400..800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --mat:#DCE2E6; --panel:#F5F7F8; --ink:#17233A; --muted:#5B687B; --line:#C3CCD4;
+  --accent:#2550B8; --accent-ink:#FFFFFF; --chip:#E7ECF0; --done:#9AA6B5; --warn:#A3361F; --ok:#1E6B45;
+  --sans:"Archivo", "Helvetica Neue", Arial, sans-serif;
+  --mono:"JetBrains Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    --mat:#121821; --panel:#1A222E; --ink:#E6EBF2; --muted:#8D99AB; --line:#2C3849;
+    --accent:#7398F2; --accent-ink:#0D1320; --chip:#243042; --done:#56637A; --warn:#F08A6E; --ok:#6CCB97;
+    color-scheme: dark;
+  }
+}
+*{box-sizing:border-box}
+[hidden]{display:none !important}
+html,body{height:100%;margin:0}
+body{
+  background:var(--mat); color:var(--ink); font-family:var(--sans); font-size:16px; line-height:1.45;
+  padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+  -webkit-font-smoothing:antialiased;
+}
+button,input,textarea,select{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.app{display:grid;grid-template-columns:minmax(0,1fr) 400px;grid-template-rows:auto minmax(0,1fr);height:100%}
+.bar{grid-column:1/-1;display:flex;align-items:center;gap:14px;padding:12px 20px;border-bottom:1px solid var(--line)}
+.brand{font-weight:800;font-stretch:80%;font-size:1.15rem;letter-spacing:.01em;margin-right:auto}
+.seg{display:inline-flex;background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:3px}
+.seg button{border:0;background:none;padding:6px 16px;border-radius:7px;font-weight:700;font-stretch:85%;cursor:pointer;color:var(--muted)}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--panel)}
+.btn{border:1px solid var(--line);background:var(--panel);border-radius:9px;padding:7px 13px;cursor:pointer;font-weight:600;font-size:.92rem}
+.btn:hover{border-color:var(--muted)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn.ghost{background:none;border-color:transparent;color:var(--muted)}
+.btn.ghost:hover{color:var(--ink)}
+.count{color:var(--muted);font-variant-numeric:tabular-nums;font-size:.9rem}
+
+.stage{position:relative;min-height:0;overflow:hidden;touch-action:none;cursor:grab}
+.stage:active{cursor:grabbing}
+.stage canvas{display:block;width:100%;height:100%}
+.stage .hint{position:absolute;left:20px;bottom:16px;color:var(--muted);font-size:.85rem;pointer-events:none}
+.stage .viewbtn{position:absolute;right:16px;bottom:12px}
+.stage .fail{position:absolute;inset:0;display:grid;place-items:center;padding:24px;text-align:center;color:var(--muted)}
+
+.side{background:var(--panel);border-left:1px solid var(--line);overflow:auto;padding:22px 22px 28px;display:flex;flex-direction:column;gap:22px}
+.case-head{display:flex;gap:16px;align-items:flex-start}
+.case-head .titles{flex:1;min-width:0}
+.case-title{font-weight:800;font-stretch:78%;font-size:2.6rem;line-height:1;letter-spacing:-.01em;margin:0}
+.case-group{color:var(--muted);margin-top:6px;font-size:.95rem}
+.src{display:inline-block;margin-top:8px;font-size:.78rem;font-weight:700;padding:2px 8px;border-radius:99px;border:1px solid var(--line);color:var(--muted)}
+.src.yiheng{border-color:var(--accent);color:var(--accent)}
+.thumb{width:92px;height:92px;flex:none}
+
+.block h2{font-size:.88rem;font-weight:700;margin:0 0 8px;color:var(--muted)}
+.block .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+.setup{font-family:var(--mono);font-size:1rem;line-height:1.6;word-spacing:.2em;background:var(--chip);border-radius:10px;padding:10px 12px}
+.moves{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:6px;min-height:40px}
+.moves li{font-family:var(--mono);font-weight:700;font-size:1.25rem;min-width:2.3em;text-align:center;padding:5px 7px;border-radius:8px;background:var(--chip);transition:background .12s,color .12s,transform .12s}
+.moves li.auf{color:var(--muted);font-weight:500}
+.moves li.active{background:var(--accent);color:var(--accent-ink);transform:translateY(-2px)}
+.moves li.past{color:var(--done)}
+.moves.masked li{color:transparent;user-select:none}
+.masknote{color:var(--muted);font-size:.85rem;margin-top:8px}
+.alts{margin-top:10px;display:flex;flex-direction:column;gap:6px}
+.alt{display:flex;gap:8px;align-items:center;font-family:var(--mono);font-size:.85rem;color:var(--muted)}
+.alt span{flex:1}
+.alt button{font-family:var(--sans)}
+
+.actions{display:grid;grid-template-columns:1fr auto auto;gap:8px}
+.actions .primary{padding:12px 14px;font-size:1rem;white-space:nowrap}
+kbd{font-family:var(--mono);font-size:.78em;border:1px solid currentColor;border-radius:4px;padding:0 4px;opacity:.75}
+
+.custom input{width:100%;font-family:var(--mono);font-size:1rem;padding:10px 12px;border-radius:10px;border:1px solid var(--line);background:var(--mat)}
+.custom .row{margin-top:8px;justify-content:flex-start;flex-wrap:wrap}
+.msg{font-size:.88rem;margin-top:8px;min-height:1.3em}
+.msg.err{color:var(--warn)} .msg.ok{color:var(--ok)}
+.keys{color:var(--muted);font-size:.82rem;line-height:1.9;margin-top:auto}
+
+dialog{border:1px solid var(--line);border-radius:14px;background:var(--panel);color:var(--ink);padding:0;width:min(760px,94vw);max-height:88vh}
+dialog::backdrop{background:rgba(10,15,25,.45)}
+.dlg-head{display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid var(--line);position:sticky;top:0;background:var(--panel);z-index:1}
+.dlg-head h2{margin:0 auto 0 0;font-size:1.1rem;font-weight:800;font-stretch:85%}
+.dlg-body{padding:16px 18px 22px;overflow:auto;max-height:calc(88vh - 60px)}
+.group-name{font-weight:700;font-size:.9rem;color:var(--muted);margin:14px 0 8px}
+.group-name:first-child{margin-top:0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(84px,1fr));gap:8px}
+.pick{border:2px solid var(--line);border-radius:10px;background:var(--mat);padding:6px 4px 4px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:2px;opacity:.45}
+.pick[aria-pressed="true"]{opacity:1;border-color:var(--accent)}
+.pick svg{width:58px;height:58px}
+.pick b{font-size:.8rem;font-stretch:85%}
+.setting{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 0;border-bottom:1px solid var(--line)}
+.setting p{margin:2px 0 0;color:var(--muted);font-size:.85rem}
+.switch{appearance:none;width:44px;height:26px;border-radius:99px;background:var(--line);position:relative;cursor:pointer;flex:none;transition:background .15s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:20px;height:20px;border-radius:50%;background:var(--panel);transition:transform .15s}
+.switch:checked{background:var(--accent)}
+.switch:checked::after{transform:translateX(18px)}
+textarea{width:100%;min-height:150px;font-family:var(--mono);font-size:.85rem;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--mat)}
+
+@media (max-width: 860px){
+  .app{grid-template-columns:1fr;grid-template-rows:auto 52vh auto;height:auto;min-height:100%}
+  .side{border-left:0;border-top:1px solid var(--line);overflow:visible}
+  .bar{flex-wrap:wrap;padding:10px 14px}
+  .brand{width:100%}
+  .keys{display:none}
+  .case-title{font-size:2.1rem}
+}
+@media (prefers-reduced-motion: reduce){ .moves li{transition:none} }
+</style>
+</head>
+<body>
+<div class="app">
+  <header class="bar">
+    <div class="brand">Last Layer Drill</div>
+    <div class="seg" role="group" aria-label="Practice set">
+      <button id="modeOll" aria-pressed="true">OLL</button>
+      <button id="modePll" aria-pressed="false">PLL</button>
+    </div>
+    <span class="count" id="count"></span>
+    <button class="btn" id="openCases">Choose cases</button>
+    <button class="btn" id="openSettings">Settings</button>
+  </header>
+
+  <main class="stage" id="stage">
+    <span class="hint">Drag to turn the cube · double-click to reset the view</span>
+    <button class="btn ghost viewbtn" id="resetView">Reset view</button>
+  </main>
+
+  <aside class="side">
+    <div class="case-head">
+      <div class="titles">
+        <h1 class="case-title" id="caseTitle">OLL</h1>
+        <div class="case-group" id="caseGroup"></div>
+        <span class="src" id="caseSrc"></span>
+      </div>
+      <svg class="thumb" id="caseThumb" viewBox="0 0 120 120" aria-hidden="true"></svg>
+    </div>
+
+    <section class="block">
+      <div class="row"><h2>Setup: do this on a solved cube to get the case</h2></div>
+      <div class="setup" id="setup"></div>
+    </section>
+
+    <section class="block">
+      <div class="row">
+        <h2>Solution</h2>
+        <button class="btn ghost" id="toggleSol">Show <kbd>S</kbd></button>
+      </div>
+      <ol class="moves" id="moves"></ol>
+      <div class="masknote" id="maskNote">Hidden. Press S to show it, or Space to watch it.</div>
+      <div class="alts" id="alts"></div>
+    </section>
+
+    <div class="actions">
+      <button class="btn primary" id="mainAction">Animate solution <kbd>Space</kbd></button>
+      <button class="btn" id="replay" title="Put the case back (R)">Redo setup</button>
+      <button class="btn" id="prev" title="Previous case (←)">Back</button>
+    </div>
+
+    <section class="block custom">
+      <h2>Type your own alg (use ' for prime)</h2>
+      <input id="algInput" spellcheck="false" autocomplete="off" placeholder="R U R' U R U2 R'">
+      <div class="row">
+        <button class="btn" id="saveAlg">Save for this case</button>
+        <button class="btn" id="tryAlg">Set it up once</button>
+        <button class="btn ghost" id="clearAlg" hidden>Back to default alg</button>
+      </div>
+      <div class="msg" id="algMsg"></div>
+    </section>
+
+    <div class="keys">
+      <kbd>Space</kbd> animate, then next case &nbsp; <kbd>S</kbd> show/hide solution &nbsp; <kbd>R</kbd> redo setup &nbsp; <kbd>←</kbd> <kbd>→</kbd> back / skip &nbsp; <kbd>1</kbd> OLL <kbd>2</kbd> PLL
+    </div>
+  </aside>
+</div>
+
+<dialog id="casesDlg">
+  <div class="dlg-head">
+    <h2>Cases in rotation</h2>
+    <button class="btn" id="pickAll">All</button>
+    <button class="btn" id="pickNone">None</button>
+    <button class="btn primary" data-close>Done</button>
+  </div>
+  <div class="dlg-body" id="casesBody"></div>
+</dialog>
+
+<dialog id="settingsDlg">
+  <div class="dlg-head"><h2>Settings</h2><button class="btn primary" data-close>Done</button></div>
+  <div class="dlg-body">
+    <label class="setting"><div><b>Animate solution on Space</b><p>On: first Space plays the alg, second Space goes to the next case. Off: Space goes straight to the next case.</p></div><input type="checkbox" class="switch" id="optAnimate"></label>
+    <label class="setting"><div><b>Always show solution</b><p>Same as pressing S. Off is better for testing recall.</p></div><input type="checkbox" class="switch" id="optShow"></label>
+    <label class="setting"><div><b>Never rotate the cube</b><p>Swaps the three PLLs that tilt the cube at the start (Aa, Ab, E) for versions with no rotation. Those use B or F turns instead, so they aren’t Yiheng’s and they need a regrip.</p></div><input type="checkbox" class="switch" id="optNoRot"></label>
+    <label class="setting"><div><b>Random order</b><p>Off goes through the cases in order.</p></div><input type="checkbox" class="switch" id="optRandom"></label>
+    <label class="setting"><div><b>Random angle</b><p>Adds a random U turn to the setup so you have to spot the case from any side. The solution then starts with the U turn that undoes it.</p></div><input type="checkbox" class="switch" id="optAuf"></label>
+    <label class="setting"><div><b>Animation speed</b><p><span id="speedLabel"></span> turns per second</p></div><input type="range" id="optSpeed" min="1" max="15" step="1"></label>
+    <div style="padding-top:16px">
+      <b>Import an alg sheet</b>
+      <p style="color:var(--muted);font-size:.85rem;margin:4px 0 10px">Paste one alg per line, starting with the case: <code>OLL 27: R U R' U R U2 R'</code>, <code>27 R U R'…</code> or <code>Jb: R U R' F'…</code>. Each alg is checked on the cube before it’s saved, so a typo can’t sneak in.</p>
+      <textarea id="importText" spellcheck="false"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap">
+        <button class="btn primary" id="importBtn">Import algs</button>
+        <button class="btn" id="resetAll">Clear all my saved algs</button>
+        <button class="btn" id="exportBtn">Download this page with my algs built in</button>
+      </div>
+      <div class="msg" id="importMsg"></div>
+    </div>
+  </div>
+</dialog>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script>
+// ---------- Cube logic (no rendering) ----------
+const FACES = {
+  U: [0, 1, 0], D: [0, -1, 0], R: [1, 0, 0], L: [-1, 0, 0], F: [0, 0, 1], B: [0, 0, -1]
+};
+const AXIS_INDEX = { x: 0, y: 1, z: 2 };
+
+// base move definitions: axis, layer coords, quarter turns (+1 = counter-clockwise by right-hand rule about +axis)
+const BASE = {
+  R: ['x', [1], -1], L: ['x', [-1], 1], M: ['x', [0], 1],
+  U: ['y', [1], -1], D: ['y', [-1], 1], E: ['y', [0], 1],
+  F: ['z', [1], -1], B: ['z', [-1], 1], S: ['z', [0], -1],
+  r: ['x', [0, 1], -1], l: ['x', [-1, 0], 1],
+  u: ['y', [0, 1], -1], d: ['y', [-1, 0], 1],
+  f: ['z', [0, 1], -1], b: ['z', [-1, 0], 1],
+  x: ['x', [-1, 0, 1], -1], y: ['y', [-1, 0, 1], -1], z: ['z', [-1, 0, 1], -1]
+};
+
+function normalizeAlgText(text) {
+  return String(text)
+    .replace(/[’‘`´′ʼ]/g, "'")
+    .replace(/[()\[\],]/g, ' ')
+    .replace(/\/\/.*$/gm, ' ');
+}
+
+// returns {moves:[{name, base, amount}], error}
+function parseAlg(text) {
+  const src = normalizeAlgText(text);
+  const moves = [];
+  const re = /([RLUDFBMESxyz]w|[RLUDFBMESxyzrludfb])(\d*)('?)(\d*)/y;
+  let i = 0;
+  while (i < src.length) {
+    if (/\s/.test(src[i])) { i++; continue; }
+    re.lastIndex = i;
+    const m = re.exec(src);
+    if (!m) {
+      const bad = src.slice(i).split(/\s/)[0];
+      return { moves, error: `“${bad}” isn’t a move I know` };
+    }
+    let face = m[1];
+    if (face.length === 2) face = face[0].toLowerCase(); // Rw -> r
+    const num = parseInt(m[2] || m[4] || '1', 10);
+    if (!(num >= 1 && num <= 3)) return { moves, error: `“${m[0]}” has an odd turn count` };
+    let amount = num * (m[3] ? -1 : 1);
+    amount = ((amount % 4) + 4) % 4; // 1,2,3
+    if (amount === 0) { i = re.lastIndex; continue; }
+    moves.push({ base: face, amount });
+    i = re.lastIndex;
+  }
+  return { moves, error: null };
+}
+
+function moveToString(mv) {
+  return mv.base + (mv.amount === 1 ? '' : mv.amount === 2 ? '2' : "'");
+}
+function movesToString(moves) { return moves.map(moveToString).join(' '); }
+function invertMoves(moves) {
+  return moves.slice().reverse().map(m => ({ base: m.base, amount: (4 - m.amount) % 4 }));
+}
+function invertAlg(text) {
+  const p = parseAlg(text);
+  return movesToString(invertMoves(p.moves));
+}
+// quarter turns signed for animation (-2..2)
+function moveTurns(mv) {
+  const sign = BASE[mv.base][2];
+  if (mv.amount === 1) return sign;
+  if (mv.amount === 3) return -sign;
+  return 2 * sign;
+}
+
+function rotVec(v, axis, q) {
+  q = ((q % 4) + 4) % 4;
+  let [x, y, z] = v;
+  for (let k = 0; k < q; k++) {
+    if (axis === 'x') [x, y, z] = [x, -z, y];
+    else if (axis === 'y') [x, y, z] = [z, y, -x];
+    else [x, y, z] = [-y, x, z];
+  }
+  return [x, y, z];
+}
+
+function solvedState() {
+  const st = [];
+  for (const f in FACES) {
+    const n = FACES[f];
+    for (let a = -1; a <= 1; a++) for (let b = -1; b <= 1; b++) {
+      let p;
+      if (n[0]) p = [n[0], a, b];
+      else if (n[1]) p = [a, n[1], b];
+      else p = [a, b, n[2]];
+      st.push({ p, n: n.slice(), c: f });
+    }
+  }
+  return st;
+}
+
+function applyMove(st, mv) {
+  const [axis, layers, sign] = BASE[mv.base];
+  const ai = AXIS_INDEX[axis];
+  const q = sign * mv.amount;
+  for (const s of st) {
+    if (layers.includes(s.p[ai])) {
+      s.p = rotVec(s.p, axis, q);
+      s.n = rotVec(s.n, axis, q);
+    }
+  }
+  return st;
+}
+function applyMoves(st, moves) { for (const m of moves) applyMove(st, m); return st; }
+
+const key = (p, n) => p.join(',') + '|' + n.join(',');
+
+// color found at each physical (position, normal) slot, recoloured relative to the centres so
+// whole-cube rotations don't matter. Returns map slotKey -> faceName it "should" be.
+function relativeColors(st) {
+  const centre = {};
+  for (const s of st) {
+    const isCentre = s.p.filter(v => v !== 0).length === 1;
+    if (isCentre) centre[s.c] = faceOf(s.n);
+  }
+  const out = {};
+  for (const s of st) out[key(s.p, s.n)] = centre[s.c];
+  return out;
+}
+function faceOf(n) {
+  for (const f in FACES) if (FACES[f].every((v, i) => v === n[i])) return f;
+}
+// state description in standard frame (centres at home): array of 54 face letters in fixed slot order
+const SLOT_ORDER = solvedState().map(s => key(s.p, s.n));
+function frameState(st) {
+  // rotate so centres are home: find a rotation among 24 that puts U-centre up and F-centre front
+  const rots = allRotations();
+  for (const r of rots) {
+    const t = st.map(s => ({ p: s.p.slice(), n: s.n.slice(), c: s.c }));
+    applyMoves(t, r);
+    let ok = true;
+    for (const s of t) {
+      const isCentre = s.p.filter(v => v !== 0).length === 1;
+      if (isCentre && faceOf(s.n) !== s.c) { ok = false; break; }
+    }
+    if (ok) {
+      const m = {};
+      for (const s of t) m[key(s.p, s.n)] = s.c;
+      return SLOT_ORDER.map(k => m[k]);
+    }
+  }
+  throw new Error('no frame');
+}
+let _rots = null;
+function allRotations() {
+  if (_rots) return _rots;
+  const seqs = [];
+  const firsts = [[], [{ base: 'x', amount: 1 }], [{ base: 'x', amount: 2 }], [{ base: 'x', amount: 3 }],
+    [{ base: 'z', amount: 1 }], [{ base: 'z', amount: 3 }]];
+  for (const f of firsts) for (let k = 0; k < 4; k++) {
+    const s = f.slice(); if (k) s.push({ base: 'y', amount: k }); seqs.push(s);
+  }
+  _rots = seqs; return seqs;
+}
+
+function stateAfter(moves) { return frameState(applyMoves(solvedState(), moves)); }
+
+const SOLVED_FRAMED = frameState(solvedState());
+
+// slot indices
+const SLOT_INFO = solvedState().map(s => ({ p: s.p, n: s.n }));
+const F2L_SLOTS = SLOT_INFO.map((s, i) => s.p[1] <= 0 ? i : -1).filter(i => i >= 0);
+const LL_SLOTS = SLOT_INFO.map((s, i) => s.p[1] === 1 ? i : -1).filter(i => i >= 0);
+const U_FACE_SLOTS = SLOT_INFO.map((s, i) => s.n[1] === 1 ? i : -1).filter(i => i >= 0);
+
+function f2lIntact(fs) { return F2L_SLOTS.every(i => fs[i] === SOLVED_FRAMED[i]); }
+
+const U = k => (k ? [{ base: 'U', amount: k }] : []);
+
+// does `moves` (solution) solve the case produced by `caseSetup` (moves), up to AUF?
+// kind 'oll' compares orientation only; 'pll' full state.
+function solvesCase(kind, setupMoves, solMoves) {
+  for (let a = 0; a < 4; a++) {
+    const fs = stateAfter([...setupMoves, ...U(a), ...solMoves]);
+    if (!f2lIntact(fs)) continue;
+    if (kind === 'oll') {
+      if (U_FACE_SLOTS.every(i => fs[i] === 'U')) return true;
+    } else {
+      for (let b = 0; b < 4; b++) {
+        const f2 = stateAfter([...setupMoves, ...U(a), ...solMoves, ...U(b)]);
+        if (f2.every((c, i) => c === SOLVED_FRAMED[i])) return true;
+      }
+    }
+  }
+  return false;
+}
+
+// top-layer description for thumbnails: returns {u:[9 colours row-major from back-left], sides:{B:[3],R:[3],F:[3],L:[3]}}
+function topView(fs) {
+  const get = (p, n) => fs[SLOT_ORDER.indexOf(key(p, n))];
+  const u = [];
+  for (let z = -1; z <= 1; z++) for (let x = -1; x <= 1; x++) u.push(get([x, 1, z], [0, 1, 0]));
+  return {
+    u,
+    B: [-1, 0, 1].map(x => get([x, 1, -1], [0, 0, -1])),
+    F: [-1, 0, 1].map(x => get([x, 1, 1], [0, 0, 1])),
+    L: [-1, 0, 1].map(z => get([-1, 1, z], [-1, 0, 0])),
+    R: [-1, 0, 1].map(z => get([1, 1, z], [1, 0, 0]))
+  };
+}
+
+if (typeof module !== 'undefined') module.exports = {
+  parseAlg, invertAlg, invertMoves, movesToString, moveToString, moveTurns, BASE,
+  solvedState, applyMoves, stateAfter, f2lIntact, solvesCase, topView, SOLVED_FRAMED, U_FACE_SLOTS, U
+};
+
+// src: 'y' = Yiheng Wang (PLL: his GAN tutorial video), 'u' = your OLL sheet, 'm' = saved by you, 's' = standard
+/*ALGS_START*/
+const OLL_CASES = [
+ [1,"Dot","R U2' R2' F R F' U2' R' F R F'","u",[]],
+ [2,"Dot","F R U R' U' S R U R' U' f'","u",[["F R U R' U' F' f R U R' U' f'","s"]]],
+ [3,"Dot","r' R2 U R' U r U2 r' U M'","u",[["f R U R' U' f' U' F R U R' U' F'","s"]]],
+ [4,"Dot","R' U R2 D r' U' r D' R2' U R U R' U R","u",[["f R U R' U' f' U F R U R' U' F'","u"]]],
+ [17,"Dot","R U R' U R' F R F' U2' R' F R F'","u",[]],
+ [18,"Dot","r U R' U R U2' r2' U' R U' R' U2' r","u",[]],
+ [19,"Dot","r' R U R U R' U' r R2' F R F'","u",[["M U R U R' U' M' R' F R F'","s"]]],
+ [20,"Dot","r U R' U' r R' M' U R U' R' U' M'","u",[["r U R' U' M2 U R U' R' U' M'","s"]]],
+ [5,"Square","r' U2' R U R' U r","u",[]],
+ [6,"Square","r U2' R' U' R U' r'","u",[]],
+ [7,"Small lightning","r U R' U R U2' r'","u",[]],
+ [8,"Small lightning","r' U' R U' R' U2' r","u",[["l' U' L U' L' U2 l","u"]]],
+ [11,"Small lightning","r' R2 U R' U R U2' R' U M'","u",[["r U R' U R' F R F' R U2 r'","s"]]],
+ [12,"Small lightning","r R2' U' R U' R' U2' R U' r' R","u",[["F R U R' U' F' U F R U R' U' F'","s"]]],
+ [9,"Fish","R U R' U' R' F R2 U R' U' F'","u",[]],
+ [10,"Fish","R U R' U R' F R F' R U2' R'","u",[]],
+ [35,"Fish","R U2' R2' F R F' R U2' R'","u",[]],
+ [37,"Fish","F R' F' R U R U' R'","u",[["F R U' R' U' R U R' F'","u"]]],
+ [13,"Knight move","r U' r' U' r U r' F' U F","u",[["F U R U' R2 F' R U R U' R'","s"]]],
+ [14,"Knight move","R' F R U R' F' R F U' F'","u",[]],
+ [15,"Knight move","r' U' r R' U' R U r' U r","u",[]],
+ [16,"Knight move","r U r' R U R' U' r U' r'","u",[]],
+ [29,"Awkward","R U R' U' R' F R F' R U R' U' M' U R U' r'","u",[["R U R' U' R U' R' F' U' F R U R'","u"]]],
+ [30,"Awkward","F U R U2 R' U' R U2 R' U' F'","u",[["F R' F R2 U' R' U' R U R' F2","s"]]],
+ [41,"Awkward","R U R' U R U2' R' F R U R' U' F'","u",[]],
+ [42,"Awkward","R' U' R U' R' U2' R U R' F' U' F U R","u",[["R' U' R U' R' U2' R F R U R' U' F'","u"]]],
+ [31,"P shape","R' U' F U R U' R' F' R","u",[]],
+ [32,"P shape","S R U R' U' R' F R f'","u",[["L U F' U' L' U L F L'","s"]]],
+ [43,"P shape","R' U' F' U F R","u",[["F' U' L' U L F","s"]]],
+ [44,"P shape","f R U R' U' f'","u",[["L U F' L F L' U' L'","u"],["F U R U' R' F'","s"]]],
+ [33,"T shape","R U R' U' R' F R F'","u",[]],
+ [45,"T shape","F R U R' U' F'","u",[]],
+ [34,"C shape","R U R' U' R' F R F' U R U R' U R U2' R'","u",[["R U R' U' R' F R F' R' U2' R U R' U R","u"],["R U R' U' R' F R F' U R U' L' U R' U' L","u"],["R U R2' U' R' F R U R U' F'","u"]]],
+ [46,"C shape","R' U' R' F R F' U R","u",[]],
+ [36,"W shape","L' U' L U' L' U L U L F' L' F","u",[]],
+ [38,"W shape","R U R' U R U' R' U' R' F R F'","u",[]],
+ [39,"Big lightning","f' r U r' U' r' F r S","u",[["L F' L' U' L U F U' L'","u"]]],
+ [40,"Big lightning","R' F R U R' U' F' U R","u",[]],
+ [47,"Small L","R' U' R' F R F' R' F R F' U R","u",[["F' L' U' L U L' U' L U F","u"]]],
+ [48,"Small L","F R U R' U' R U R' U' F'","u",[]],
+ [49,"Small L","l U' l2' U l2 U l2' U' l","u",[["r U' r2 U r2 U r2 U' r","s"]]],
+ [50,"Small L","r' U r2 U' r2' U' r2 U r'","u",[]],
+ [53,"Small L","r' U2' R U R' U' R U R' U r","u",[["r' U' R U' R' U R U' R' U2 r","s"]]],
+ [54,"Small L","r U2' R' U' R U R' U' R U' r'","u",[["r U R' U R U' R' U R U2 r'","s"]]],
+ [51,"I shape","f R U R' U' R U R' U' f'","u",[["R' U' R' F R F' R U' R' U2 R","u"],["F U R U' R' U R U' R' F'","s"]]],
+ [52,"I shape","R' F' U' F U' R U R' U R","u",[["R U R' U R U' B U' B' R'","s"]]],
+ [55,"I shape","r U2' R' U' r' R2 U R' U' r U' r'","u",[["R U2 R2 U' R U' R' U2 F R F'","s"],["R' F R U R U' R2 F' R2 U' R' U R U R'","s"]]],
+ [56,"I shape","r U r' U R U' R' U R U' R' r U' r'","u",[["r' U' r U' R' U R U' R' U R r' U r","s"]]],
+ [21,"Cross · H","R U2' R' U' R U R' U' R U' R'","u",[["R U R' U R U L' U R' U' L","u"]]],
+ [22,"Cross · Pi","R U2' R2' U' R2 U' R2' U2' R","u",[]],
+ [23,"Cross · Headlights","R2' D' R U2 R' D R U2 R","u",[["R2 D R' U2 R D' R' U2 R'","u"],["F R U R' U' F' r U R' U' r' R U R U' R'","u"]]],
+ [24,"Cross · Chameleon","r U R' U' r' F R F'","u",[]],
+ [25,"Cross · Bowtie","F' r U R' U' r' F R","u",[]],
+ [26,"Cross · Antisune","R' U' R U' R' U2' R","u",[["L' U' L U' L' U2 L","u"],["R U2' R' U' R U' R'","u"],["L' U R U' L U R'","u"]]],
+ [27,"Cross · Sune","R U R' U R U2' R'","u",[["L U L' U L U2 L'","u"],["R' U2' R U R' U R","u"],["R U' L' U R' U' L","u"]]],
+ [28,"Corners oriented","r U R' U' r' R U R U' R'","u",[]],
+ [57,"Corners oriented","R U R' U' M' U R U' r'","u",[]]
+];
+const PLL_CASES = [
+ ["Aa","Corners only","x' R2 D2 R' U' R D2 R' U R' x","y",[["x R' U R' D2 R U' R' D2 R2 x'","y"],["R' F R' B2 R F' R' B2 R2","s"]]],
+ ["Ab","Corners only","x' R U' R D2 R' U R D2 R2 x","y",[["x R2 D2 R U R' D2 R U' R x'","y"],["R B' R F2 R' B R F2 R2","s"]]],
+ ["E","Corners only","x' R U' R' D R U R' D' R U R' D R U' R' D' x","y",[["R B' R' F R B R' F' R B R' F R B' R' F'","s"]]],
+ ["H","Edges only","M2 U M2 U2 M2 U M2","y",[["M2 U2 M2 U M2 U2 M2","y"]]],
+ ["Ua","Edges only","R U' R U R U R U' R' U' R2","y",[]],
+ ["Ub","Edges only","R2 U R U R' U' R' U' R' U R'","y",[["R' U R' U' R' U' R' U R U R2","y"]]],
+ ["Z","Edges only","M' U M2 U M2 U M' U2 M2","y",[]],
+ ["T","Adjacent swap","R U R' U' R' F R2 U' R' U' R U R' F'","y",[]],
+ ["F","Adjacent swap","R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R","y",[]],
+ ["Ja","Adjacent swap","L' U' L F L' U' L U L F' L2 U L","y",[["R' U L' U2 R U' R' U2 R L","s"]]],
+ ["Jb","Adjacent swap","R U R' F' R U R' U' R' F R2 U' R'","y",[]],
+ ["Ra","Adjacent swap","R U' R' U' R U R D R' U' R D' R' U2 R'","y",[]],
+ ["Rb","Adjacent swap","R' U2 R U2 R' F R U R' U' R' F' R2","y",[["R2 F R U R U' R' F' R U2 R' U2 R","s"]]],
+ ["Ga","G perms","D' R2 U R' U R' U' R U' R2 D U' R' U R","y",[["R2 U R' U R' U' R U' R2 U' D R' U R D'","s"]]],
+ ["Gb","G perms","F' U' F R2 u R' U R U' R u' R2","y",[["R' U' R U D' R2 U R' U R U' R U' R2 D","s"]]],
+ ["Gc","G perms","R2 F2 R U2 R U2 R' F R U R' U' R' F R2","y",[["R2 U' R U' R U R' U R2 U D' R U' R' D","s"]]],
+ ["Gd","G perms","D' R U R' U' D R2 U' R U' R' U R' U R2","y",[["R U R' U' D R2 U' R U' R' U R' U R2 D'","s"]]],
+ ["V","Diagonal swap","R' U R' U' R D' R' D R' U D' R2 U' R2 D R2","y",[["R U' R U R' D R D' R U' D R2 U R2 D' R2","y"],["R' U R' d' R' F' R2 U' R' U R' F R F","s"]]],
+ ["Y","Diagonal swap","F R U' R' U' R U R' F' R U R' U' R' F R F'","y",[]],
+ ["Na","Diagonal swap","R U R' U R U R' F' R U R' U' R' F R2 U' R' U2 R U' R'","y",[]],
+ ["Nb","Diagonal swap","R' U R U' R' F' U' F R U R' U' R U' f R f'","y",[["R' U R U' R' F' U' F R U R' F R' F' R U' R","s"]]]
+];
+/*ALGS_END*/
+if (typeof module !== 'undefined') module.exports = { OLL_CASES, PLL_CASES };
+
+</script>
+<script>
+(function(){
+"use strict";
+const PRISTINE = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
+const $ = id => document.getElementById(id);
+
+/* ---------- storage ---------- */
+const store = {
+  get(k, d){ try{ const v = localStorage.getItem('lld.'+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
+  set(k, v){ try{ localStorage.setItem('lld.'+k, JSON.stringify(v)); }catch(e){} }
+};
+const settings = Object.assign({ animate:true, show:false, random:true, auf:false, noRot:false, speed:6, mode:'oll' }, store.get('settings', {}));
+const customAlgs = Object.assign({ oll:{}, pll:{} }, store.get('custom', {}));
+const enabled = Object.assign({ oll:null, pll:null }, store.get('enabled', {}));
+const saveSettings = () => store.set('settings', settings);
+
+/* ---------- case data ---------- */
+function buildCases(kind, list){
+  const S = s => ({ y:'yiheng', u:'sheet', m:'mine' })[s] || 'standard';
+  return list.map(([id, group, alg, src, alts]) => {
+    const algs = [{ alg, src: S(src) }, ...(alts || []).map(([a, s]) => ({ alg: a, src: S(s) }))];
+    const c = { kind, id:String(id), group, algs, title: kind === 'oll' ? 'OLL ' + id : id + ' perm' };
+    c.canonSetup = invertMoves(parseAlg(algs[0].alg).moves);
+    return c;
+  });
+}
+const CASES = { oll: buildCases('oll', OLL_CASES), pll: buildCases('pll', PLL_CASES) };
+CASES.oll.ordered = CASES.oll.slice().sort((a,b) => a.id - b.id);
+CASES.pll.ordered = CASES.pll.slice();
+for (const k of ['oll','pll']) if (!Array.isArray(enabled[k])) enabled[k] = CASES[k].map(c => c.id);
+
+const hasRot = a => /[xyz]/.test(a);
+function algFor(c){
+  if (customAlgs[c.kind][c.id]) return customAlgs[c.kind][c.id];
+  if (settings.noRot && hasRot(c.algs[0].alg)){ const free = c.algs.find(a => !hasRot(a.alg)); if (free) return free.alg; }
+  return c.algs[0].alg;
+}
+function rotNote(alg){
+  const rots = parseAlg(alg).moves.filter(m => 'xyz'.includes(m.base));
+  if (!rots.length) return 'No rotations';
+  const inner = rots.length - (/^[xyz]/.test(alg.trim()) ? 1 : 0) - (/[xyz]'?2?\s*$/.test(alg.trim()) ? 1 : 0);
+  return inner > 0 ? rots.length + ' rotations' : 'Tilts the cube at the start';
+}
+
+/* ---------- 2D thumbnails ---------- */
+const HEX = { U:'#FFD500', D:'#FFFFFF', F:'#009E60', B:'#0051BA', R:'#FF5800', L:'#C41E3A' };
+const GREY = '#7E8794';
+function physicalTop(moves){
+  const st = applyMoves(solvedState(), moves); const m = {};
+  for (const s of st) m[s.p.join(',')+'|'+s.n.join(',')] = s.c;
+  const g = (p, n) => m[p.join(',')+'|'+n.join(',')];
+  const u = []; for (let z=-1; z<=1; z++) for (let x=-1; x<=1; x++) u.push(g([x,1,z],[0,1,0]));
+  return { u, B:[-1,0,1].map(x=>g([x,1,-1],[0,0,-1])), F:[-1,0,1].map(x=>g([x,1,1],[0,0,1])),
+           L:[-1,0,1].map(z=>g([-1,1,z],[-1,0,0])), R:[-1,0,1].map(z=>g([1,1,z],[1,0,0])) };
+}
+function thumbSVG(kind, moves){
+  const t = physicalTop(moves);
+  const col = c => kind === 'oll' ? (c === 'U' ? HEX.U : GREY) : HEX[c];
+  const S = 28, G = 2, O = 16; let out = '';
+  const r = (x,y,w,h,f) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${f}" stroke="#141820" stroke-width="1.5"/>`;
+  t.u.forEach((c,i) => { const cx = i%3, cy = (i/3)|0; out += r(O+cx*(S+G)+1, O+cy*(S+G)+1, S, S, col(c)); });
+  for (let i=0;i<3;i++){
+    out += r(O+i*(S+G)+1, 3, S, 10, col(t.B[i]));
+    out += r(O+i*(S+G)+1, 107, S, 10, col(t.F[i]));
+    out += r(3, O+i*(S+G)+1, 10, S, col(t.L[i]));
+    out += r(107, O+i*(S+G)+1, 10, S, col(t.R[i]));
+  }
+  return out;
+}
+
+/* ---------- 3D cube ---------- */
+const HAS3 = typeof THREE !== 'undefined';
+let renderer, scene, camera, root, cubies = [], webglOK = HAS3;
+const DEFAULT_VIEW = HAS3 ? new THREE.Quaternion().setFromEuler(new THREE.Euler(0.5, -0.62, 0, 'XYZ')) : null;
+function initScene(){
+  const host = $('stage');
+  if (!HAS3){ host.insertAdjacentHTML('beforeend','<div class="fail">The 3D library (three.js) didn’t load, so the cube can’t be drawn. Check your connection and reload. The setups and algs below still work.</div>'); return; }
+  try { renderer = new THREE.WebGLRenderer({ antialias:true, alpha:true }); }
+  catch(e){ webglOK = false; host.insertAdjacentHTML('beforeend','<div class="fail">This browser couldn’t start WebGL, so the 3D cube can’t be drawn. The algs and setups still work below.</div>'); return; }
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  host.prepend(renderer.domElement);
+  scene = new THREE.Scene();
+  camera = new THREE.PerspectiveCamera(30, 1, 0.1, 100);
+  scene.add(new THREE.AmbientLight(0xffffff, 0.62));
+  const dl = new THREE.DirectionalLight(0xffffff, 0.45); dl.position.set(2, 5, 8); scene.add(dl);
+  root = new THREE.Group(); root.quaternion.copy(DEFAULT_VIEW); scene.add(root);
+
+  const body = new THREE.BoxGeometry(0.97, 0.97, 0.97);
+  const bodyMat = new THREE.MeshLambertMaterial({ color: 0x15171c });
+  const stickerGeo = roundedSquare(0.84, 0.13);
+  const mats = {}; for (const f in HEX) mats[f] = new THREE.MeshLambertMaterial({ color: new THREE.Color(HEX[f]) });
+  const faceDefs = [ ['R',[1,0,0],[0,Math.PI/2,0]], ['L',[-1,0,0],[0,-Math.PI/2,0]], ['U',[0,1,0],[-Math.PI/2,0,0]],
+                     ['D',[0,-1,0],[Math.PI/2,0,0]], ['F',[0,0,1],[0,0,0]], ['B',[0,0,-1],[0,Math.PI,0]] ];
+  for (let x=-1;x<=1;x++) for (let y=-1;y<=1;y++) for (let z=-1;z<=1;z++){
+    if (!x && !y && !z) continue;
+    const g = new THREE.Group(); g.add(new THREE.Mesh(body, bodyMat));
+    const pos = [x,y,z];
+    for (const [f, n, rot] of faceDefs){
+      const ax = n.findIndex(v => v !== 0);
+      if (pos[ax] !== n[ax]) continue;
+      const s = new THREE.Mesh(stickerGeo, mats[f]);
+      s.position.set(n[0]*0.492, n[1]*0.492, n[2]*0.492);
+      s.rotation.set(rot[0], rot[1], rot[2]);
+      g.add(s);
+    }
+    g.userData.home = pos; g.position.set(x,y,z);
+    root.add(g); cubies.push(g);
+  }
+  new ResizeObserver(resize).observe(host); resize();
+  setupDrag(host);
+  (function loop(){ renderer.render(scene, camera); requestAnimationFrame(loop); })();
+}
+function roundedSquare(w, r){
+  const h = w/2, s = new THREE.Shape();
+  s.moveTo(-h+r,-h); s.lineTo(h-r,-h); s.quadraticCurveTo(h,-h,h,-h+r); s.lineTo(h,h-r); s.quadraticCurveTo(h,h,h-r,h);
+  s.lineTo(-h+r,h); s.quadraticCurveTo(-h,h,-h,h-r); s.lineTo(-h,-h+r); s.quadraticCurveTo(-h,-h,-h+r,-h);
+  return new THREE.ShapeGeometry(s, 5);
+}
+function resize(){
+  const host = $('stage'), w = host.clientWidth, h = host.clientHeight;
+  if (!w || !h) return;
+  renderer.setSize(w, h, false); camera.aspect = w/h;
+  camera.position.set(0, 0, w/h < 1 ? 12.5 / (w/h) * 0.82 : 12.5);
+  camera.updateProjectionMatrix();
+}
+function setupDrag(el){
+  let last = null;
+  el.addEventListener('pointerdown', e => { if (e.target.closest('button')) return; last = [e.clientX, e.clientY]; el.setPointerCapture(e.pointerId); });
+  el.addEventListener('pointermove', e => {
+    if (!last) return;
+    const dx = e.clientX - last[0], dy = e.clientY - last[1]; last = [e.clientX, e.clientY];
+    const qy = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(0,1,0), dx * 0.009);
+    const qx = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(1,0,0), dy * 0.009);
+    root.quaternion.premultiply(qy).premultiply(qx);
+  });
+  const end = () => { last = null; };
+  el.addEventListener('pointerup', end); el.addEventListener('pointercancel', end);
+  el.addEventListener('dblclick', resetView);
+}
+function resetView(){ if (root) root.quaternion.copy(DEFAULT_VIEW); }
+
+const AX = { x:0, y:1, z:2 };
+const _m = HAS3 ? new THREE.Matrix4() : null;
+function snap(c){
+  c.position.set(Math.round(c.position.x), Math.round(c.position.y), Math.round(c.position.z));
+  _m.makeRotationFromQuaternion(c.quaternion);
+  const e = _m.elements; for (let i=0;i<16;i++) e[i] = Math.round(e[i]);
+  c.quaternion.setFromRotationMatrix(_m);
+}
+function layerOf(mv){
+  const [axis, layers] = BASE[mv.base];
+  return { axis, list: cubies.filter(c => layers.includes(Math.round(c.position.getComponent(AX[axis])))) };
+}
+function turnInstant(mv){
+  if (!webglOK) return;
+  const { axis, list } = layerOf(mv);
+  const q = new THREE.Quaternion().setFromAxisAngle(new THREE.Vector3(axis==='x'?1:0, axis==='y'?1:0, axis==='z'?1:0), moveTurns(mv) * Math.PI/2);
+  for (const c of list){ c.position.applyQuaternion(q); c.quaternion.premultiply(q); snap(c); }
+}
+let fastForward = false;
+function turnAnimated(mv, ms){
+  return new Promise(res => {
+    if (!webglOK || fastForward || ms <= 0){ turnInstant(mv); return res(); }
+    const { axis, list } = layerOf(mv);
+    const pivot = new THREE.Group(); root.add(pivot); root.updateMatrixWorld(true);
+    list.forEach(c => pivot.attach(c));
+    const target = moveTurns(mv) * Math.PI/2;
+    const t0 = performance.now();
+    const finish = () => {
+      pivot.rotation[axis] = target; pivot.updateMatrixWorld(true);
+      list.forEach(c => { root.attach(c); snap(c); }); root.remove(pivot); res();
+    };
+    (function step(now){
+      if (fastForward) return finish();
+      const t = Math.min(1, (now - t0) / ms);
+      const e = t < .5 ? 2*t*t : 1 - Math.pow(-2*t + 2, 2) / 2;
+      pivot.rotation[axis] = target * e;
+      if (t < 1) requestAnimationFrame(step); else finish();
+    })(t0);
+  });
+}
+function resetCube(){
+  for (const c of cubies){ const h = c.userData.home; c.position.set(h[0],h[1],h[2]); c.quaternion.identity(); }
+}
+
+/* ---------- drill state ---------- */
+let mode = settings.mode === 'pll' ? 'pll' : 'oll';
+let current = null;   // {case, solution:[moves], auf:[moves], setup:[moves], custom:bool}
+let phase = 'ready';  // ready | playing | done
+let history = [], drilled = -1, seqIndex = -1;
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+function pool(){ return CASES[mode].ordered.filter(c => enabled[mode].includes(c.id)); }
+
+function loadCase(c, opts = {}){
+  const algText = opts.alg || algFor(c);
+  const sol = parseAlg(algText).moves;
+  let auf = [];
+  if (opts.auf) auf = opts.auf;
+  else if (settings.auf && !opts.customOnce){ const k = Math.floor(Math.random()*4); if (k) auf = [{ base:'U', amount:(4-k)%4 }]; }
+  // state = solved · inv(sol) · inv(auf) ; solution = auf + sol
+  const setup = invertMoves([...auf, ...sol]);
+  current = { case:c, algText, sol, auf, setup, customOnce: !!opts.customOnce };
+  resetCube(); setup.forEach(turnInstant);
+  phase = 'ready';
+  render();
+}
+function nextCase(){
+  const p = pool();
+  if (!p.length){ openCases(); return; }
+  let c;
+  if (settings.random){
+    const choices = p.length > 1 && current ? p.filter(x => x !== current.case) : p;
+    c = choices[Math.floor(Math.random() * choices.length)];
+  } else {
+    seqIndex = (seqIndex + 1) % p.length; c = p[seqIndex];
+  }
+  if (current && !current.customOnce) history.push(current.case);
+  if (history.length > 200) history.shift();
+  drilled++;
+  loadCase(c);
+}
+function prevCase(){
+  const c = history.pop();
+  if (c){ if (c.kind !== mode) setMode(c.kind, true); loadCase(c); }
+}
+let playing = null;
+function idle(fn){ return (...args) => { if (playing){ fastForward = true; playing.then(() => fn(...args)); } else fn(...args); }; }
+function playSolution(){ if (phase !== 'ready' || playing) return; playing = runSolution().finally(() => { playing = null; }); }
+async function runSolution(){
+  phase = 'playing'; fastForward = false; render();
+  const all = [...current.auf, ...current.sol];
+  const ms = reduceMotion ? 0 : 1000 / settings.speed;
+  const lis = $('moves').children;
+  for (let i=0; i<all.length; i++){
+    [...lis].forEach((li,j) => { li.classList.toggle('active', j===i); li.classList.toggle('past', j<i); });
+    const dbl = all[i].amount === 2 ? 1.45 : 1;
+    await turnAnimated(all[i], ms * dbl);
+  }
+  [...lis].forEach(li => { li.classList.remove('active'); li.classList.add('past'); });
+  fastForward = false; phase = 'done'; render(true);
+}
+function mainAction(){
+  if (playing){ fastForward = true; return; }
+  if (settings.animate && phase === 'ready') playSolution();
+  else nextCase();
+}
+function replay(){ loadCase(current.case, { alg: current.algText, auf: current.auf, customOnce: current.customOnce }); }
+
+/* ---------- rendering the panel ---------- */
+function render(keepMoveClasses){
+  const c = current.case;
+  $('modeOll').setAttribute('aria-pressed', mode === 'oll');
+  $('modePll').setAttribute('aria-pressed', mode === 'pll');
+  const p = pool();
+  $('count').textContent = `${p.length} of ${CASES[mode].length} cases on · ${drilled} drilled`;
+  if (current.customOnce){
+    $('caseTitle').textContent = 'Your alg'; $('caseGroup').textContent = 'One-off setup from what you typed';
+    $('caseSrc').hidden = true;
+  } else {
+    $('caseTitle').textContent = c.title; $('caseGroup').textContent = c.group;
+    const custom = !!customAlgs[c.kind][c.id];
+    const used = c.algs.find(a => a.alg === current.algText);
+    const src = custom && !used ? 'mine' : used ? used.src : 'standard';
+    $('caseSrc').hidden = false;
+    $('caseSrc').className = 'src ' + (src === 'yiheng' || src === 'sheet' ? 'yiheng' : '');
+    $('caseSrc').textContent = (SRC_LABEL[src] || 'Standard alg') + ' · ' + rotNote(current.algText);
+  }
+  $('caseThumb').innerHTML = thumbSVG(current.customOnce ? 'pll' : c.kind, current.setup);
+  $('setup').textContent = movesToString(current.setup) || '(nothing: already solved)';
+
+  const shown = settings.show || phase !== 'ready';
+  if (!keepMoveClasses || $('moves').children.length !== current.auf.length + current.sol.length){
+    $('moves').innerHTML = [...current.auf.map(m => `<li class="auf" title="Turn U to line the case up">${moveToString(m)}</li>`),
+                            ...current.sol.map(m => `<li>${moveToString(m)}</li>`)].join('');
+  }
+  $('moves').classList.toggle('masked', !shown);
+  $('maskNote').hidden = shown;
+  $('toggleSol').innerHTML = (settings.show ? 'Hide' : 'Show') + ' <kbd>S</kbd>';
+
+  // alternatives
+  const alts = current.customOnce ? [] : c.algs.filter(a => a.alg !== current.algText);
+  $('alts').innerHTML = shown ? alts.map((a,i) => `<div class="alt"><span>${esc(a.alg)}</span><small>${({ yiheng:'Yiheng', sheet:'your sheet', mine:'yours' })[a.src] || 'standard'}</small><button class="btn ghost" data-alt="${esc(a.alg)}">Use this</button></div>`).join('') : '';
+
+  const willAnimate = settings.animate && phase === 'ready';
+  $('mainAction').innerHTML = (phase === 'playing' ? 'Skip to end' : willAnimate ? 'Animate solution' : 'Next case') + ' <kbd>Space</kbd>';
+  $('clearAlg').hidden = current.customOnce || !customAlgs[c.kind][c.id];
+}
+const SRC_LABEL = { yiheng:'Yiheng’s alg', sheet:'From your OLL sheet', mine:'Your saved alg', standard:'Standard alg' };
+const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
+
+/* ---------- custom algs ---------- */
+function msg(el, text, kind){ el.textContent = text; el.className = 'msg ' + (kind || ''); }
+function saveTyped(){
+  const text = $('algInput').value.trim(), m = $('algMsg');
+  if (!text) return msg(m, 'Type an alg first.', 'err');
+  const p = parseAlg(text);
+  if (p.error) return msg(m, p.error + '. Use R L U D F B, r l u d f b, M E S, x y z with \' or 2.', 'err');
+  if (current.customOnce) return msg(m, 'Pick a normal case first (press → for the next one).', 'err');
+  const c = current.case;
+  if (!solvesCase(c.kind, c.canonSetup, p.moves)) return msg(m, `That alg doesn’t solve ${c.title} (checked from all four angles). Nothing was saved.`, 'err');
+  customAlgs[c.kind][c.id] = movesToString(p.moves); store.set('custom', customAlgs);
+  msg(m, `Saved. ${c.title} now uses your alg.`, 'ok');
+  loadCase(c);
+}
+function tryTyped(){
+  const text = $('algInput').value.trim(), m = $('algMsg');
+  if (!text) return msg(m, 'Type an alg first.', 'err');
+  const p = parseAlg(text);
+  if (p.error) return msg(m, p.error + '. Use R L U D F B, r l u d f b, M E S, x y z with \' or 2.', 'err');
+  if (current && !current.customOnce) history.push(current.case);
+  loadCase(current.case, { alg: movesToString(p.moves), customOnce: true });
+  msg(m, 'Set up. Space plays it; Space again returns to the drill.', 'ok');
+}
+function clearCustom(){
+  const c = current.case; delete customAlgs[c.kind][c.id]; store.set('custom', customAlgs);
+  msg($('algMsg'), `${c.title} is back to the default alg.`, 'ok'); loadCase(c);
+}
+function importSheet(){
+  const lines = $('importText').value.split(/\n+/).map(l => l.trim()).filter(Boolean);
+  let ok = 0; const skipped = [];
+  const pllIds = CASES.pll.map(c => c.id.toLowerCase());
+  for (const line of lines){
+    const mt = line.match(/^(?:(oll|pll)\s*)?#?\s*(\d{1,2}|[a-z]{1,2})(?:\s*-?\s*perm)?\s*[:.\-–—)]?\s+(.+)$/i);
+    if (!mt){ skipped.push(line.slice(0, 30)); continue; }
+    let [, set, id, alg] = mt;
+    let kind = set ? set.toLowerCase() : (/^\d+$/.test(id) ? 'oll' : 'pll');
+    const c = kind === 'oll' ? CASES.oll.find(x => x.id === String(parseInt(id,10)))
+                             : CASES.pll.find(x => x.id.toLowerCase() === id.toLowerCase());
+    const p = parseAlg(alg);
+    if (!c || p.error || !p.moves.length || !solvesCase(kind, c.canonSetup, p.moves)){ skipped.push(line.slice(0, 30)); continue; }
+    customAlgs[kind][c.id] = movesToString(p.moves); ok++;
+  }
+  store.set('custom', customAlgs);
+  msg($('importMsg'), `Imported ${ok} alg${ok===1?'':'s'}.` + (skipped.length ? ` Skipped ${skipped.length} that didn’t parse or didn’t solve their case: ${skipped.slice(0,4).join(' / ')}${skipped.length>4?' …':''}` : ''), skipped.length && !ok ? 'err' : 'ok');
+  if (current && !current.customOnce) loadCase(current.case);
+  buildCasePicker();
+}
+
+/* ---------- dialogs ---------- */
+function buildCasePicker(){
+  const groups = [];
+  for (const c of CASES[mode]){ let g = groups.find(x => x.name === c.group); if (!g) groups.push(g = { name:c.group, items:[] }); g.items.push(c); }
+  $('casesBody').innerHTML = groups.map(g => `<div class="group-name">${esc(g.name)} <button class="btn ghost" data-group="${esc(g.name)}">toggle group</button></div><div class="grid">` +
+    g.items.map(c => `<button class="pick" data-id="${c.id}" aria-pressed="${enabled[mode].includes(c.id)}"><svg viewBox="0 0 120 120">${thumbSVG(c.kind, invertMoves(parseAlg(algFor(c)).moves))}</svg><b>${esc(mode==='oll' ? c.id : c.id)}</b></button>`).join('') + '</div>').join('');
+}
+function openCases(){ buildCasePicker(); $('casesDlg').showModal(); }
+function saveEnabled(){ store.set('enabled', enabled); render(); }
+$('casesBody').addEventListener('click', e => {
+  const b = e.target.closest('.pick'), g = e.target.closest('[data-group]');
+  if (b){ const id = b.dataset.id, list = enabled[mode], i = list.indexOf(id);
+    if (i >= 0) list.splice(i,1); else list.push(id); b.setAttribute('aria-pressed', i < 0); saveEnabled(); }
+  if (g){ const ids = CASES[mode].filter(c => c.group === g.dataset.group).map(c => c.id);
+    const allOn = ids.every(id => enabled[mode].includes(id));
+    enabled[mode] = allOn ? enabled[mode].filter(id => !ids.includes(id)) : [...new Set([...enabled[mode], ...ids])];
+    saveEnabled(); buildCasePicker(); }
+});
+$('pickAll').onclick = () => { enabled[mode] = CASES[mode].map(c => c.id); saveEnabled(); buildCasePicker(); };
+$('pickNone').onclick = () => { enabled[mode] = []; saveEnabled(); buildCasePicker(); };
+document.querySelectorAll('[data-close]').forEach(b => b.onclick = () => b.closest('dialog').close());
+$('casesDlg').addEventListener('close', idle(() => { if (!current || !enabled[mode].includes(current.case.id)) { seqIndex = -1; if (pool().length) nextCase(); } }));
+
+function syncSettingsUI(){
+  $('optAnimate').checked = settings.animate; $('optShow').checked = settings.show;
+  $('optRandom').checked = settings.random; $('optNoRot').checked = settings.noRot; $('optAuf').checked = settings.auf;
+  $('optSpeed').value = settings.speed; $('speedLabel').textContent = settings.speed;
+}
+$('openSettings').onclick = () => { syncSettingsUI(); $('settingsDlg').showModal(); };
+$('openCases').onclick = openCases;
+[['optAnimate','animate'],['optShow','show'],['optRandom','random'],['optAuf','auf'],['optNoRot','noRot']].forEach(([id,k]) =>
+  $(id).addEventListener('change', idle(e => { settings[k] = e.target.checked; saveSettings(); if (k==='random') seqIndex = -1; if (k==='noRot' && current && !current.customOnce) loadCase(current.case); else render(true); })));
+$('optSpeed').addEventListener('input', e => { settings.speed = +e.target.value; $('speedLabel').textContent = settings.speed; saveSettings(); });
+$('importBtn').onclick = idle(importSheet);
+function exportPage(){
+  const code = s => ({ yiheng:'y', sheet:'u', mine:'m' })[s] || 's';
+  const rows = kind => CASES[kind].map(c => {
+    const list = [], seen = new Set();
+    const add = (a, s) => { const k = a.replace(/\s+/g, ' ').trim(); if (!seen.has(k)){ seen.add(k); list.push([k, s]); } };
+    const mine = customAlgs[kind][c.id], same = mine && c.algs.find(a => a.alg.replace(/\s+/g, ' ').trim() === mine.replace(/\s+/g, ' ').trim());
+    if (mine) add(mine, same ? code(same.src) : 'm');
+    c.algs.forEach(a => add(a.alg, code(a.src)));
+    const [p, ...rest] = list;
+    return [kind === 'oll' ? +c.id : c.id, c.group, p[0], p[1], rest];
+  });
+  const block = '/*' + 'ALGS_START*/\nconst OLL_CASES = ' + JSON.stringify(rows('oll')) + ';\nconst PLL_CASES = ' + JSON.stringify(rows('pll')) + ';\n/*' + 'ALGS_END*/';
+  const re = new RegExp('/\\*ALGS_START\\*/[\\s\\S]*?/\\*ALGS_END\\*/');
+  if (!re.test(PRISTINE)) return msg($('importMsg'), 'Couldn’t find the alg data inside this page, so nothing was downloaded.', 'err');
+  const html = PRISTINE.replace(re, () => block);
+  const name = decodeURIComponent((location.pathname.split('/').pop() || 'index.html')) || 'index.html';
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([html], { type:'text/html' })); a.download = /\.html?$/.test(name) ? name : 'index.html';
+  document.body.appendChild(a); a.click(); a.remove();
+  const n = Object.keys(customAlgs.oll).length + Object.keys(customAlgs.pll).length;
+  msg($('importMsg'), `Downloaded ${a.download} with ${n} of your algs built in as the defaults. Upload it to GitHub in place of the old file.`, 'ok');
+}
+$('exportBtn').onclick = exportPage;
+function checkText(text){
+  if (!text.trim() || !current || current.customOnce) return null;
+  const p = parseAlg(text); if (p.error) return { ok:false, text: p.error + '.' };
+  const c = current.case;
+  return solvesCase(c.kind, c.canonSetup, p.moves)
+    ? { ok:true, text: `✓ Solves ${c.title} (${p.moves.length} moves). Press “Save for this case” to keep it.` }
+    : { ok:false, text: `Doesn’t solve ${c.title} yet.` };
+}
+$('resetAll').onclick = () => { customAlgs.oll = {}; customAlgs.pll = {}; store.set('custom', customAlgs); msg($('importMsg'), 'All your saved algs are cleared. Every case is back to its default.', 'ok'); if (current && !current.customOnce) loadCase(current.case); };
+
+/* ---------- controls ---------- */
+function setMode(m, silent){
+  mode = m; settings.mode = m; saveSettings(); seqIndex = -1;
+  if (!silent){ history = []; nextCase(); }
+}
+const switchMode = idle(m => { if (mode !== m) setMode(m); });
+$('modeOll').onclick = () => switchMode('oll');
+$('modePll').onclick = () => switchMode('pll');
+$('mainAction').onclick = mainAction;
+$('replay').onclick = idle(replay);
+$('prev').onclick = idle(prevCase);
+$('resetView').onclick = resetView;
+$('toggleSol').onclick = () => { settings.show = !settings.show; saveSettings(); render(true); };
+$('saveAlg').onclick = idle(saveTyped);
+$('tryAlg').onclick = idle(tryTyped);
+$('clearAlg').onclick = idle(clearCustom);
+$('algInput').addEventListener('keydown', e => { if (e.key === 'Enter'){ e.preventDefault(); idle(tryTyped)(); } });
+$('algInput').addEventListener('input', () => { const r = checkText($('algInput').value); if (r) msg($('algMsg'), r.text, r.ok ? 'ok' : 'err'); else msg($('algMsg'), ''); });
+$('alts').addEventListener('click', e => {
+  const b = e.target.closest('[data-alt]'); if (!b) return;
+  if (playing) return;
+  const c = current.case; customAlgs[c.kind][c.id] = b.dataset.alt; store.set('custom', customAlgs); loadCase(c);
+  msg($('algMsg'), `${c.title} now uses that alg.`, 'ok');
+});
+// mouse clicks shouldn't leave focus on a button (Space would press it again)
+document.addEventListener('click', e => { const b = e.target.closest('button, label'); if (b && e.detail > 0) setTimeout(() => { const a = document.activeElement; if (a && a !== document.body && !['text', 'search'].includes(a.type) && a.tagName !== 'TEXTAREA') a.blur(); }, 0); });
+
+document.addEventListener('keydown', e => {
+  if (document.querySelector('dialog[open]')) return;
+  const tag = (e.target.tagName || '').toLowerCase(), typ = (e.target.type || '').toLowerCase();
+  if (tag === 'textarea' || (tag === 'input' && !['checkbox', 'radio', 'button'].includes(typ)) || e.metaKey || e.ctrlKey || e.altKey) return;
+  if (tag === 'input' && (e.key === ' ' || e.key.startsWith('Arrow'))) e.target.blur();
+  const k = e.key;
+  if (k === ' ' || e.code === 'Space'){ e.preventDefault(); if (!e.repeat) mainAction(); return; }
+  if (e.repeat) return;
+  if (k === 's' || k === 'S'){ settings.show = !settings.show; saveSettings(); render(true); }
+  else if (k === 'r' || k === 'R') idle(replay)();
+  else if (k === 'ArrowRight') idle(nextCase)();
+  else if (k === 'ArrowLeft') idle(prevCase)();
+  else if (k === '1') switchMode('oll');
+  else if (k === '2') switchMode('pll');
+});
+
+/* ---------- start ---------- */
+initScene();
+nextCase();
+})();
+</script>
+</body>
+</html>
