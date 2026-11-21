@@ -432,7 +432,58 @@ function topView(fs) {
   };
 }
 
-if (typeof module !== 'undefined') module.exports = {
+// ---------- grip model: counts regrips by tracking both hands ----------
+// right wrist r: R +1, R' -1 (home 0, range ±2); left wrist l: L' +1, L -1 (mirror of the right hand)
+const GT = { U: [0.6, 0.9], R: [0.7, 1.0], L: [0.75, 1.1], F: [0.9, 1.4], D: [1.25, 1.9], B: [1.9, 2.9] };
+const REGRIP = 3.0, ALT_FINGER = 0.15;
+function gripSim(names) {            // names: [['R', 0|1|2]] with 0 = clockwise, 1 = half, 2 = counter-clockwise
+  let r = 0, l = 0, t = 0, regrips = 0;
+  const regrip = h => { regrips++; t += REGRIP; if (h === 'r') r = 0; else l = 0; };
+  const wrist = (v, d) => { if (Math.abs(v + d) <= 2) return [v + d, false]; if (Math.abs(v - d) <= 2 && Math.abs(d) === 2) return [v - d, false]; return [null, true]; };
+  for (const [f, k] of names) {
+    const half = k === 1, cw = k === 0;
+    t += GT[f][half ? 1 : 0];
+    if (f === 'R' || f === 'L') {
+      let d = half ? (f === 'R' ? (r > 0 ? -2 : 2) : (l > 0 ? -2 : 2)) : (f === 'R' ? (cw ? 1 : -1) : (cw ? -1 : 1));
+      let [nv, bad] = wrist(f === 'R' ? r : l, d);
+      if (bad) { regrip(f === 'R' ? 'r' : 'l'); nv = d; }
+      if (f === 'R') r = nv; else l = nv;
+    } else if (f === 'U') {
+      const rOk = r === 0 || r === 1, lOk = l === 0 || l === 1;
+      if (half) { if (!rOk && !lOk) regrip('r'); }
+      else if (cw) { if (rOk) {} else if (l === 0) t += ALT_FINGER; else regrip('r'); }
+      else { if (lOk) {} else if (r === 0) t += ALT_FINGER; else regrip('l'); }
+    } else if (f === 'F') {
+      if (half) { if (!(r === -1 || l === -1)) regrip('l'); }
+      else if (cw) { if (r === -1 || l === -1) {} else if (l === 0) t += ALT_FINGER * 0.7; else regrip('l'); }
+      else { if (r === 0 || r === -1 || l === -1) {} else regrip('r'); }
+    } else if (f === 'D') {
+      if (half) { if (!(r === 0 || l === 0)) regrip('r'); }
+      else if (cw) { if (l !== 0) { if (r === 0) t += ALT_FINGER; else regrip('l'); } }
+      else { if (r !== 0) { if (l === 0) t += ALT_FINGER; else regrip('r'); } }
+    } else if (f === 'B') {
+      if (half) regrip('r');
+      else if (cw) { if (l !== 0) regrip('l'); }
+      else { if (r !== 0) regrip('r'); }
+    }
+  }
+  return { t, regrips };
+}
+
+function gripOf(text) {
+  const names = [], p = parseAlg(text);
+  let extra = 0, extraRegrips = 0;
+  for (const m of p.moves) {
+    const b = m.base, k = m.amount === 1 ? 0 : m.amount === 2 ? 1 : 2;
+    if ('RLUDFB'.includes(b)) names.push([b, k]);
+    else if ('rludfb'.includes(b)) names.push([b.toUpperCase(), k]);
+    else { extra += REGRIP; extraRegrips++; }
+  }
+  const s = gripSim(names);
+  return { t: s.t + extra, regrips: s.regrips + extraRegrips };
+}
+
+if (typeof module !== 'undefined') module.exports = { gripSim, gripOf,
   parseAlg, invertAlg, invertMoves, movesToString, moveToString, moveTurns, BASE,
   solvedState, applyMoves, stateAfter, f2lIntact, solvesCase, topView, SOLVED_FRAMED, U_FACE_SLOTS, U
 };
