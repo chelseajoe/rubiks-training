@@ -163,6 +163,36 @@ details.typein input{flex:1;font-family:var(--mono);padding:7px 10px;border-radi
 .pick svg.net{width:84px;height:84px}
 .alt .tag{font-family:var(--sans);font-size:.72rem;font-weight:700;color:var(--accent);white-space:nowrap}
 a.btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center}
+.seg.modes{display:flex;width:100%}
+.seg.modes button{flex:1;padding:8px 6px;font-size:.88rem}
+.quiz{border:2px solid var(--accent);border-radius:14px;padding:14px;background:var(--mat)}
+.quiz-q{font-size:1.05rem !important;color:var(--ink) !important;font-weight:800 !important;margin:0 0 4px !important}
+.quiz-sub{margin:0 0 10px;color:var(--muted);font-size:.88rem}
+.quiz-map{width:100%;max-width:290px;display:block;margin:0 auto}
+.quiz-map .spot{cursor:pointer}
+.quiz-map .spot rect{fill:var(--panel);stroke:var(--line);stroke-width:2}
+.quiz-map .spot:hover rect{stroke:var(--muted)}
+.quiz-map .spot.picked rect{stroke:var(--accent);stroke-width:4}
+.quiz-map .spot.right rect{fill:#2FA36B;stroke:#1E6B45}
+.quiz-map .spot.wrong rect{fill:#D9583B;stroke:#8E2D17}
+.quiz-map .spot.off{pointer-events:none;opacity:.25}
+.quiz-map .now{fill:none;stroke:#B14CFF;stroke-width:2.5;stroke-dasharray:4 3}
+.quiz-map text{font-family:var(--sans);font-size:9px;fill:var(--muted);text-anchor:middle}
+.quiz-map .spot text{font-weight:700;fill:var(--ink);font-size:9.5px;pointer-events:none}
+.quiz-map .spot.right text,.quiz-map .spot.wrong text{fill:#fff}
+.dirs{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:10px}
+.dirs p{grid-column:1/-1;margin:0 0 2px;font-size:.88rem;font-weight:700}
+.dirs button{border:2px solid var(--line);background:var(--panel);border-radius:8px;padding:6px;font-weight:600;cursor:pointer}
+.dirs button[aria-pressed="true"]{border-color:var(--accent)}
+.dirs button.right{background:#2FA36B;color:#fff;border-color:#1E6B45}
+.dirs button.wrong{background:#D9583B;color:#fff;border-color:#8E2D17}
+.qpath{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px;list-style:none;padding:0}
+.qpath li{display:flex;flex-direction:column;align-items:center;background:var(--chip);border-radius:7px;padding:3px 6px;min-width:2.6em}
+.qpath li b{font-family:var(--mono);font-size:.92rem}
+.qpath li span{font-size:.68rem;color:var(--muted);white-space:nowrap}
+.qpath li.moved span{color:#B14CFF;font-weight:700}
+.quiz-stats{font-size:.85rem;color:var(--muted);margin-top:8px;font-variant-numeric:tabular-nums}
+.quiz-stats b{color:var(--ink)}
 .totals{font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
 .totals b{color:var(--ink)}
 .working{color:var(--muted);font-size:.9rem}
@@ -269,6 +299,29 @@ a.btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center}
       </div>
       <svg class="thumb f2lthumb" id="f2lThumb" viewBox="0 0 140 140" aria-hidden="true"></svg>
     </div>
+    <div class="seg modes" id="f2lMode" role="group" aria-label="How to practise">
+      <button data-qm="0">Walk through</button><button data-qm="1">Predict where pieces go</button>
+    </div>
+    <section class="block quiz" id="quizBlock" hidden>
+      <h2 class="quiz-q" id="quizQ"></h2>
+      <p class="quiz-sub" id="quizSub"></p>
+      <svg class="quiz-map" id="quizMap" viewBox="0 0 220 236" aria-label="Map of the top layer and the four slots"></svg>
+      <div id="quizOri"></div>
+      <div class="msg" id="quizFb"></div>
+      <div id="quizPath"></div>
+      <div class="actions" style="grid-template-columns:1fr;margin-top:6px">
+        <button class="btn primary" id="quizGo">Check <kbd>Space</kbd></button>
+      </div>
+      <div class="quiz-stats" id="quizStats"></div>
+      <details class="typein"><summary>Quiz settings</summary>
+        <label class="setting"><div><b>Show the moves for this pair</b><p>Off is harder: you have to know the F2L alg and track the piece in your head.</p></div><input type="checkbox" class="switch" id="optQuizAlg"></label>
+        <label class="setting"><div><b>Also guess how it’s turned</b><p>Asks which way one of its stickers faces at the end.</p></div><input type="checkbox" class="switch" id="optQuizOri"></label>
+        <label class="setting"><div><b>Watch the pair play before the answer</b><p>Off shows the answer straight away.</p></div><input type="checkbox" class="switch" id="optQuizWatch"></label>
+        <div class="setting"><div><b>Which pieces to ask about</b><p>The next pair is what you’d actually look at during a solve.</p></div>
+          <div class="seg" id="quizWho"><button data-who="next">Next pair</button><button data-who="any">Any later pair</button></div></div>
+        <button class="btn ghost" id="quizReset">Reset my score</button>
+      </details>
+    </section>
     <section class="block">
       <div class="row"><h2 id="f2lScrambleLabel">Scramble</h2></div>
       <div class="scramble" id="f2lScramble"></div>
@@ -278,7 +331,7 @@ a.btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center}
         <button class="btn ghost" id="f2lRedo">Back to the start <kbd>R</kbd></button>
       </div>
     </section>
-    <section class="block">
+    <section class="block" id="f2lAheadBlock">
       <h2>Look ahead: highlight the pairs you'll solve next</h2>
       <div class="seg ahead" id="f2lAhead" role="group" aria-label="Pairs to highlight">
         <button data-ahead="0">This pair</button><button data-ahead="1">+1 next</button><button data-ahead="2">+2 next</button><button data-ahead="3">+3 next</button>
@@ -288,6 +341,7 @@ a.btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center}
     <section class="block">
       <div class="row"><h2>Steps</h2><button class="btn ghost" id="f2lToggleSol">Show <kbd>S</kbd></button></div>
       <div class="steps" id="f2lSteps"></div>
+      <div id="f2lWalkCtl">
       <div class="stepper">
         <button class="btn" id="f2lPrevStep" title="Previous step (↑)">⏮ Step</button>
         <button class="btn" id="f2lPrevMove" title="Undo one move (←)">◀ Move</button>
@@ -297,6 +351,7 @@ a.btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center}
       <div class="actions" style="margin-top:8px;grid-template-columns:1fr auto">
         <button class="btn primary" id="f2lPlay">Play <kbd>Space</kbd></button>
         <button class="btn" id="f2lPlayAll">Play the rest</button>
+      </div>
       </div>
       <div class="alts" id="f2lAlts"></div>
     </section>
@@ -348,6 +403,7 @@ a.btn{text-decoration:none;color:inherit;display:inline-flex;align-items:center}
         <button class="btn primary" id="playStep">Play next step <kbd>Space</kbd></button>
         <button class="btn" id="playAll">Play the rest</button>
       </div>
+      <p class="masknote">F2L is ranked by how fast it is to turn, not only by move count. F, B, D and double turns count as slower, and a y rotation counts as about two easy moves, so you only get one where it beats regrips and B turns.</p>
       <label class="setting"><div><b>Pick pairs I can see from the front</b><p>Never chooses a pair with a piece hidden in a back slot or at the back of the bottom, when another pair is visible. Costs about half a move per solve on average.</p></div><input type="checkbox" class="switch" id="optVisible"></label>
       <label class="setting"><div><b>Snap back to the front view each step</b><p>Keeps you looking from the front, the way you’d hold it, instead of turning the cube to peek at the back.</p></div><input type="checkbox" class="switch" id="optSnap"></label>
     </section>
@@ -413,6 +469,7 @@ const BASE = {
 function normalizeAlgText(text) {
   return String(text)
     .replace(/[’‘`´′ʼ]/g, "'")
+    .replace(/[·•]/g, ' ')
     .replace(/[()\[\],]/g, ' ')
     .replace(/\/\/.*$/gm, ' ');
 }
@@ -438,18 +495,23 @@ function parseAlg(text) {
     let amount = num * (m[3] ? -1 : 1);
     amount = ((amount % 4) + 4) % 4; // 1,2,3
     if (amount === 0) { i = re.lastIndex; continue; }
-    moves.push({ base: face, amount });
+    // keep the move exactly as written (R3 stays R3, R2' stays R2') for display and animation
+    moves.push({ base: face, amount, raw: m[0], q: num * (m[3] ? -1 : 1) });
     i = re.lastIndex;
   }
   return { moves, error: null };
 }
 
 function moveToString(mv) {
+  if (mv.raw) return mv.raw;
   return mv.base + (mv.amount === 1 ? '' : mv.amount === 2 ? '2' : "'");
 }
+function invertRaw(raw) { return raw.endsWith("'") ? raw.slice(0, -1) : /2$/.test(raw) ? raw : raw + "'"; }
 function movesToString(moves) { return moves.map(moveToString).join(' '); }
 function invertMoves(moves) {
-  return moves.slice().reverse().map(m => ({ base: m.base, amount: (4 - m.amount) % 4 }));
+  return moves.slice().reverse().map(m => m.raw
+    ? { base: m.base, amount: (4 - m.amount) % 4, raw: invertRaw(m.raw), q: -m.q }
+    : { base: m.base, amount: (4 - m.amount) % 4 });
 }
 function invertAlg(text) {
   const p = parseAlg(text);
@@ -458,6 +520,7 @@ function invertAlg(text) {
 // quarter turns signed for animation (-2..2)
 function moveTurns(mv) {
   const sign = BASE[mv.base][2];
+  if (mv.q) return sign * mv.q;   // as written: R3 is a real triple turn
   if (mv.amount === 1) return sign;
   if (mv.amount === 3) return -sign;
   return 2 * sign;
@@ -890,25 +953,76 @@ function pairSolutions(st, k, keep, cap, maxDepth, budget) {
   return out;
 }
 // greedy: at each step, the remaining pair with the shortest optimal insertion (ties -> ergonomics)
-// pieces you can't see from the front: edge in a back slot (BL=10, BR=11), corner in the back of the D layer (DBL=6, DRB=7)
-const hiddenCount = (s, k) => ([6, 7].includes((s[4 + k] / 3) | 0) ? 1 : 0) + ([10, 11].includes((s[8 + k] / 2) | 0) ? 1 : 0);
-function solveF2L(st, budget, visible) {
-  const steps = []; let s = st; const done = [];
-  for (let k = 0; k < 4; k++) if (pairSolved(s, k)) { done.push(k); steps.push({ slot: SLOT_NAMES[k], moves: [], note: 'already solved' }); }
+// ---------- speed model: what's fast to turn, not just what's short ----------
+// costs are rough turning time with R = 1; double turns of F/B/L/D mean regrips
+const FACE_N = { U: [0, 1, 0], R: [1, 0, 0], F: [0, 0, 1], D: [0, -1, 0], L: [-1, 0, 0], B: [0, 0, -1] };
+const MCOST = { U: [0.75, 1.15], R: [1, 1.35], L: [1.1, 1.6], F: [1.35, 2.3], D: [1.4, 2.1], B: [2.0, 3.0] };
+const ROT_COST = [0, 1.9, 2.8, 1.9];             // change of grip by 0, 1 (y), 2 (y2), 3 (y') quarter turns
+const ROT_TOKEN = ['', 'y', 'y2', "y'"];
+const faceAt = n => FACE_NAMES.find(g => FACE_N[g].every((v, i) => v === n[i]));
+// HELD[h][fixedFace] = name of that face after h y-rotations
+const HELD = [0, 1, 2, 3].map(h => FACE_NAMES.map(f => faceAt(rotVec(FACE_N[f], 'y', -h))));
+const seqTime = (seq, h) => seq.reduce((c, m) => c + MCOST[HELD[h][(m / 3) | 0]][m % 3 === 1 ? 1 : 0], 0);
+const heldStr = (seq, h) => seq.map(m => HELD[h][(m / 3) | 0] + ['', '2', "'"][m % 3]).join(' ');
+const SLOT_VEC = { FR: [1, 0, 1], FL: [-1, 0, 1], BL: [-1, 0, -1], BR: [1, 0, -1] };
+const slotOfVec = v => Object.keys(SLOT_VEC).find(s => SLOT_VEC[s][0] === v[0] && SLOT_VEC[s][2] === v[2]);
+const heldSlot = (slot, h) => slotOfVec(rotVec(SLOT_VEC[slot], 'y', -h));
+// a piece you can't see from the front (as you're holding the cube): back of the middle or bottom layer
+function hiddenAt(s, k, h) {
+  const cv = rotVec(CORNER_SLOTS[(s[4 + k] / 3) | 0][0], 'y', -h), ev = rotVec(EDGE_SLOTS[(s[8 + k] / 2) | 0][0], 'y', -h);
+  return (cv[2] === -1 && cv[1] <= 0 ? 1 : 0) + (ev[2] === -1 && ev[1] <= 0 ? 1 : 0);
+}
+// solutions of exactly `depth` moves using only `faces`
+function pairExact(st, k, keep, depth, cap, faces, budget) {
+  const need = keep.concat([k]), out = [], path = []; let nodes = 0;
+  const h = s => { let v = CROSS_T[crossIndex(s)]; for (const j of need) { const x = PAIR_T[j][s[4 + j] * 24 + s[8 + j]]; if (x > v) v = x; } return v; };
+  (function dfs(s, d, last) {
+    if (out.length >= cap || ++nodes > budget) return;
+    if (h(s) > d) return;
+    if (d === 0) { out.push(path.slice()); return; }
+    for (const f of faces) {
+      if (d === 1 && f === 0) continue;                       // a final U turn never matters for F2L
+      if (last >= 0 && (f === last || (f % 3 === last % 3 && f < last))) continue;
+      for (let a = 0; a < 3; a++) { const m = f * 3 + a; path.push(m); dfs(applyTracked(s, m), d - 1, f); path.pop(); if (out.length >= cap) return; }
+    }
+  })(st, depth, -1);
+  return out;
+}
+// candidate solutions for slot k: the shortest ones with any face, plus longer ones that only use
+// easy faces (U R L, or U R F for sledgehammer-type edges) for each way of holding the cube
+function pairCandidates(s, k, keep, budget, extra) {
+  let opt = [];
+  try { opt = pairSolutions(s, k, keep, 40, 16, budget); } catch (e) { if (e !== 'budget') throw e; }
+  if (!opt.length) return [];
+  const d = opt[0].length, out = opt.slice();
+  const ext = extra == null ? 2 : extra;
+  for (let h2 = 0; h2 < 4; h2++) {
+    const fixedOf = name => HELD[h2].indexOf(name);
+    const rul = ['U', 'R', 'L'].map(fixedOf).sort((a, b) => a - b), ruf = ['U', 'R', 'F'].map(fixedOf).sort((a, b) => a - b);
+    for (let x = d; x <= d + ext; x++) out.push(...pairExact(s, k, keep, x, 25, rul, budget / 8));
+    for (let x = d; x <= d + ext - 1; x++) out.push(...pairExact(s, k, keep, x, 20, ruf, budget / 8));
+  }
+  return out;
+}
+// cheapest way to do `seq` from grip h: maybe rotate first
+function bestGrip(seq, h) {
+  let best = null;
+  for (let r = 0; r < 4; r++) { const h2 = (h + r) % 4, t = ROT_COST[r] + seqTime(seq, h2); if (!best || t < best.t) best = { t, r, h2 }; }
+  return best;
+}
+// greedy F2L: each time, the pair that's fastest to solve next (by the speed model above)
+function solveF2L(st, budget, visible, startHeld) {
+  const steps = []; let s = st, h = startHeld || 0; const done = [];
+  for (let k = 0; k < 4; k++) if (pairSolved(s, k)) { done.push(k); steps.push({ slot: SLOT_NAMES[k], heldSlot: heldSlot(SLOT_NAMES[k], h), moves: [], rot: '', held: '', time: 0, note: 'already solved' }); }
   while (done.length < 4) {
+    let order = [0, 1, 2, 3].filter(k => !done.includes(k));
+    if (visible) { const seen = order.filter(k => hiddenAt(s, k, h) === 0); if (seen.length) order = seen; }
     let best = null;
-    const lb = k => Math.max(CROSS_T[crossIndex(s)], PAIR_T[k][s[4 + k] * 24 + s[8 + k]]);
-    let order = [0, 1, 2, 3].filter(k => !done.includes(k)).sort((a, b) => lb(a) - lb(b));
-    if (visible) { const seen = order.filter(k => hiddenCount(s, k) === 0); if (seen.length) order = seen; }
     for (const bud of [budget, budget * 12]) {
       for (const k of order) {
-        const maxD = best ? best.moves.length : 16;
-        if (lb(k) > maxD) continue;
-        let sols = [];
-        try { sols = pairSolutions(s, k, done, 60, maxD, bud); } catch (e) { if (e !== 'budget') throw e; }
-        for (const q of sols) {
-          const hid = hiddenCount(s, k);
-          if (!best || q.length < best.moves.length || (q.length === best.moves.length && (hid < best.hid || (hid === best.hid && seqCost(q) < seqCost(best.moves))))) best = { k, moves: q, hid };
+        for (const q of pairCandidates(s, k, done, bud)) {
+          const g = bestGrip(q, h);
+          if (!best || g.t < best.t - 1e-9 || (Math.abs(g.t - best.t) < 1e-9 && q.length < best.moves.length)) best = { k, moves: q, t: g.t, r: g.r, h2: g.h2 };
         }
       }
       if (best) break;
@@ -916,7 +1030,9 @@ function solveF2L(st, budget, visible) {
     if (!best) return null;
     for (const m of best.moves) s = applyTracked(s, m);
     done.push(best.k);
-    steps.push({ slot: SLOT_NAMES[best.k], moves: best.moves });
+    const rot = ROT_TOKEN[best.r], held = heldStr(best.moves, best.h2);
+    steps.push({ slot: SLOT_NAMES[best.k], heldSlot: heldSlot(SLOT_NAMES[best.k], best.h2), moves: best.moves, rot, held: (rot ? rot + ' ' : '') + held, time: best.t });
+    h = best.h2;
   }
   return steps;
 }
@@ -937,18 +1053,18 @@ function solveCFOP(scramble, face, llAlgs, opts) {
     let s = st0; for (const m of cr) s = applyTracked(s, m);
     const f2l = solveF2L(s, opts.budget || 3e6, !!opts.visible);
     if (!f2l) continue;
-    const len = cr.length + f2l.reduce((a, p) => a + p.moves.length, 0);
-    if (!best || len < best.len || (len === best.len && seqCost(cr) < seqCost(best.cross))) best = { cross: cr, f2l, len };
+    const time = seqTime(cr, 0) + f2l.reduce((a, p) => a + p.time, 0);
+    if (!best || time < best.time) best = { cross: cr, f2l, time };
   }
   if (!best) return null;
-  const f2lText = [mvStr(best.cross), ...best.f2l.map(p => mvStr(p.moves))].join(' ');
+  const f2lText = [mvStr(best.cross), ...best.f2l.map(p => p.held)].join(' ');
   // last layer with the drill algs
   const stLL = applyMoves(solvedState(), parseAlg(scramble + ' ' + rot + ' ' + f2lText).moves);
   const ll = solveLL(stLL, llAlgs);
   return {
     face, rotation: rot, crossLen: best.cross.length,
     cross: mvStr(best.cross),
-    pairs: best.f2l.map(p => ({ slot: p.slot, moves: mvStr(p.moves), note: p.note || '' })),
+    pairs: best.f2l.map(p => ({ slot: p.slot, heldSlot: p.heldSlot, moves: p.held, rot: p.rot, note: p.note || '' })),
     oll: ll.oll, pll: ll.pll
   };
 }
@@ -978,9 +1094,13 @@ function solveLL(st, llAlgs) {
   const solvedEq = fs => fs.every((c, i) => c === SOLVED_FRAMED[i]);
   for (let b = 0; b < 4 && !pll; b++) { const t = applyMoves(cloneSt(st2), parseAlg(AUF[b]).moves); if (solvedEq(frameState(t))) pll = { id: 'skip', alg: '', auf: '', post: AUF[b] }; }
   if (!pll) {
-    outer2: for (const c of llAlgs.pll) for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) {
+    const aufCost = [0, 1, 1.3, 1];
+    let bestCost = Infinity;
+    for (const c of llAlgs.pll) for (let a = 0; a < 4; a++) for (let b = 0; b < 4; b++) {
+      const cost = aufCost[a] + aufCost[b] * 0.6;
+      if (cost >= bestCost) continue;
       const t = applyMoves(cloneSt(st2), parseAlg(AUF[a] + ' ' + c.alg + ' ' + AUF[b]).moves);
-      if (solvedEq(frameState(t))) { pll = { id: c.id, alg: c.alg, auf: AUF[a], post: AUF[b] }; break outer2; }
+      if (solvedEq(frameState(t))) { pll = { id: c.id, alg: c.alg, auf: AUF[a], post: AUF[b], note: c.note || '' }; bestCost = cost; }
     }
   }
   return { oll, pll };
@@ -1011,13 +1131,16 @@ function f2lScramble(setup, k, alg, visible, real) {
   let rest = [];
   if (real) {
     const after = applyMoves(solvedState(), parseAlg(scramble + ' ' + alg).moves);
+    // the alg may turn the cube (y); the solver works in that new frame, so map slot names back for piece identity
+    const h0 = parseAlg(alg).moves.filter(m => m.base === 'y').reduce((a, m) => (a + m.amount) % 4, 0);
     const steps = solveF2L(trackedFromCubie(stickersToCubie(after)), 3e6, visible) || [];
-    rest = steps.filter(p => p.slot !== SLOT_NAMES[k]).map(p => ({ slot: p.slot, moves: mvStr(p.moves), note: p.note || '' }));
+    rest = steps.filter(p => slotOfVec(rotVec(SLOT_VEC[p.slot], 'y', h0)) !== SLOT_NAMES[k])
+      .map(p => ({ slot: slotOfVec(rotVec(SLOT_VEC[p.slot], 'y', h0)), heldSlot: p.heldSlot, moves: p.held, rot: p.rot, note: p.note || '' }));
   }
   return { scramble, rest };
 }
 
-if (typeof module !== 'undefined') module.exports = { f2lScramble,
+if (typeof module !== 'undefined') module.exports = { pairCandidates, bestGrip, seqTime, heldStr, HELD, ROT_TOKEN, pairExact, f2lScramble,
   MOVES, MOVE_STR, cIdentity, cApply, cMul, mvStr, mvParse, mvInverse, stickersToCubie, twoPhaseSolve, randomCube,
   randomStateScramble, buildTwoPhase, buildCFOPTables, trackedFromCubie, applyTracked, crossSolutions, solveF2L, solveCFOP, BOTTOM_ROT
 };
@@ -1071,6 +1194,7 @@ const BASE = {
 function normalizeAlgText(text) {
   return String(text)
     .replace(/[’‘`´′ʼ]/g, "'")
+    .replace(/[·•]/g, ' ')
     .replace(/[()\[\],]/g, ' ')
     .replace(/\/\/.*$/gm, ' ');
 }
@@ -1096,18 +1220,23 @@ function parseAlg(text) {
     let amount = num * (m[3] ? -1 : 1);
     amount = ((amount % 4) + 4) % 4; // 1,2,3
     if (amount === 0) { i = re.lastIndex; continue; }
-    moves.push({ base: face, amount });
+    // keep the move exactly as written (R3 stays R3, R2' stays R2') for display and animation
+    moves.push({ base: face, amount, raw: m[0], q: num * (m[3] ? -1 : 1) });
     i = re.lastIndex;
   }
   return { moves, error: null };
 }
 
 function moveToString(mv) {
+  if (mv.raw) return mv.raw;
   return mv.base + (mv.amount === 1 ? '' : mv.amount === 2 ? '2' : "'");
 }
+function invertRaw(raw) { return raw.endsWith("'") ? raw.slice(0, -1) : /2$/.test(raw) ? raw : raw + "'"; }
 function movesToString(moves) { return moves.map(moveToString).join(' '); }
 function invertMoves(moves) {
-  return moves.slice().reverse().map(m => ({ base: m.base, amount: (4 - m.amount) % 4 }));
+  return moves.slice().reverse().map(m => m.raw
+    ? { base: m.base, amount: (4 - m.amount) % 4, raw: invertRaw(m.raw), q: -m.q }
+    : { base: m.base, amount: (4 - m.amount) % 4 });
 }
 function invertAlg(text) {
   const p = parseAlg(text);
@@ -1116,6 +1245,7 @@ function invertAlg(text) {
 // quarter turns signed for animation (-2..2)
 function moveTurns(mv) {
   const sign = BASE[mv.base][2];
+  if (mv.q) return sign * mv.q;   // as written: R3 is a real triple turn
   if (mv.amount === 1) return sign;
   if (mv.amount === 3) return -sign;
   return 2 * sign;
@@ -1328,8 +1458,8 @@ const PLL_CASES = [
  ["Ab","Corners only","x' R U' R D2 R' U R D2 R2 x","y",[["x R2 D2 R U R' D2 R U' R x'","y"],["R B' R F2 R' B R F2 R2","s"]]],
  ["E","Corners only","x' R U' R' D R U R' D' R U R' D R U' R' D' x","y",[["R B' R' F R B R' F' R B R' F R B' R' F'","s"]]],
  ["H","Edges only","M2 U M2 U2 M2 U M2","y",[["M2 U2 M2 U M2 U2 M2","y"]]],
- ["Ua","Edges only","R U' R U R U R U' R' U' R2","y",[]],
- ["Ub","Edges only","R2 U R U R' U' R' U' R' U R'","y",[["R' U R' U' R' U' R' U R U R2","y"]]],
+ ["Ua", "Edges only", "R U' R U R·U R U' R' U' R2", "y", [["R U R' U R' U' R2 U' R' U R' U R", "u", "from the back"], ["R U' R U R U R U' R' U' R2", "y"]]],
+ ["Ub", "Edges only", "R2' U R U R' U' R3 U' R' U R'", "y", [["R' U R' U' R3 U' R' U R U R2", "u", "from the back"], ["R2 U R U R' U' R' U' R' U R'", "y"]]],
  ["Z","Edges only","M' U M2 U M2 U M' U2 M2","y",[]],
  ["T","Adjacent swap","R U R' U' R' F R2 U' R' U' R U R' F'","y",[]],
  ["F","Adjacent swap","R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R","y",[]],
@@ -1350,7 +1480,7 @@ const PLL_CASES = [
 if (typeof module !== 'undefined') module.exports = { OLL_CASES, PLL_CASES };
 
 /*F2L_START*/
-const F2L_CASES = [{"n":1,"group":"Both on top, white facing up","slots":{"FR":{"setup":"F' L' U2 L F","opt":5,"algs":[{"alg":"F' L' U2 L F","tag":"Best"},{"alg":"F' L' U L U F","tag":"Also good"},{"alg":"U2 F' L F' L' F2","tag":"Also good"}]},"FL":{"setup":"L' U L U2 L' U' L","opt":5,"algs":[{"alg":"L' U L U2 L' U' L","tag":"Best"},{"alg":"L' B' U2 B L","tag":"Fewest moves"},{"alg":"U2 R' U L' U' R L","tag":"Also good"}]},"BL":{"setup":"B' R' U2 R B","opt":5,"algs":[{"alg":"B' R' U2 R B","tag":"Best"},{"alg":"B' R' U R U B","tag":"Also good"},{"alg":"U2 B' R B' R' B2","tag":"Also good"}]},"BR":{"setup":"R' F' U2 F R","opt":5,"algs":[{"alg":"R' F' U2 F R","tag":"Best"},{"alg":"R' U R U2 R' U' R","tag":"R and U only"},{"alg":"U2 L' U R' U' R L","tag":"Also good"}]}}},{"n":2,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U' R' U2 R U R'","opt":5,"algs":[{"alg":"R U' R' U2 R U R'","tag":"Best"},{"alg":"R B U2 B' R'","tag":"Fewest moves"},{"alg":"U2 L U' R U R' L'","tag":"Also good"}]},"FL":{"setup":"F R U2 R' F'","opt":5,"algs":[{"alg":"F R U2 R' F'","tag":"Best"},{"alg":"F R U' R' U' F'","tag":"Also good"},{"alg":"U2 F R' F R F2","tag":"Also good"}]},"BL":{"setup":"L F U2 F' L'","opt":5,"algs":[{"alg":"L F U2 F' L'","tag":"Best"},{"alg":"L U' L' U2 L U L'","tag":"L and U only"},{"alg":"U2 R U' L U R' L'","tag":"Also good"}]},"BR":{"setup":"B L U2 L' B'","opt":5,"algs":[{"alg":"B L U2 L' B'","tag":"Best"},{"alg":"B L U' L' U' B'","tag":"Also good"},{"alg":"U2 B L' B L B2","tag":"Also good"}]}}},{"n":3,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U' R' U R U2 R'","opt":7,"algs":[{"alg":"R U2 R' U' R U R'","tag":"Best"},{"alg":"U2 R2 U2 F R F' U2 R2","tag":"Also good"},{"alg":"U' R' U2 R2 U R2 U R2 U R'","tag":"Also good"}]},"FL":{"setup":"F U' F' U F U2 F'","opt":7,"algs":[{"alg":"F U2 F' U' F U F'","tag":"Best"},{"alg":"U2 F2 U2 L F L' U2 F2","tag":"Also good"},{"alg":"U2 F2 R2 B' R' B R' F2","tag":"Also good"}]},"BL":{"setup":"L U' L' U L U2 L'","opt":7,"algs":[{"alg":"L U2 L' U' L U L'","tag":"Best"},{"alg":"U' L' U2 L2 U L2 U L2 U L'","tag":"Also good"},{"alg":"U2 R L U2 R' U' R U' R' L'","tag":"Also good"}]},"BR":{"setup":"B U' B' U B U2 B'","opt":7,"algs":[{"alg":"B U2 B' U' B U B'","tag":"Best"},{"alg":"U2 B2 U2 R B R' U2 B2","tag":"Also good"},{"alg":"U2 B2 L2 F' L' F L' B2","tag":"Also good"}]}}},{"n":4,"group":"Both on top, white facing up","slots":{"FR":{"setup":"F' U F U' F' U2 F","opt":7,"algs":[{"alg":"F' U2 F U F' U' F","tag":"Best"},{"alg":"U2 F2 U2 R' F' R U2 F2","tag":"Also good"},{"alg":"U2 F2 L2 B L B' L F2","tag":"Also good"}]},"FL":{"setup":"L' U L U' L' U2 L","opt":7,"algs":[{"alg":"L' U2 L U L' U' L","tag":"Best"},{"alg":"U2 L2 U2 F' L' F U2 L2","tag":"Also good"},{"alg":"U L U2 L2 U' L2 U' L2 U' L","tag":"Also good"}]},"BL":{"setup":"B' U B U' B' U2 B","opt":7,"algs":[{"alg":"B' U2 B U B' U' B","tag":"Best"},{"alg":"U2 B2 U2 L' B' L U2 B2","tag":"Also good"},{"alg":"U2 B2 R2 F R F' R B2","tag":"Also good"}]},"BR":{"setup":"R' U R U' R' U2 R","opt":7,"algs":[{"alg":"R' U2 R U R' U' R","tag":"Best"},{"alg":"U R U2 R2 U' R2 U' R2 U' R","tag":"Also good"},{"alg":"R' U2 L F R' F' R2 L'","tag":"Also good"}]}}},{"n":5,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U R' U' R U2 R' U'","opt":7,"algs":[{"alg":"U R U2 R' U R U' R'","tag":"Best"},{"alg":"U R U2 R2 F R F'","tag":"Fewest moves"},{"alg":"U R U2 R' U2 R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U' R U2 R' U2 F' U2","opt":7,"algs":[{"alg":"U2 F U2 R U2 R' U F'","tag":"Best"},{"alg":"U F U R' F R F2","tag":"Fewest moves"},{"alg":"U F U2 F2 L F L'","tag":"Also good"}]},"BL":{"setup":"L U L' U' L U2 L' U'","opt":7,"algs":[{"alg":"U L U2 L' U L U' L'","tag":"Best"},{"alg":"U L U F' L F L2","tag":"Fewest moves"},{"alg":"U L U2 L' U2 L U2 L'","tag":"Also good"}]},"BR":{"setup":"B U' L U2 L' U2 B' U2","opt":7,"algs":[{"alg":"U2 B U2 L U2 L' U B'","tag":"Best"},{"alg":"U B U2 B2 R B R'","tag":"Fewest moves"},{"alg":"U B U L' B L B2","tag":"Also good"}]}}},{"n":6,"group":"Both on top, white facing up","slots":{"FR":{"setup":"F' U L' U2 L U2 F U2","opt":7,"algs":[{"alg":"U2 F' U2 L' U2 L U' F","tag":"Best"},{"alg":"U' F' U2 F2 R' F' R","tag":"Fewest moves"},{"alg":"U' F' U' L F' L' F2","tag":"Also good"}]},"FL":{"setup":"L' U2 L U2 L' U2 L U","opt":7,"algs":[{"alg":"U' L' U2 L U2 L' U2 L","tag":"Best"},{"alg":"U' L' U2 L2 F' L' F","tag":"Fewest moves"},{"alg":"U' L' U2 L U' L' U L","tag":"Also good"}]},"BL":{"setup":"B' U R' U2 R U2 B U2","opt":7,"algs":[{"alg":"U2 B' U2 R' U2 R U' B","tag":"Best"},{"alg":"U' B' U' R B' R' B2","tag":"Fewest moves"},{"alg":"U' B' U2 B2 L' B' L","tag":"Also good"}]},"BR":{"setup":"R' U2 R U2 R' U2 R U","opt":7,"algs":[{"alg":"U' R' U2 R U2 R' U2 R","tag":"Best"},{"alg":"U' R' U' F R' F' R2","tag":"Fewest moves"},{"alg":"U' R' U2 R U' R' U R","tag":"Also good"}]}}},{"n":7,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U R' F R U R' U' F'","opt":8,"algs":[{"alg":"F U R U' R' F' R U' R'","tag":"Best"},{"alg":"U2 R B U B2 R B R2","tag":"Fewest moves"},{"alg":"U F' L' U L F R U R'","tag":"Also good"}]},"FL":{"setup":"L2 U' L U' L' U2 L2 U2","opt":8,"algs":[{"alg":"U2 L2 U2 L U L' U L2","tag":"Best"},{"alg":"L U L' U L U2 L2 U2 L","tag":"Also good"},{"alg":"L2 U' L U' L' U2 L U L","tag":"Also good"}]},"BL":{"setup":"L2 F U F' U' L' U2 L' U'","opt":8,"algs":[{"alg":"U L U2 L U F U' F' L2","tag":"Best"},{"alg":"U2 L F U F2 L F L2","tag":"Fewest moves"},{"alg":"U2 L U L U F U' F' L2","tag":"Also good"}]},"BR":{"setup":"R2 U' R U' R' U2 R2 U2","opt":8,"algs":[{"alg":"U2 R2 U2 R U R' U R2","tag":"Best"},{"alg":"R U R' U R U2 R2 U2 R","tag":"Also good"},{"alg":"R2 U' R U' R' U2 R U R","tag":"Also good"}]}}},{"n":8,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R2 U R' U R U2 R2 U2","opt":8,"algs":[{"alg":"U2 R2 U2 R' U' R U' R2","tag":"Best"},{"alg":"R2 U R' U R U2 R' U' R'","tag":"Also good"},{"alg":"R' U' R U' R' U2 R2 U2 R'","tag":"Also good"}]},"FL":{"setup":"L' U' L F' L' U' L U F","opt":8,"algs":[{"alg":"F' U' L' U L F L' U L","tag":"Best"},{"alg":"F U F R' F' R U2 F'","tag":"Fewest moves"},{"alg":"U' F R U' R' F' L' U' L","tag":"Also good"}]},"BL":{"setup":"L2 U L' U L U2 L2 U2","opt":8,"algs":[{"alg":"U2 L2 U2 L' U' L U' L2","tag":"Best"},{"alg":"L2 U L' U L U2 L' U' L'","tag":"Also good"},{"alg":"L' U' L U' L' U2 L2 U2 L'","tag":"Also good"}]},"BR":{"setup":"R2 F' U' F U R U R U2","opt":8,"algs":[{"alg":"U2 R' U' R' U' F' U F R2","tag":"Best"},{"alg":"U2 R' F' U' F2 R' F' R2","tag":"Fewest moves"},{"alg":"U' R' U2 R' U' F' U F R2","tag":"Also good"}]}}},{"n":9,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U' R'","opt":3,"algs":[{"alg":"R U R'","tag":"Best"},{"alg":"R L' U R' U' L","tag":"Also good"},{"alg":"R U2 R' U R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U' F'","opt":3,"algs":[{"alg":"F U F'","tag":"Best"}]},"BL":{"setup":"L U' L'","opt":3,"algs":[{"alg":"L U L'","tag":"Best"},{"alg":"R' L U L' U' R","tag":"Also good"},{"alg":"L U2 L' U L U2 L'","tag":"Also good"}]},"BR":{"setup":"B U' B'","opt":3,"algs":[{"alg":"B U B'","tag":"Best"}]}}},{"n":10,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U F","opt":3,"algs":[{"alg":"F' U' F","tag":"Best"}]},"FL":{"setup":"L' U L","opt":3,"algs":[{"alg":"L' U' L","tag":"Best"},{"alg":"R L' U' L U R'","tag":"Also good"},{"alg":"L' U L U L' U L","tag":"Also good"}]},"BL":{"setup":"B' U B","opt":3,"algs":[{"alg":"B' U' B","tag":"Best"}]},"BR":{"setup":"R' U R","opt":3,"algs":[{"alg":"R' U' R","tag":"Best"},{"alg":"R' L U' R U L'","tag":"Also good"},{"alg":"R' U R U R' U R","tag":"Also good"}]}}},{"n":11,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U R' U'","opt":4,"algs":[{"alg":"U R U' R'","tag":"Best"},{"alg":"U2 R U2 R'","tag":"Also good"},{"alg":"R' F R F'","tag":"Also good"}]},"FL":{"setup":"F U F' U'","opt":4,"algs":[{"alg":"U F U' F'","tag":"Best"},{"alg":"U2 F U2 F'","tag":"Also good"},{"alg":"F' L F L'","tag":"Also good"}]},"BL":{"setup":"L U L' U'","opt":4,"algs":[{"alg":"U L U' L'","tag":"Best"},{"alg":"U2 L U2 L'","tag":"Also good"},{"alg":"R' U L U' R L'","tag":"Also good"}]},"BR":{"setup":"B U B' U'","opt":4,"algs":[{"alg":"U B U' B'","tag":"Best"},{"alg":"U2 B U2 B'","tag":"Also good"},{"alg":"B' R B R'","tag":"Also good"}]}}},{"n":12,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U2 F U2","opt":4,"algs":[{"alg":"U2 F' U2 F","tag":"Best"},{"alg":"U' F' U F","tag":"Also good"},{"alg":"F R' F' R","tag":"Also good"}]},"FL":{"setup":"L' U2 L U2","opt":4,"algs":[{"alg":"U2 L' U2 L","tag":"Best"},{"alg":"U' L' U L","tag":"Also good"},{"alg":"L F' L' F","tag":"Also good"}]},"BL":{"setup":"B' U2 B U2","opt":4,"algs":[{"alg":"U2 B' U2 B","tag":"Best"},{"alg":"U' B' U B","tag":"Also good"},{"alg":"B L' B' L","tag":"Also good"}]},"BR":{"setup":"R' U2 R U2","opt":4,"algs":[{"alg":"U2 R' U2 R","tag":"Best"},{"alg":"U' R' U R","tag":"Also good"},{"alg":"L U' R' U R L'","tag":"Also good"}]}}},{"n":13,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R2 U B U' B' R2","opt":6,"algs":[{"alg":"R2 B U B' U' R2","tag":"Best"},{"alg":"U2 F' L' U' L U2 F","tag":"Also good"}]},"FL":{"setup":"L' U2 L U' L' U L U'","opt":6,"algs":[{"alg":"U L' U' L U L' U2 L","tag":"Best"},{"alg":"F2 R U R' U' F2","tag":"Fewest moves"},{"alg":"U L' U' L U2 L' U L","tag":"Also good"}]},"BL":{"setup":"L2 U F U' F' L2","opt":6,"algs":[{"alg":"L2 F U F' U' L2","tag":"Best"},{"alg":"U2 B' R' U' R U2 B","tag":"Also good"}]},"BR":{"setup":"R' U2 R U' R' U R U'","opt":6,"algs":[{"alg":"U R' U' R U R' U2 R","tag":"Best"},{"alg":"B2 L U L' U' B2","tag":"Fewest moves"},{"alg":"U R' U' R U2 R' U R","tag":"Also good"}]}}},{"n":14,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R2 B U B' U' R2","opt":6,"algs":[{"alg":"R2 U B U' B' R2","tag":"Best"},{"alg":"F' U L' U' L U2 F","tag":"Also good"},{"alg":"R2 B2 D B D' B R2","tag":"Also good"}]},"FL":{"setup":"L' U L U L' U L U'","opt":6,"algs":[{"alg":"U L' U' L U' L' U' L","tag":"Best"},{"alg":"F2 U R U' R' F2","tag":"Fewest moves"},{"alg":"U2 L' U L U L' U' L","tag":"Also good"}]},"BL":{"setup":"L2 F U F' U' L2","opt":6,"algs":[{"alg":"L2 U F U' F' L2","tag":"Best"},{"alg":"B' U R' U' R U2 B","tag":"Also good"},{"alg":"L2 F2 D F D' F L2","tag":"Also good"}]},"BR":{"setup":"R' U R U R' U R U'","opt":6,"algs":[{"alg":"U R' U' R U' R' U' R","tag":"Best"},{"alg":"B2 U L U' L' B2","tag":"Fewest moves"},{"alg":"U2 R' U R U R' U' R","tag":"Also good"}]}}},{"n":15,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U' R' U R U R' U2","opt":6,"algs":[{"alg":"U2 R U' R' U' R U R'","tag":"Best"},{"alg":"F2 U' L' U L F2","tag":"Fewest moves"},{"alg":"U' R U R' U R U R'","tag":"Also good"}]},"FL":{"setup":"L2 B' U' B U L2","opt":6,"algs":[{"alg":"L2 U' B' U B L2","tag":"Best"},{"alg":"F U' R U R' U2 F'","tag":"Also good"},{"alg":"L2 B2 D' B' D B' L2","tag":"Also good"}]},"BL":{"setup":"L U' L' U L U L' U2","opt":6,"algs":[{"alg":"U2 L U' L' U' L U L'","tag":"Best"},{"alg":"B2 U' R' U R B2","tag":"Fewest moves"},{"alg":"U' L U L' U L U L'","tag":"Also good"}]},"BR":{"setup":"R2 F' U' F U R2","opt":6,"algs":[{"alg":"R2 U' F' U F R2","tag":"Best"},{"alg":"B U' L U L' U2 B'","tag":"Also good"},{"alg":"R2 F2 D' F' D F' R2","tag":"Also good"}]}}},{"n":16,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U R' U2 R U' R' U","opt":6,"algs":[{"alg":"U' R U R' U2 R U' R'","tag":"Best"},{"alg":"F2 L' U' L U F2","tag":"Fewest moves"},{"alg":"U' R U R' U' R U2 R'","tag":"Also good"}]},"FL":{"setup":"L2 U' B' U B L2","opt":6,"algs":[{"alg":"L2 B' U' B U L2","tag":"Best"},{"alg":"U2 F R U R' U2 F'","tag":"Also good"}]},"BL":{"setup":"L U L' U2 L U' L' U","opt":6,"algs":[{"alg":"U' L U L' U2 L U' L'","tag":"Best"},{"alg":"B2 R' U' R U B2","tag":"Fewest moves"},{"alg":"U' L U L' U' L U2 L'","tag":"Also good"}]},"BR":{"setup":"R2 U' F' U F R2","opt":6,"algs":[{"alg":"R2 F' U' F U R2","tag":"Best"},{"alg":"U2 B L U L' U2 B'","tag":"Also good"}]}}},{"n":17,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U' R' U2 F' U' F","opt":7,"algs":[{"alg":"F' U F U2 R U R'","tag":"Best"},{"alg":"R U' R U2 R2 U' R2 U' R2","tag":"R and U only"},{"alg":"F' U L' U L U2 F","tag":"Also good"}]},"FL":{"setup":"F U' R U' R' U2 F'","opt":7,"algs":[{"alg":"F U2 R U R' U F'","tag":"Best"},{"alg":"L' U L U2 F U F'","tag":"Also good"},{"alg":"L' U B' U B U2 L","tag":"Also good"}]},"BL":{"setup":"L U' F U' F' U2 L'","opt":7,"algs":[{"alg":"L U2 F U F' U L'","tag":"Best"},{"alg":"L U' L U2 L2 U' L2 U' L2","tag":"L and U only"},{"alg":"L F R U' R' F' L'","tag":"Also good"}]},"BR":{"setup":"R' U2 F' U' F U' R","opt":7,"algs":[{"alg":"R' U F' U F U2 R","tag":"Best"},{"alg":"R' U R U2 B U B'","tag":"Also good"},{"alg":"B U2 L U L' U B'","tag":"Also good"}]}}},{"n":18,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R' U' R2 U' R2 U2 R","opt":7,"algs":[{"alg":"R' U2 R2 U R2 U R","tag":"Best"},{"alg":"R2 U2 R' U' R U' R' U' R'","tag":"Also good"},{"alg":"R' U2 R2 U R' U' R' U2 R","tag":"Also good"}]},"FL":{"setup":"F U2 R U2 R' U F'","opt":7,"algs":[{"alg":"F U' R U2 R' U2 F'","tag":"Best"},{"alg":"U L' U2 L U' F U F'","tag":"Also good"},{"alg":"F' U2 F2 U F2 U F","tag":"Also good"}]},"BL":{"setup":"L' U' L2 U' L2 U2 L","opt":7,"algs":[{"alg":"L' U2 L2 U L2 U L","tag":"Best"},{"alg":"L U' F U2 F' U2 L'","tag":"Also good"},{"alg":"L2 U2 L' U' L U' L' U' L'","tag":"Also good"}]},"BR":{"setup":"B U2 L U2 L' U B'","opt":7,"algs":[{"alg":"B U' L U2 L' U2 B'","tag":"Best"},{"alg":"U R' U2 R U' B U B'","tag":"Also good"},{"alg":"B' U' D' R2 U R2 D B","tag":"Also good"}]}}},{"n":19,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U2 L' U2 L U' F","opt":7,"algs":[{"alg":"F' U L' U2 L U2 F","tag":"Best"},{"alg":"U' R U2 R' U F' U' F","tag":"Also good"},{"alg":"F U2 F2 U' F2 U' F'","tag":"Also good"}]},"FL":{"setup":"L U L2 U L2 U2 L'","opt":7,"algs":[{"alg":"L U2 L2 U' L2 U' L'","tag":"Best"},{"alg":"L U2 L2 U' L U L U2 L'","tag":"Also good"},{"alg":"L2 U2 L U L' U L U L","tag":"Also good"}]},"BL":{"setup":"B' U2 R' U2 R U' B","opt":7,"algs":[{"alg":"B' U R' U2 R U2 B","tag":"Best"},{"alg":"U' L U2 L' U B' U' B","tag":"Also good"},{"alg":"B U D L2 U' L2 D' B'","tag":"Also good"}]},"BR":{"setup":"R U R2 U R2 U2 R'","opt":7,"algs":[{"alg":"R U2 R2 U' R2 U' R'","tag":"Best"},{"alg":"R' U F' U2 F U2 R","tag":"Also good"},{"alg":"R U2 R2 U' R U R U2 R'","tag":"Also good"}]}}},{"n":20,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U F U2 R U R'","opt":7,"algs":[{"alg":"R U' R' U2 F' U' F","tag":"Best"},{"alg":"F' U2 L' U' L U' F","tag":"Also good"},{"alg":"R U' B U' B' U2 R'","tag":"Also good"}]},"FL":{"setup":"F U2 R U R' U F'","opt":7,"algs":[{"alg":"F U' R U' R' U2 F'","tag":"Best"},{"alg":"L' U L' U2 L2 U L2 U L2","tag":"L and U only"},{"alg":"F U' F' U2 L' U' L","tag":"Also good"}]},"BL":{"setup":"L U2 F U F' U L'","opt":7,"algs":[{"alg":"L U' F U' F' U2 L'","tag":"Best"},{"alg":"B' U2 R' U' R U' B","tag":"Also good"},{"alg":"L U' L' U2 B' U' B","tag":"Also good"}]},"BR":{"setup":"R' U F' U F U2 R","opt":7,"algs":[{"alg":"R' U2 F' U' F U' R","tag":"Best"},{"alg":"R' U R' U2 R2 U R2 U R2","tag":"R and U only"},{"alg":"R' F' L' U L F R","tag":"Also good"}]}}},{"n":21,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R2 U2 F R2 F' U2 R2","opt":7,"algs":[{"alg":"R2 U2 F R2 F' U2 R2","tag":"Best"},{"alg":"F' U' L' U2 L U' F","tag":"Also good"},{"alg":"B' R' U' R2 U R' B","tag":"Also good"}]},"FL":{"setup":"L' U2 L U' L' U2 L U'","opt":7,"algs":[{"alg":"U L' U2 L U L' U2 L","tag":"Best"},{"alg":"L' U' B' U2 B U' L","tag":"Fewest moves"},{"alg":"U L' U2 L U2 L' U L","tag":"Also good"}]},"BL":{"setup":"F' L U' L2 U L F","opt":7,"algs":[{"alg":"F' L' U' L2 U L' F","tag":"Best"},{"alg":"B' U' R' U2 R U' B","tag":"Also good"},{"alg":"L2 U2 B L2 B' U2 L2","tag":"Also good"}]},"BR":{"setup":"R' U2 R U' R' U2 R U'","opt":7,"algs":[{"alg":"U R' U2 R U R' U2 R","tag":"Best"},{"alg":"R' U' F' U2 F U' R","tag":"Fewest moves"},{"alg":"U R' U2 R U2 R' U R","tag":"Also good"}]}}},{"n":22,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U R' U2 R U2 R' U","opt":7,"algs":[{"alg":"U' R U2 R' U2 R U' R'","tag":"Best"},{"alg":"R U B U2 B' U R'","tag":"Fewest moves"},{"alg":"U' R U2 R' U' R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U' R U2 R' U' F'","opt":7,"algs":[{"alg":"F U R U2 R' U F'","tag":"Best"},{"alg":"L2 U2 F' L2 F U2 L2","tag":"Also good"},{"alg":"B L U L2 U' L B'","tag":"Also good"}]},"BL":{"setup":"L U L' U2 L U2 L' U","opt":7,"algs":[{"alg":"U' L U2 L' U2 L U' L'","tag":"Best"},{"alg":"L U F U2 F' U L'","tag":"Fewest moves"},{"alg":"U' L U2 L' U' L U2 L'","tag":"Also good"}]},"BR":{"setup":"F R' U R2 U' R' F'","opt":7,"algs":[{"alg":"F R U R2 U' R F'","tag":"Best"},{"alg":"R2 U2 B' R2 B U2 R2","tag":"Also good"},{"alg":"B U L U2 L' U B'","tag":"Also good"}]}}},{"n":23,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U F2 R' F' R2 U' R'","opt":8,"algs":[{"alg":"R U R2 F R F2 U' F","tag":"Best"},{"alg":"R U R' F' U L' U2 L F","tag":"Also good"},{"alg":"U F' U F U' F' U' F","tag":"Also good"}]},"FL":{"setup":"L' U L U L' U' L U'","opt":8,"algs":[{"alg":"U L' U L U' L' U' L","tag":"Best"},{"alg":"U2 L2 U' L U' L' U2 L2","tag":"Also good"},{"alg":"U L2 D' L U' L' D L2","tag":"Also good"}]},"BL":{"setup":"L2 F' L' F2 U F' U L'","opt":8,"algs":[{"alg":"L U' F U' F2 L F L2","tag":"Best"},{"alg":"L U L' B' U R' U2 R B","tag":"Also good"},{"alg":"L U L2 B L B2 U' B","tag":"Also good"}]},"BR":{"setup":"R' U R U R' U' R U'","opt":8,"algs":[{"alg":"U R' U R U' R' U' R","tag":"Best"},{"alg":"U2 R2 U' R U' R' U2 R2","tag":"Also good"},{"alg":"U R2 D' R U' R' D R2","tag":"Also good"}]}}},{"n":24,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R2 U2 R' U' R U' R2 U2","opt":8,"algs":[{"alg":"U2 R2 U R' U R U2 R2","tag":"Best"},{"alg":"U' R U' R' U R U R'","tag":"Also good"},{"alg":"U' R2 D R' U R D' R2","tag":"Also good"}]},"FL":{"setup":"F U' F2 L F L2 U L","opt":8,"algs":[{"alg":"L' U' L2 F' L' F2 U F'","tag":"Best"},{"alg":"L' U' L F U' R U2 R' F'","tag":"Also good"},{"alg":"U' F U' F' U F U F'","tag":"Also good"}]},"BL":{"setup":"L2 U2 L' U' L U' L2 U2","opt":8,"algs":[{"alg":"U2 L2 U L' U L U2 L2","tag":"Best"},{"alg":"U' L U' L' U L U L'","tag":"Also good"},{"alg":"U' L2 D L' U L D' L2","tag":"Also good"}]},"BR":{"setup":"R2 F R F2 U' F U' R","opt":8,"algs":[{"alg":"R' U F' U F2 R' F' R2","tag":"Best"},{"alg":"R' U' R B U' L U2 L' B'","tag":"Also good"},{"alg":"R' U' R2 B' R' B2 U B'","tag":"Also good"}]}}},{"n":25,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"F' U2 F R U R'","opt":6,"algs":[{"alg":"R U' R' F' U2 F","tag":"Best"},{"alg":"F' U F R U2 R'","tag":"Also good"},{"alg":"U R U2 R' F' U' F","tag":"Also good"}]},"FL":{"setup":"F U2 F' L' U' L","opt":6,"algs":[{"alg":"L' U L F U2 F'","tag":"Best"},{"alg":"F U' F' L' U2 L","tag":"Also good"},{"alg":"U' L' U2 L F U F'","tag":"Also good"}]},"BL":{"setup":"B' U2 B L U L'","opt":6,"algs":[{"alg":"L U' L' B' U2 B","tag":"Best"},{"alg":"B' U B L U2 L'","tag":"Also good"},{"alg":"L U' L F' L' F L'","tag":"Also good"}]},"BR":{"setup":"B U2 B' R' U' R","opt":6,"algs":[{"alg":"R' U R B U2 B'","tag":"Best"},{"alg":"B U' B' R' U2 R","tag":"Also good"},{"alg":"R' U R' F R F' R","tag":"Also good"}]}}},{"n":26,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R2 U2 R2 U' R2 U' R2","opt":7,"algs":[{"alg":"R2 U R2 U R2 U2 R2","tag":"Best"},{"alg":"U2 R2 U2 R2 U' R2 U' R2","tag":"Also good"},{"alg":"U2 L' U R2 U' L U R2","tag":"Also good"}]},"FL":{"setup":"L2 U2 L2 U L2 U L2","opt":7,"algs":[{"alg":"L2 U' L2 U' L2 U2 L2","tag":"Best"},{"alg":"U2 L2 U2 L2 U L2 U L2","tag":"Also good"},{"alg":"U2 R U' L2 U R' U' L2","tag":"Also good"}]},"BL":{"setup":"L2 U2 L2 U' L2 U' L2","opt":7,"algs":[{"alg":"L2 U L2 U L2 U2 L2","tag":"Best"},{"alg":"U2 L2 U2 L2 U' L2 U' L2","tag":"Also good"},{"alg":"U2 R' U L2 U' R U L2","tag":"Also good"}]},"BR":{"setup":"R2 U2 R2 U R2 U R2","opt":7,"algs":[{"alg":"R2 U' R2 U' R2 U2 R2","tag":"Best"},{"alg":"U2 R2 U2 R2 U R2 U R2","tag":"Also good"},{"alg":"U2 L U' R2 U L' U' R2","tag":"Also good"}]}}},{"n":27,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R U' R' U2 R U' R' U'","opt":7,"algs":[{"alg":"U R U R' U2 R U R'","tag":"Best"},{"alg":"L D' L' U L D L'","tag":"Fewest moves"},{"alg":"U' R U2 R' U R U R'","tag":"Also good"}]},"FL":{"setup":"L' U2 L U' L' U' L U'","opt":7,"algs":[{"alg":"U L' U L U L' U2 L","tag":"Best"},{"alg":"U F U2 R U2 R' F'","tag":"Fewest moves"},{"alg":"U L' U L U2 L' U L","tag":"Also good"}]},"BL":{"setup":"L U' L' U2 L U' L' U'","opt":7,"algs":[{"alg":"U L U L' U2 L U L'","tag":"Best"},{"alg":"R D' R' U R D R'","tag":"Fewest moves"},{"alg":"U' L U2 L' U L U L'","tag":"Also good"}]},"BR":{"setup":"R' U2 R U' R' U' R U'","opt":7,"algs":[{"alg":"U R' U R U R' U2 R","tag":"Best"},{"alg":"U2 R' F' U2 F U2 R","tag":"Fewest moves"},{"alg":"U R' U R U2 R' U R","tag":"Also good"}]}}},{"n":28,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R U R' U2 R U R' U","opt":7,"algs":[{"alg":"U' R U' R' U2 R U' R'","tag":"Best"},{"alg":"U' F' U2 L' U2 L F","tag":"Fewest moves"},{"alg":"U' R U' R' U' R U2 R'","tag":"Also good"}]},"FL":{"setup":"L' U L U L' U2 L U'","opt":7,"algs":[{"alg":"U L' U2 L U' L' U' L","tag":"Best"},{"alg":"R' D R U' R' D' R","tag":"Fewest moves"},{"alg":"U' L' U' L U2 L' U' L","tag":"Also good"}]},"BL":{"setup":"L U L' U2 L U L' U","opt":7,"algs":[{"alg":"U' L U' L' U2 L U' L'","tag":"Best"},{"alg":"R' D2 R U2 R' D2 R","tag":"Fewest moves"},{"alg":"U' L U' L' U' L U2 L'","tag":"Also good"}]},"BR":{"setup":"R' U R U R' U2 R U'","opt":7,"algs":[{"alg":"U R' U2 R U' R' U' R","tag":"Best"},{"alg":"L' D L U' L' D' L","tag":"Fewest moves"},{"alg":"U' R' U' R U2 R' U' R","tag":"Also good"}]}}},{"n":29,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R U' R' U F' U F U'","opt":8,"algs":[{"alg":"U F' U' F U' R U R'","tag":"Best"},{"alg":"U2 F' U F U R U R'","tag":"Also good"},{"alg":"U2 F' U' F U R U' R'","tag":"Also good"}]},"FL":{"setup":"F U' F' U L' U L U'","opt":8,"algs":[{"alg":"U L' U' L U' F U F'","tag":"Best"},{"alg":"U2 L' U L U F U F'","tag":"Also good"},{"alg":"U2 L' U' L U F U' F'","tag":"Also good"}]},"BL":{"setup":"L U' L' U B' U B U'","opt":8,"algs":[{"alg":"U B' U' B U' L U L'","tag":"Best"},{"alg":"U2 B' U B U L U L'","tag":"Also good"},{"alg":"U2 B' U' B U L U' L'","tag":"Also good"}]},"BR":{"setup":"R' U R' F R F' R U'","opt":8,"algs":[{"alg":"U R' F R' F' R U' R","tag":"Best"},{"alg":"U R' U' R U' B U B'","tag":"Also good"},{"alg":"U2 R' U R U B U B'","tag":"Also good"}]}}},{"n":30,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"F' U2 F U2 R U' R' U2","opt":8,"algs":[{"alg":"U2 R U R' U2 F' U2 F","tag":"Best"},{"alg":"U2 R U R' U' F' U F","tag":"Also good"},{"alg":"U2 R U R' F R' F' R","tag":"Also good"}]},"FL":{"setup":"L' U2 L U2 F U' F' U2","opt":8,"algs":[{"alg":"U2 F U F' U2 L' U2 L","tag":"Best"},{"alg":"U2 F U F' U' L' U L","tag":"Also good"},{"alg":"U2 F U' F' U' L' U' L","tag":"Also good"}]},"BL":{"setup":"L U' L F' L' F L' U","opt":8,"algs":[{"alg":"U' L F' L F L' U L'","tag":"Best"},{"alg":"U2 L U L' U2 B' U2 B","tag":"Also good"},{"alg":"U2 L U L' U' B' U B","tag":"Also good"}]},"BR":{"setup":"R' U2 R U2 B U' B' U2","opt":8,"algs":[{"alg":"U2 B U B' U2 R' U2 R","tag":"Best"},{"alg":"U2 B U B' U' R' U R","tag":"Also good"},{"alg":"U2 B U' B' U' R' U' R","tag":"Also good"}]}}},{"n":31,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"R U R' U' R U R'","opt":6,"algs":[{"alg":"R U' R' U R U' R'","tag":"Best"},{"alg":"R U' R2 F R F'","tag":"Fewest moves"},{"alg":"R U' R' U2 R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U2 F' L' U2 L","opt":6,"algs":[{"alg":"L' U2 L F U2 F'","tag":"Best"},{"alg":"U' F R U2 R' U F'","tag":"Also good"},{"alg":"L' U2 L U' F U' F'","tag":"Also good"}]},"BL":{"setup":"L U L' U' L U L'","opt":6,"algs":[{"alg":"L U' L' U L U' L'","tag":"Best"},{"alg":"L U2 F' L F L2","tag":"Fewest moves"},{"alg":"L U' L' U2 L U2 L'","tag":"Also good"}]},"BR":{"setup":"B U2 B' R' U2 R","opt":6,"algs":[{"alg":"R' U2 R B U2 B'","tag":"Best"},{"alg":"R' U2 R' F R F' R","tag":"Also good"},{"alg":"R' U2 R U' B U' B'","tag":"Also good"}]}}},{"n":32,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"R U' R' U R U' R'","opt":7,"algs":[{"alg":"R U R' U' R U R'","tag":"Best"},{"alg":"U' R U2 R' U2 R U R'","tag":"Also good"},{"alg":"U' R U2 L U' R' U L'","tag":"Also good"}]},"FL":{"setup":"F R U2 R' U F' U","opt":7,"algs":[{"alg":"U' F U' R U2 R' F'","tag":"Best"},{"alg":"U2 L' U L F U F'","tag":"Also good"},{"alg":"U' F U' R U' R' U' F'","tag":"Also good"}]},"BL":{"setup":"L U' L' U L U' L'","opt":7,"algs":[{"alg":"L U L' U' L U L'","tag":"Best"},{"alg":"U' L U2 L' U2 L U L'","tag":"Also good"},{"alg":"U' L U2 R U' L' U R'","tag":"Also good"}]},"BR":{"setup":"B U' B' R' U' R U2","opt":7,"algs":[{"alg":"U2 R' U R B U B'","tag":"Best"},{"alg":"U' B U' L U2 L' B'","tag":"Also good"},{"alg":"R B' R' B U2 R' U2 R","tag":"Also good"}]}}},{"n":33,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"F' U2 F R U2 R' U'","opt":7,"algs":[{"alg":"U R U2 R' F' U2 F","tag":"Best"},{"alg":"U2 F' L' U2 L U' F","tag":"Also good"},{"alg":"U R U R' U F' U2 F","tag":"Also good"}]},"FL":{"setup":"L' U2 L U2 L' U' L U'","opt":7,"algs":[{"alg":"U L' U L U2 L' U2 L","tag":"Best"},{"alg":"U F U2 F' L' U2 L","tag":"Fewest moves"},{"alg":"U L' U L U' L' U L","tag":"Also good"}]},"BL":{"setup":"B' U R' U2 R B U2","opt":7,"algs":[{"alg":"U2 B' R' U2 R U' B","tag":"Best"},{"alg":"U L U2 L' B' U2 B","tag":"Also good"},{"alg":"U L U2 L F' L' F L'","tag":"Also good"}]},"BR":{"setup":"R' U2 R U2 R' U' R U'","opt":7,"algs":[{"alg":"U R' U R U2 R' U2 R","tag":"Best"},{"alg":"U R' U2 F R' F' R2","tag":"Fewest moves"},{"alg":"U R' U R U' R' U R","tag":"Also good"}]}}},{"n":34,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"F' U F U2 R U2 R'","opt":7,"algs":[{"alg":"R U2 R' U2 F' U' F","tag":"Best"},{"alg":"R U2 B U' B' U2 R'","tag":"Also good"},{"alg":"U2 R U R' U' F' U' F","tag":"Also good"}]},"FL":{"setup":"F U2 R U R' U2 F'","opt":7,"algs":[{"alg":"F U2 R U' R' U2 F'","tag":"Best"},{"alg":"L U L U L2 U' L' U' L'","tag":"L and U only"},{"alg":"F U2 F' U2 L' U' L","tag":"Also good"}]},"BL":{"setup":"L U2 F U F' U2 L'","opt":7,"algs":[{"alg":"L U2 F U' F' U2 L'","tag":"Best"},{"alg":"L U2 L' U2 B' U' B","tag":"Also good"},{"alg":"U L' U2 F' L F U2 L","tag":"Also good"}]},"BR":{"setup":"F R2 U R U' R2 F'","opt":7,"algs":[{"alg":"F R2 U R' U' R2 F'","tag":"Best"},{"alg":"R U R U R2 U' R' U' R'","tag":"R and U only"},{"alg":"B U2 B' U2 R' U' R","tag":"Also good"}]}}},{"n":35,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"F' U F R U R' U","opt":7,"algs":[{"alg":"U' R U' R' F' U' F","tag":"Best"},{"alg":"U2 F' U L' U2 L F","tag":"Also good"},{"alg":"U2 F' U L' U L U F","tag":"Also good"}]},"FL":{"setup":"L' U L U' L' U L U'","opt":7,"algs":[{"alg":"U L' U' L U L' U' L","tag":"Best"},{"alg":"U' F U' F' L' U' L","tag":"Fewest moves"},{"alg":"U2 L' U2 L U2 L' U' L","tag":"Also good"}]},"BL":{"setup":"B' R' U2 R U' B U2","opt":7,"algs":[{"alg":"U2 B' U R' U2 R B","tag":"Best"},{"alg":"U' L U' L' B' U' B","tag":"Also good"},{"alg":"U2 B' U R' U R U B","tag":"Also good"}]},"BR":{"setup":"R' U R U' R' U R U'","opt":7,"algs":[{"alg":"U R' U' R U R' U' R","tag":"Best"},{"alg":"U2 R' U F' U2 F R","tag":"Fewest moves"},{"alg":"U2 R' U2 R U2 R' U' R","tag":"Also good"}]}}},{"n":36,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"R2 U R' U R' U' R2 U' R2","opt":7,"algs":[{"alg":"R2 U R2 U R U' R U' R2","tag":"Best"},{"alg":"R' U2 B' R' B U2 R","tag":"Fewest moves"},{"alg":"R' U' R' U' R' U R U R","tag":"Also good"}]},"FL":{"setup":"L U2 B L B' U2 L'","opt":7,"algs":[{"alg":"L U2 B L' B' U2 L'","tag":"Best"},{"alg":"F' U2 R' F' R U2 F","tag":"Also good"},{"alg":"U2 F U2 R U2 R' U2 F'","tag":"Also good"}]},"BL":{"setup":"F' L2 U' L U L2 F","opt":7,"algs":[{"alg":"F' L2 U' L' U L2 F","tag":"Best"},{"alg":"L2 U L2 U L U' L U' L2","tag":"L and U only"},{"alg":"L' U2 F' L' F U2 L","tag":"Also good"}]},"BR":{"setup":"R U2 F R F' U2 R'","opt":7,"algs":[{"alg":"R U2 F R' F' U2 R'","tag":"Best"},{"alg":"U R' U2 F' U F U2 R","tag":"Also good"},{"alg":"U2 F R2 U R2 U' R2 F'","tag":"Also good"}]}}},{"n":37,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R U' R' F' L' U2 L F","opt":8,"algs":[{"alg":"F' L' U2 L F R U R'","tag":"Best"},{"alg":"R U' R U B U' B' R2","tag":"Also good"},{"alg":"R F U R U' R' F' U' R'","tag":"Also good"}]},"FL":{"setup":"F R U2 R' F' L' U' L","opt":8,"algs":[{"alg":"L' U L F R U2 R' F'","tag":"Best"},{"alg":"L2 B' U' B U L U' L","tag":"Also good"},{"alg":"F U2 R U R2 F R F2","tag":"Also good"}]},"BL":{"setup":"L2 F U F' U' L' U L'","opt":8,"algs":[{"alg":"L U' L U F U' F' L2","tag":"Best"},{"alg":"B' R' U2 R B L U L'","tag":"Also good"}]},"BR":{"setup":"R' U R' U' F' U F R2","opt":8,"algs":[{"alg":"R2 F' U' F U R U' R","tag":"Best"}]}}},{"n":38,"group":"Both pieces in the slot","slots":{"FR":{"setup":"F' L' U2 L F R U R'","opt":8,"algs":[{"alg":"R U' R' F' L' U2 L F","tag":"Best"},{"alg":"R2 B U B' U' R' U R'","tag":"Also good"},{"alg":"R U F R U R' U' F' R'","tag":"Also good"}]},"FL":{"setup":"L' U L F R U2 R' F'","opt":8,"algs":[{"alg":"F R U2 R' F' L' U' L","tag":"Best"},{"alg":"L' U L' U' B' U B L2","tag":"Also good"},{"alg":"F2 R U R' U' F' U F'","tag":"Also good"}]},"BL":{"setup":"L U' L U F U' F' L2","opt":8,"algs":[{"alg":"L2 F U F' U' L' U L'","tag":"Best"},{"alg":"L U' L' B' R' U2 R B","tag":"Also good"}]},"BR":{"setup":"R2 F' U' F U R U' R","opt":8,"algs":[{"alg":"R' U R' U' F' U F R2","tag":"Best"}]}}},{"n":39,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R2 U2 R' U' R U' R' U2 R'","opt":9,"algs":[{"alg":"R U2 R U R' U R U2 R2","tag":"Best"}]},"FL":{"setup":"L' U2 L' U' L U' L' U2 L2","opt":9,"algs":[{"alg":"L2 U2 L U L' U L U2 L","tag":"Best"}]},"BL":{"setup":"L2 U2 L' U' L U' L' U2 L'","opt":9,"algs":[{"alg":"L U2 L U L' U L U2 L2","tag":"Best"}]},"BR":{"setup":"R' U2 R' U' R U' R' U2 R2","opt":9,"algs":[{"alg":"R2 U2 R U R' U R U2 R","tag":"Best"}]}}},{"n":40,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R2 U2 F R2 F' U2 R' U R'","opt":9,"algs":[{"alg":"R U' R U2 F R2 F' U2 R2","tag":"Best"},{"alg":"R2 U2 F R2 F' U2 R' U R'","tag":"Also good"}]},"FL":{"setup":"L' U L' U2 F' L2 F U2 L2","opt":9,"algs":[{"alg":"L2 U2 F' L2 F U2 L U' L","tag":"Best"},{"alg":"L' U L' U2 F' L2 F U2 L2","tag":"Also good"}]},"BL":{"setup":"L2 U2 B L2 B' U2 L' U L'","opt":9,"algs":[{"alg":"L U' L U2 B L2 B' U2 L2","tag":"Best"},{"alg":"L2 U2 B L2 B' U2 L' U L'","tag":"Also good"},{"alg":"F' L U' L2 U L F L U L'","tag":"Also good"}]},"BR":{"setup":"R' U R' U2 B' R2 B U2 R2","opt":9,"algs":[{"alg":"R2 U2 B' R2 B U2 R U' R","tag":"Best"},{"alg":"R' U R' U2 B' R2 B U2 R2","tag":"Also good"},{"alg":"R' U R F R U R2 U' R F'","tag":"Also good"}]}}},{"n":41,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R U2 R U R' U R U2 R2","opt":9,"algs":[{"alg":"R2 U2 R' U' R U' R' U2 R'","tag":"Best"}]},"FL":{"setup":"L2 U2 L U L' U L U2 L","opt":9,"algs":[{"alg":"L' U2 L' U' L U' L' U2 L2","tag":"Best"}]},"BL":{"setup":"L U2 L U L' U L U2 L2","opt":9,"algs":[{"alg":"L2 U2 L' U' L U' L' U2 L'","tag":"Best"}]},"BR":{"setup":"R2 U2 R U R' U R U2 R","opt":9,"algs":[{"alg":"R' U2 R' U' R U' R' U2 R2","tag":"Best"}]}}}];
+const F2L_CASES = [{"n":1,"group":"Both on top, white facing up","slots":{"FR":{"setup":"F' L' U2 L F","opt":5,"algs":[{"alg":"F' L' U2 L F","tag":"Best"},{"alg":"F' L' U L U F","tag":"Also good"},{"alg":"U' F' L' U' L U' F","tag":"Also good"},{"alg":"U2 R U R' F' U' F","tag":"Also good"}]},"FL":{"setup":"R' U L' U' R U' L","opt":5,"algs":[{"alg":"L' U R' U L U' R","tag":"Best"},{"alg":"L' B' U2 B L","tag":"Fewest moves"},{"alg":"L' U L U2 L' U' L","tag":"L and U only"},{"alg":"U2 R' U L' U' R L","tag":"Also good"}]},"BL":{"setup":"B' R' U2 R B","opt":5,"algs":[{"alg":"B' R' U2 R B","tag":"Best"},{"alg":"B' R' U R U B","tag":"Also good"},{"alg":"U' B' R' U' R U' B","tag":"Also good"},{"alg":"U2 L U L' B' U' B","tag":"Also good"}]},"BR":{"setup":"R' F' U2 F R","opt":5,"algs":[{"alg":"R' F' U2 F R","tag":"Best"},{"alg":"R' U R U2 R' U' R","tag":"R and U only"},{"alg":"R' F' U F U R","tag":"Also good"},{"alg":"R' U L' U R U' L","tag":"Also good"}]}}},{"n":2,"group":"Both on top, white facing up","slots":{"FR":{"setup":"L U' R U L' U R'","opt":5,"algs":[{"alg":"R U' L U' R' U L'","tag":"Best"},{"alg":"R B U2 B' R'","tag":"Fewest moves"},{"alg":"R U' R' U2 R U R'","tag":"R and U only"},{"alg":"U2 L U' R U R' L'","tag":"Also good"}]},"FL":{"setup":"F R U2 R' F'","opt":5,"algs":[{"alg":"F R U2 R' F'","tag":"Best"},{"alg":"F R U' R' U' F'","tag":"Also good"},{"alg":"U F R U R' U F'","tag":"Also good"},{"alg":"U2 L' U' L F U F'","tag":"Also good"}]},"BL":{"setup":"L F U2 F' L'","opt":5,"algs":[{"alg":"L F U2 F' L'","tag":"Best"},{"alg":"L U' L' U2 L U L'","tag":"L and U only"},{"alg":"L F U' F' U' L'","tag":"Also good"},{"alg":"L U' R U' L' U R'","tag":"Also good"}]},"BR":{"setup":"B L U2 L' B'","opt":5,"algs":[{"alg":"B L U2 L' B'","tag":"Best"},{"alg":"y R U' L U' R' U L'","tag":"With a rotation"},{"alg":"B L U' L' U' B'","tag":"Also good"},{"alg":"U B L U L' U B'","tag":"Also good"}]}}},{"n":3,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U' R' U R U2 R'","opt":7,"algs":[{"alg":"R U2 R' U' R U R'","tag":"Best"},{"alg":"R U L' U R' U' R L U R'","tag":"Also good"},{"alg":"R U2 R' U R L U' R' U L'","tag":"Also good"},{"alg":"R U2 R' U' R L' U R' U' L","tag":"Also good"}]},"FL":{"setup":"F U' F' U F U2 F'","opt":7,"algs":[{"alg":"F U2 F' U' F U F'","tag":"Best"},{"alg":"F U2 F' R' U' F U F' R","tag":"Also good"},{"alg":"L' U2 B L U L' U' B' L","tag":"Also good"},{"alg":"U2 F2 U2 L F L' U2 F2","tag":"Also good"}]},"BL":{"setup":"L U' L' U L U2 L'","opt":7,"algs":[{"alg":"L U2 L' U' L U L'","tag":"Best"},{"alg":"L U R' U L' U' R L U L'","tag":"Also good"},{"alg":"L U2 L' F' U' L U L' F","tag":"Also good"},{"alg":"R L U2 L' U' L U L' U R'","tag":"Also good"}]},"BR":{"setup":"R' F U R U' R' F' U2 R","opt":7,"algs":[{"alg":"y R U2 R' U' R U R'","tag":"Best (with a rotation)"},{"alg":"R' U2 F R U R' U' F' R","tag":"Best without a rotation"},{"alg":"B U2 B' U' B U B'","tag":"Fewest moves"},{"alg":"R2 F' U F U2 F' U' F R2","tag":"Also good"}]}}},{"n":4,"group":"Both on top, white facing up","slots":{"FR":{"setup":"F' U F U' F' U2 F","opt":7,"algs":[{"alg":"F' U2 F U F' U' F","tag":"Best"},{"alg":"F' U2 F L U F' U' F L'","tag":"Also good"},{"alg":"R U2 B' R' U' R U B R'","tag":"Also good"},{"alg":"R' F R F2 U2 F R U2 R'","tag":"Also good"}]},"FL":{"setup":"L' U L U' L' U2 L","opt":7,"algs":[{"alg":"L' U2 L U L' U' L","tag":"Best"},{"alg":"L' U' R U' L U R' L' U' L","tag":"Also good"},{"alg":"R' L' U2 L U L' U' L U' R","tag":"Also good"},{"alg":"L' U2 L U R L' U' L U R'","tag":"Also good"}]},"BL":{"setup":"L F' U' L' U L F U2 L'","opt":7,"algs":[{"alg":"y R' U2 R U R' U' R","tag":"Best (with a rotation)"},{"alg":"L U2 F' L' U' L U F L'","tag":"Best without a rotation"},{"alg":"B' U2 B U B' U' B","tag":"Fewest moves"},{"alg":"L2 F U' F' U2 F U F' L2","tag":"Also good"}]},"BR":{"setup":"R' U R U' R' U2 R","opt":7,"algs":[{"alg":"R' U2 R U R' U' R","tag":"Best"},{"alg":"R' U' L U' R U R' L' U' R","tag":"Also good"},{"alg":"R' U2 R F U R' U' R F'","tag":"Also good"},{"alg":"R' U2 R U R' L U' R U L'","tag":"Also good"}]}}},{"n":5,"group":"Both on top, white facing up","slots":{"FR":{"setup":"F2 L F L' U F U","opt":7,"algs":[{"alg":"U' F' U' L F' L' F2","tag":"Best"},{"alg":"U' F' U2 F U' F' U F","tag":"Also good"},{"alg":"U' F' U2 F2 R' F' R","tag":"Also good"},{"alg":"U2 F' U2 L' U2 L U' F","tag":"Also good"}]},"FL":{"setup":"L' U' L U L' U2 L U","opt":7,"algs":[{"alg":"U' L' U2 L U' L' U L","tag":"Best"},{"alg":"U' L' U2 L2 F' L' F","tag":"Fewest moves"},{"alg":"U' L' U2 L U2 L' U2 L","tag":"Also good"},{"alg":"U' L' U' B L' B' L2","tag":"Also good"}]},"BL":{"setup":"B' U R' U2 R U2 B U2","opt":7,"algs":[{"alg":"y U' R' U2 R U' R' U R","tag":"Best (with a rotation)"},{"alg":"U2 B' U2 R' U2 R U' B","tag":"Best without a rotation"},{"alg":"U' B' U' R B' R' B2","tag":"Fewest moves"},{"alg":"R' U' R U R B' R' U2 B","tag":"Also good"}]},"BR":{"setup":"R' U' R U R' U2 R U","opt":7,"algs":[{"alg":"U' R' U2 R U' R' U R","tag":"Best"},{"alg":"U' R' U' F R' F' R2","tag":"Fewest moves"},{"alg":"U' R' U2 R U2 R' U2 R","tag":"Also good"},{"alg":"R' U R' U' R U' R' U2 R2","tag":"Also good"}]}}},{"n":6,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U R' U' R U2 R' U'","opt":7,"algs":[{"alg":"U R U2 R' U R U' R'","tag":"Best"},{"alg":"U R U2 R2 F R F'","tag":"Fewest moves"},{"alg":"U R U2 R' U2 R U2 R'","tag":"Also good"},{"alg":"R U' R U R' U R U2 R2","tag":"Also good"}]},"FL":{"setup":"F2 R' F' R U' F' U'","opt":7,"algs":[{"alg":"U F U R' F R F2","tag":"Best"},{"alg":"U F U2 F' U F U' F'","tag":"Also good"},{"alg":"U2 F U2 R U2 R' U F'","tag":"Also good"},{"alg":"U F U2 F2 L F L'","tag":"Also good"}]},"BL":{"setup":"L U L' U' L U2 L' U'","opt":7,"algs":[{"alg":"U L U2 L' U L U' L'","tag":"Best"},{"alg":"U L U F' L F L2","tag":"Fewest moves"},{"alg":"U L U2 L' U2 L U2 L'","tag":"Also good"},{"alg":"U2 L U2 F U2 F' U L'","tag":"Also good"}]},"BR":{"setup":"B U' L U2 L' U2 B' U2","opt":7,"algs":[{"alg":"y U R U2 R' U R U' R'","tag":"Best (with a rotation)"},{"alg":"U2 B U2 L U2 L' U B'","tag":"Best without a rotation"},{"alg":"U B U L' B L B2","tag":"Fewest moves"},{"alg":"U' R' U' F' U F2 R' F' R2","tag":"Also good"}]}}},{"n":7,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R U R' F R U R' U' F'","opt":8,"algs":[{"alg":"F U R U' R' F' R U' R'","tag":"Best"},{"alg":"F' U' F' L F L' U2 F","tag":"Fewest moves"},{"alg":"U' R' F R F' U' F' U' F","tag":"Also good"},{"alg":"F' U' F R U' R' F' U' F","tag":"Also good"}]},"FL":{"setup":"R U' L2 U R' U' L U' L","opt":8,"algs":[{"alg":"L' U L' U R U' L2 U R'","tag":"Best"},{"alg":"U2 L2 U2 L U L' U L2","tag":"Fewest moves"},{"alg":"U2 R L' U' L' U R' U' L2","tag":"Also good"},{"alg":"U' F' L F L' U' L' U' L","tag":"Also good"}]},"BL":{"setup":"L2 F U F' U' L' U2 L' U'","opt":8,"algs":[{"alg":"U L U2 L U F U' F' L2","tag":"Best"},{"alg":"U2 L F U F2 L F L2","tag":"Fewest moves"},{"alg":"y U2 R2 U2 R U R' U R2","tag":"With a rotation"},{"alg":"U2 L U L U F U' F' L2","tag":"Also good"}]},"BR":{"setup":"R2 U' R U' R' U2 R2 U2","opt":8,"algs":[{"alg":"U2 R2 U2 R U R' U R2","tag":"Best"},{"alg":"R' U R' U L U' R2 U L'","tag":"Also good"},{"alg":"R' U' R' F R F' U2 R","tag":"Also good"},{"alg":"R2 U' R U' R' U2 R U R","tag":"Also good"}]}}},{"n":8,"group":"Both on top, white facing up","slots":{"FR":{"setup":"R2 U R' U R U2 R2 U2","opt":8,"algs":[{"alg":"U2 R2 U2 R' U' R U' R2","tag":"Best"},{"alg":"R U' R U' L' U R2 U' L","tag":"Also good"},{"alg":"R2 U R' U R U2 R' U' R'","tag":"Also good"},{"alg":"U2 R L' U R U' L U R2","tag":"Also good"}]},"FL":{"setup":"F U2 R' F R F' U' F'","opt":8,"algs":[{"alg":"F U F R' F' R U2 F'","tag":"Best"},{"alg":"y' U2 R2 U2 R' U' R U' R2","tag":"With a rotation"},{"alg":"F' U' L' U L F L' U L","tag":"Also good"},{"alg":"F R U R' F' U F U F'","tag":"Also good"}]},"BL":{"setup":"R' U L2 U' R U L' U L'","opt":8,"algs":[{"alg":"L U' L U' R' U L2 U' R","tag":"Best"},{"alg":"L U L F' L' F U2 L'","tag":"Fewest moves"},{"alg":"U2 L2 U2 L' U' L U' L2","tag":"L and U only"},{"alg":"U2 R' L U L U' R U L2","tag":"Also good"}]},"BR":{"setup":"R2 F' U' F U R U R U2","opt":8,"algs":[{"alg":"U2 R' U' R' U' F' U F R2","tag":"Best"},{"alg":"U2 R' F' U' F2 R' F' R2","tag":"Fewest moves"},{"alg":"y U2 R2 U2 R' U' R U' R2","tag":"With a rotation"},{"alg":"U' R' U2 R' U' F' U F R2","tag":"Also good"}]}}},{"n":9,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U' R'","opt":3,"algs":[{"alg":"R U R'","tag":"Best"},{"alg":"R L' U R' U' L","tag":"Also good"},{"alg":"R U' R' U' R U' R'","tag":"Also good"},{"alg":"R U2 R' U R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U' F'","opt":3,"algs":[{"alg":"F U F'","tag":"Best"},{"alg":"F B' U F' U' B","tag":"Also good"}]},"BL":{"setup":"L U' L'","opt":3,"algs":[{"alg":"L U L'","tag":"Best"},{"alg":"R' L U L' U' R","tag":"Also good"},{"alg":"L U' L' U' L U' L'","tag":"Also good"},{"alg":"L U2 L' U L U2 L'","tag":"Also good"}]},"BR":{"setup":"B U' B'","opt":3,"algs":[{"alg":"y R U R'","tag":"Best (with a rotation)"},{"alg":"B U B'","tag":"Best without a rotation"},{"alg":"F' B U B' U' F","tag":"Also good"}]}}},{"n":10,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U F","opt":3,"algs":[{"alg":"F' U' F","tag":"Best"},{"alg":"F' B U' F U B'","tag":"Also good"}]},"FL":{"setup":"L' U L","opt":3,"algs":[{"alg":"L' U' L","tag":"Best"},{"alg":"R L' U' L U R'","tag":"Also good"},{"alg":"L' U L U L' U L","tag":"Also good"},{"alg":"L' U2 L U' L' U2 L","tag":"Also good"}]},"BL":{"setup":"B' U B","opt":3,"algs":[{"alg":"y R' U' R","tag":"Best (with a rotation)"},{"alg":"B' U' B","tag":"Best without a rotation"},{"alg":"F B' U' B U F'","tag":"Also good"}]},"BR":{"setup":"R' U R","opt":3,"algs":[{"alg":"R' U' R","tag":"Best"},{"alg":"R' L U' R U L'","tag":"Also good"},{"alg":"R' U R U R' U R","tag":"Also good"},{"alg":"R' U2 R U' R' U2 R","tag":"Also good"}]}}},{"n":11,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U' F U","opt":4,"algs":[{"alg":"U' F' U F","tag":"Best"},{"alg":"F R' F' R","tag":"Also good"},{"alg":"U2 F' U2 F","tag":"Also good"},{"alg":"U' F' L' U L F","tag":"Also good"}]},"FL":{"setup":"L' U' L U","opt":4,"algs":[{"alg":"U' L' U L","tag":"Best"},{"alg":"U2 L' U2 L","tag":"Also good"},{"alg":"L F' L' F","tag":"Also good"},{"alg":"R U' L' U R' L","tag":"Also good"}]},"BL":{"setup":"B' U' B U","opt":4,"algs":[{"alg":"y U' R' U R","tag":"Best (with a rotation)"},{"alg":"U' B' U B","tag":"Best without a rotation"},{"alg":"B L' B' L","tag":"Also good"},{"alg":"U2 B' U2 B","tag":"Also good"}]},"BR":{"setup":"R' U' R U","opt":4,"algs":[{"alg":"U' R' U R","tag":"Best"},{"alg":"U2 R' U2 R","tag":"Also good"},{"alg":"L U' R' U R L'","tag":"Also good"},{"alg":"R B' R' B","tag":"Also good"}]}}},{"n":12,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U R' U'","opt":4,"algs":[{"alg":"U R U' R'","tag":"Best"},{"alg":"U2 R U2 R'","tag":"Also good"},{"alg":"R' F R F'","tag":"Also good"},{"alg":"L' U R U' R' L","tag":"Also good"}]},"FL":{"setup":"F U F' U'","opt":4,"algs":[{"alg":"U F U' F'","tag":"Best"},{"alg":"F' L F L'","tag":"Also good"},{"alg":"U2 F U2 F'","tag":"Also good"},{"alg":"U F R U' R' F'","tag":"Also good"}]},"BL":{"setup":"L U L' U'","opt":4,"algs":[{"alg":"U L U' L'","tag":"Best"},{"alg":"U2 L U2 L'","tag":"Also good"},{"alg":"R' U L U' R L'","tag":"Also good"},{"alg":"L' B L B'","tag":"Also good"}]},"BR":{"setup":"B U B' U'","opt":4,"algs":[{"alg":"y U R U' R'","tag":"Best (with a rotation)"},{"alg":"U B U' B'","tag":"Best without a rotation"},{"alg":"B' R B R'","tag":"Also good"},{"alg":"U R' F' U' F R","tag":"Also good"}]}}},{"n":13,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U2 L' U L U' F","opt":6,"algs":[{"alg":"F' U L' U' L U2 F","tag":"Best"},{"alg":"R2 U B U' B' R2","tag":"Fewest moves"},{"alg":"U' R U' R' U F' U' F","tag":"Also good"},{"alg":"U R U R' U2 F' U' F","tag":"Also good"}]},"FL":{"setup":"L' U L U L' U L U'","opt":6,"algs":[{"alg":"U L' U' L U' L' U' L","tag":"Best"},{"alg":"F2 U R U' R' F2","tag":"Fewest moves"},{"alg":"U2 L' U L U L' U' L","tag":"Also good"},{"alg":"U' F U' F' U L' U' L","tag":"Also good"}]},"BL":{"setup":"L2 F U F' U' L2","opt":6,"algs":[{"alg":"L2 U F U' F' L2","tag":"Best"},{"alg":"U L U F U' F' U2 L'","tag":"Also good"},{"alg":"B' U R' U' R U2 B","tag":"Also good"},{"alg":"U' L U' L' U B' U' B","tag":"Also good"}]},"BR":{"setup":"R' U R U R' U R U'","opt":6,"algs":[{"alg":"U R' U' R U' R' U' R","tag":"Best"},{"alg":"B2 U L U' L' B2","tag":"Fewest moves"},{"alg":"R' U F' U' F U2 R","tag":"Also good"},{"alg":"U2 R' U R U R' U' R","tag":"Also good"}]}}},{"n":14,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U' R' U' R U' R' U","opt":6,"algs":[{"alg":"U' R U R' U R U R'","tag":"Best"},{"alg":"F2 U' L' U L F2","tag":"Fewest moves"},{"alg":"U2 R U' R' U' R U R'","tag":"Also good"},{"alg":"U F' U F U' R U R'","tag":"Also good"}]},"FL":{"setup":"F U2 R U' R' U F'","opt":6,"algs":[{"alg":"F U' R U R' U2 F'","tag":"Best"},{"alg":"L2 U' B' U B L2","tag":"Fewest moves"},{"alg":"U L' U L U' F U F'","tag":"Also good"},{"alg":"U' L' U' L U2 F U F'","tag":"Also good"}]},"BL":{"setup":"L U' L' U' L U' L' U","opt":6,"algs":[{"alg":"U' L U L' U L U L'","tag":"Best"},{"alg":"B2 U' R' U R B2","tag":"Fewest moves"},{"alg":"L U' F U F' U2 L'","tag":"Also good"},{"alg":"U2 L U' L' U' L U L'","tag":"Also good"}]},"BR":{"setup":"R2 F' U' F U R2","opt":6,"algs":[{"alg":"R2 U' F' U F R2","tag":"Best"},{"alg":"U' R' U' F' U F U2 R","tag":"Also good"},{"alg":"B U' L U L' U2 B'","tag":"Also good"},{"alg":"U R' U R U' B U B'","tag":"Also good"}]}}},{"n":15,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U L' U' L U F U'","opt":6,"algs":[{"alg":"U F' U' L' U L U' F","tag":"Best"},{"alg":"R2 B U B' U' R2","tag":"Fewest moves"},{"alg":"U2 F' L' U' L U2 F","tag":"Also good"},{"alg":"R' U' R F R' F' U R","tag":"Also good"}]},"FL":{"setup":"L' U' L U2 L' U L U'","opt":6,"algs":[{"alg":"U L' U' L U2 L' U L","tag":"Best"},{"alg":"F2 R U R' U' F2","tag":"Fewest moves"},{"alg":"U L' U' L U L' U2 L","tag":"Also good"},{"alg":"F' U' F L F' L' U F","tag":"Also good"}]},"BL":{"setup":"L2 U F U' F' L2","opt":6,"algs":[{"alg":"L2 F U F' U' L2","tag":"Best"},{"alg":"U B' U' R' U R U' B","tag":"Also good"},{"alg":"U2 B' R' U' R U2 B","tag":"Also good"},{"alg":"L' U' L B L' B' U L","tag":"Also good"}]},"BR":{"setup":"R' U2 R U' R' U R U'","opt":6,"algs":[{"alg":"U R' U' R U R' U2 R","tag":"Best"},{"alg":"B2 L U L' U' B2","tag":"Fewest moves"},{"alg":"U R' U' R U2 R' U R","tag":"Also good"},{"alg":"U R' U' F' U F U' R","tag":"Also good"}]}}},{"n":16,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U R' U2 R U' R' U","opt":6,"algs":[{"alg":"U' R U R' U2 R U' R'","tag":"Best"},{"alg":"F2 L' U' L U F2","tag":"Fewest moves"},{"alg":"U' R U R' U' R U2 R'","tag":"Also good"},{"alg":"F U F' R' F R U' F'","tag":"Also good"}]},"FL":{"setup":"F U' R U R' U' F' U","opt":6,"algs":[{"alg":"U' F U R U' R' U F'","tag":"Best"},{"alg":"L2 B' U' B U L2","tag":"Fewest moves"},{"alg":"U2 F R U R' U2 F'","tag":"Also good"},{"alg":"L U L' F' L F U' L'","tag":"Also good"}]},"BL":{"setup":"L U L' U2 L U' L' U","opt":6,"algs":[{"alg":"U' L U L' U2 L U' L'","tag":"Best"},{"alg":"B2 R' U' R U B2","tag":"Fewest moves"},{"alg":"y R2 F' U' F U R2","tag":"With a rotation"},{"alg":"U' L U L' U' L U2 L'","tag":"Also good"}]},"BR":{"setup":"R2 U' F' U F R2","opt":6,"algs":[{"alg":"R2 F' U' F U R2","tag":"Best"},{"alg":"U' B U L U' L' U B'","tag":"Also good"},{"alg":"U2 B L U L' U2 B'","tag":"Also good"},{"alg":"R U R' B' R B U' R'","tag":"Also good"}]}}},{"n":17,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U' R' U2 F' U' F","opt":7,"algs":[{"alg":"F' U F U2 R U R'","tag":"Best"},{"alg":"R U' R U2 R2 U' R2 U' R2","tag":"R and U only"},{"alg":"F' U L' U L U2 F","tag":"Also good"},{"alg":"R U2 B U B' U R'","tag":"Also good"}]},"FL":{"setup":"F U' R U' R' U2 F'","opt":7,"algs":[{"alg":"F U2 R U R' U F'","tag":"Best"},{"alg":"L' U L U2 F U F'","tag":"Also good"},{"alg":"L' U B' U B U2 L","tag":"Also good"},{"alg":"F U R' F R F' U2 F'","tag":"Also good"}]},"BL":{"setup":"L U' F U' F' U2 L'","opt":7,"algs":[{"alg":"L U2 F U F' U L'","tag":"Best"},{"alg":"L U' L U2 L2 U' L2 U' L2","tag":"L and U only"},{"alg":"L F R U' R' F' L'","tag":"Also good"},{"alg":"B' U R' U R U2 B","tag":"Also good"}]},"BR":{"setup":"R' U2 F' U' F U' R","opt":7,"algs":[{"alg":"R' U F' U F U2 R","tag":"Best"},{"alg":"R' U R U2 B U B'","tag":"Also good"},{"alg":"B U2 L U L' U B'","tag":"Also good"},{"alg":"B L F U' F' L' B'","tag":"Also good"}]}}},{"n":18,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R' U' R2 U' R2 U2 R","opt":7,"algs":[{"alg":"R' U2 R2 U R2 U R","tag":"Best"},{"alg":"U F' U2 F U' R U R'","tag":"Also good"},{"alg":"R2 U2 R' U' R U' R' U' R'","tag":"Also good"},{"alg":"R U' B U2 B' U2 R'","tag":"Also good"}]},"FL":{"setup":"F U2 R U2 R' U F'","opt":7,"algs":[{"alg":"F U' R U2 R' U2 F'","tag":"Best"},{"alg":"U L' U2 L U' F U F'","tag":"Also good"},{"alg":"L U L' F U L U2 L' F'","tag":"Also good"},{"alg":"F' U2 F2 U F2 U F","tag":"Also good"}]},"BL":{"setup":"L U2 F U2 F' U L'","opt":7,"algs":[{"alg":"L U' F U2 F' U2 L'","tag":"Best"},{"alg":"L' U2 L2 U L2 U L","tag":"L and U only"},{"alg":"L2 U2 L' U' L U' L' U' L'","tag":"Also good"},{"alg":"U B' U2 B U' L U L'","tag":"Also good"}]},"BR":{"setup":"R' U R' F R F' U R U'","opt":7,"algs":[{"alg":"U R' U' F R' F' R U' R","tag":"Best"},{"alg":"B U' L U2 L' U2 B'","tag":"Fewest moves"},{"alg":"y R' U2 R2 U R2 U R","tag":"With a rotation"},{"alg":"U R' U2 R U' B U B'","tag":"Also good"}]}}},{"n":19,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U2 L' U2 L U' F","opt":7,"algs":[{"alg":"F' U L' U2 L U2 F","tag":"Best"},{"alg":"U' R U2 R' U F' U' F","tag":"Also good"},{"alg":"R' U' R F' U' R' U2 R F","tag":"Also good"},{"alg":"F U2 F2 U' F2 U' F'","tag":"Also good"}]},"FL":{"setup":"L U L2 U L2 U2 L'","opt":7,"algs":[{"alg":"L U2 L2 U' L2 U' L'","tag":"Best"},{"alg":"U' F U2 F' U L' U' L","tag":"Also good"},{"alg":"L' U B' U2 B U2 L","tag":"Also good"},{"alg":"L2 U2 L U L' U L U L","tag":"Also good"}]},"BL":{"setup":"B' U2 R' U2 R U' B","opt":7,"algs":[{"alg":"B' U R' U2 R U2 B","tag":"Best"},{"alg":"y R U2 R2 U' R2 U' R'","tag":"With a rotation"},{"alg":"U' L U F' L F L' U L'","tag":"Also good"},{"alg":"U' L U2 L' U B' U' B","tag":"Also good"}]},"BR":{"setup":"R U R2 U R2 U2 R'","opt":7,"algs":[{"alg":"R U2 R2 U' R2 U' R'","tag":"Best"},{"alg":"R' U F' U2 F U2 R","tag":"Also good"},{"alg":"R2 U2 R U R' U R U R","tag":"Also good"},{"alg":"R U2 R2 U' R U R U2 R'","tag":"Also good"}]}}},{"n":20,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U F U2 R U R'","opt":7,"algs":[{"alg":"R U' R' U2 F' U' F","tag":"Best"},{"alg":"F' U2 L' U' L U' F","tag":"Also good"},{"alg":"R U' B U' B' U2 R'","tag":"Also good"},{"alg":"U R F R U R' U' F' R'","tag":"Also good"}]},"FL":{"setup":"F U2 R U R' U F'","opt":7,"algs":[{"alg":"F U' R U' R' U2 F'","tag":"Best"},{"alg":"L' U L' U2 L2 U L2 U L2","tag":"L and U only"},{"alg":"F U' F' U2 L' U' L","tag":"Also good"},{"alg":"L' U2 B' U' B U' L","tag":"Also good"}]},"BL":{"setup":"L U2 F U F' U L'","opt":7,"algs":[{"alg":"L U' F U' F' U2 L'","tag":"Best"},{"alg":"B' U2 R' U' R U' B","tag":"Also good"},{"alg":"L U' L' U2 B' U' B","tag":"Also good"},{"alg":"B' R' F' U F R B","tag":"Also good"}]},"BR":{"setup":"R' U F' U F U2 R","opt":7,"algs":[{"alg":"R' U2 F' U' F U' R","tag":"Best"},{"alg":"R' U R' U2 R2 U R2 U R2","tag":"R and U only"},{"alg":"R' F' L' U L F R","tag":"Also good"},{"alg":"R' U' F R' F' R U2 R","tag":"Also good"}]}}},{"n":21,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U L' U2 L U F","opt":7,"algs":[{"alg":"F' U' L' U2 L U' F","tag":"Best"},{"alg":"U F' U2 L' U L U' F","tag":"Also good"},{"alg":"U' F' U' L' U2 L U2 F","tag":"Also good"},{"alg":"B' R' U' R2 U R' B","tag":"Also good"}]},"FL":{"setup":"L' U2 L U' L' U2 L U'","opt":7,"algs":[{"alg":"U L' U2 L U L' U2 L","tag":"Best"},{"alg":"R' F' U' F2 U F' R","tag":"Fewest moves"},{"alg":"U L' U2 L U2 L' U L","tag":"Also good"},{"alg":"L' U' B' U2 B U' L","tag":"Also good"}]},"BL":{"setup":"F' L U' L2 U L F","opt":7,"algs":[{"alg":"F' L' U' L2 U L' F","tag":"Best"},{"alg":"B' U' R' U2 R U' B","tag":"Also good"},{"alg":"U B' U2 R' U R U' B","tag":"Also good"},{"alg":"U' B' U' R' U2 R U2 B","tag":"Also good"}]},"BR":{"setup":"R' U F' U2 F U R","opt":7,"algs":[{"alg":"R' U' F' U2 F U' R","tag":"Best"},{"alg":"U R' U2 R U2 R' U R","tag":"R and U only"},{"alg":"U R' U2 R U R' U2 R","tag":"Also good"},{"alg":"U R' U2 F' U F U' R","tag":"Also good"}]}}},{"n":22,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U R' U2 R U2 R' U","opt":7,"algs":[{"alg":"U' R U2 R' U2 R U' R'","tag":"Best"},{"alg":"R U B U2 B' U R'","tag":"Fewest moves"},{"alg":"U' R U2 R' U' R U2 R'","tag":"Also good"},{"alg":"L F U F2 U' F L'","tag":"Also good"}]},"FL":{"setup":"F U' R U2 R' U' F'","opt":7,"algs":[{"alg":"F U R U2 R' U F'","tag":"Best"},{"alg":"U' F U2 R U' R' U F'","tag":"Also good"},{"alg":"U F U R U2 R' U2 F'","tag":"Also good"},{"alg":"U' F U2 F' U2 F U' F'","tag":"Also good"}]},"BL":{"setup":"L U' F U2 F' U' L'","opt":7,"algs":[{"alg":"L U F U2 F' U L'","tag":"Best"},{"alg":"U' L U2 L' U2 L U' L'","tag":"L and U only"},{"alg":"U' L U2 L' U' L U2 L'","tag":"Also good"},{"alg":"U' L U2 F U' F' U L'","tag":"Also good"}]},"BR":{"setup":"F R' U R2 U' R' F'","opt":7,"algs":[{"alg":"F R U R2 U' R F'","tag":"Best"},{"alg":"B U L U2 L' U B'","tag":"Also good"},{"alg":"U' B U2 L U' L' U B'","tag":"Also good"},{"alg":"L F2 R2 F' R2 F' L'","tag":"Also good"}]}}},{"n":23,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"R U' R' U' R U R' U","opt":8,"algs":[{"alg":"U' R U' R' U R U R'","tag":"Best"},{"alg":"U2 R2 U R' U R U2 R2","tag":"Also good"},{"alg":"R U F R' U R U' F' R'","tag":"Also good"},{"alg":"U' R2 D R' U R D' R2","tag":"Also good"}]},"FL":{"setup":"F U' F' U' F U F' U","opt":8,"algs":[{"alg":"U' F U' F' U F U F'","tag":"Best"},{"alg":"F U L F' U F U' L' F'","tag":"Also good"},{"alg":"U' F' U' L' U L F2 U F'","tag":"Also good"},{"alg":"F R U R2 F R F' U F'","tag":"Also good"}]},"BL":{"setup":"L U' L' U' L U L' U","opt":8,"algs":[{"alg":"U' L U' L' U L U L'","tag":"Best"},{"alg":"U2 L2 U L' U L U2 L2","tag":"Also good"},{"alg":"U' R L U' L' U R' L U L'","tag":"Also good"},{"alg":"L F' U' L' U L2 F L2","tag":"Also good"}]},"BR":{"setup":"R2 F R F2 U' F U' R","opt":8,"algs":[{"alg":"y U' R U' R' U R U R'","tag":"Best (with a rotation)"},{"alg":"R' U F' U F2 R' F' R2","tag":"Best without a rotation"},{"alg":"R U2 R U' F' U F R' U' R'","tag":"Also good"},{"alg":"R' F' U2 F U' R U R' U' R","tag":"Also good"}]}}},{"n":24,"group":"Both on top, white facing the side","slots":{"FR":{"setup":"F' U F U F' U' F U'","opt":8,"algs":[{"alg":"U F' U F U' F' U' F","tag":"Best"},{"alg":"F' U' R' F U' F' U R F","tag":"Also good"},{"alg":"R U R' U R U' R' F' U' F","tag":"Also good"},{"alg":"R U R2 F R F2 U' F","tag":"Also good"}]},"FL":{"setup":"L' U L U L' U' L U'","opt":8,"algs":[{"alg":"U L' U L U' L' U' L","tag":"Best"},{"alg":"U2 L2 U' L U' L' U2 L2","tag":"Also good"},{"alg":"L' U' F' L U' L' U F L","tag":"Also good"},{"alg":"U R' L' U L U' R L' U' L","tag":"Also good"}]},"BL":{"setup":"L2 F' L' F2 U F' U L'","opt":8,"algs":[{"alg":"y U R' U R U' R' U' R","tag":"Best (with a rotation)"},{"alg":"L U' F U' F2 L F L2","tag":"Best without a rotation"},{"alg":"L' U2 L' U F U' F' L U L","tag":"Also good"},{"alg":"L F U2 F' U L' U' L U L'","tag":"Also good"}]},"BR":{"setup":"R' U R U R' U' R U'","opt":8,"algs":[{"alg":"U R' U R U' R' U' R","tag":"Best"},{"alg":"U2 R2 U' R U' R' U2 R2","tag":"Also good"},{"alg":"R' F U R U' R2 F' R2","tag":"Also good"},{"alg":"U R2 D' R U' R' D R2","tag":"Also good"}]}}},{"n":25,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"F' U2 F R U R'","opt":6,"algs":[{"alg":"R U' R' F' U2 F","tag":"Best"},{"alg":"F' U F R U2 R'","tag":"Also good"},{"alg":"R U' R' U F' U F","tag":"Also good"},{"alg":"F' U F U' R U' R'","tag":"Also good"}]},"FL":{"setup":"L' U2 L F U F'","opt":6,"algs":[{"alg":"F U' F' L' U2 L","tag":"Best"},{"alg":"L' U L F U2 F'","tag":"Also good"},{"alg":"F U' F' U L' U L","tag":"Also good"},{"alg":"L' U L U' F U' F'","tag":"Also good"}]},"BL":{"setup":"L F' L F L' U L'","opt":6,"algs":[{"alg":"L U' L F' L' F L'","tag":"Best"},{"alg":"L U' L' B' U2 B","tag":"Fewest moves"},{"alg":"B' U B L U2 L'","tag":"Also good"},{"alg":"L U' L' U B' U B","tag":"Also good"}]},"BR":{"setup":"R' F R' F' R U' R","opt":6,"algs":[{"alg":"R' U R' F R F' R","tag":"Best"},{"alg":"R' U R B U2 B'","tag":"Fewest moves"},{"alg":"B U' B' R' U2 R","tag":"Also good"},{"alg":"R' U R U' B U' B'","tag":"Also good"}]}}},{"n":26,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R2 U2 R2 U' R2 U' R2","opt":7,"algs":[{"alg":"R2 U R2 U R2 U2 R2","tag":"Best"},{"alg":"U2 L' U R2 U' L U R2","tag":"Also good"},{"alg":"U2 F' U L' U' L U' F","tag":"Also good"},{"alg":"U' F' U L' U2 L U' F","tag":"Also good"}]},"FL":{"setup":"F U' R U2 R' U F' U'","opt":7,"algs":[{"alg":"U F U' R U2 R' U F'","tag":"Best"},{"alg":"L2 U' L2 U' L2 U2 L2","tag":"Fewest moves"},{"alg":"U2 F U' R U R' U F'","tag":"Also good"},{"alg":"U2 R U' L2 U R' U' L2","tag":"Also good"}]},"BL":{"setup":"L U' F U2 F' U L' U'","opt":7,"algs":[{"alg":"U L U' F U2 F' U L'","tag":"Best"},{"alg":"L2 U L2 U L2 U2 L2","tag":"Fewest moves"},{"alg":"U2 L U' F U F' U L'","tag":"Also good"},{"alg":"U2 R' U L2 U' R U L2","tag":"Also good"}]},"BR":{"setup":"R2 U2 R2 U R2 U R2","opt":7,"algs":[{"alg":"R2 U' R2 U' R2 U2 R2","tag":"Best"},{"alg":"U2 R' U F' U' F U' R","tag":"Also good"},{"alg":"U' R' U F' U2 F U' R","tag":"Also good"},{"alg":"U2 L U' R2 U L' U' R2","tag":"Also good"}]}}},{"n":27,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"L U' R U L' U' R' U'","opt":7,"algs":[{"alg":"U R U L U' R' U L'","tag":"Best"},{"alg":"L D' L' U L D L'","tag":"Fewest moves"},{"alg":"U R U R' U2 R U R'","tag":"R and U only"},{"alg":"U' R U2 R' U R U R'","tag":"Also good"}]},"FL":{"setup":"L' U' R' U L U' R U","opt":7,"algs":[{"alg":"U' R' U L' U' R U L","tag":"Best"},{"alg":"U F U2 R U2 R' F'","tag":"Fewest moves"},{"alg":"U L' U L U2 L' U L","tag":"L and U only"},{"alg":"U L' U L U L' U2 L","tag":"Also good"}]},"BL":{"setup":"R U' L U R' U' L' U'","opt":7,"algs":[{"alg":"U L U R U' L' U R'","tag":"Best"},{"alg":"R D' R' U R D R'","tag":"Fewest moves"},{"alg":"U L U L' U2 L U L'","tag":"L and U only"},{"alg":"U' L U2 L' U L U L'","tag":"Also good"}]},"BR":{"setup":"R' U' L' U R U' L U","opt":7,"algs":[{"alg":"U' L' U R' U' L U R","tag":"Best"},{"alg":"U2 R' F' U2 F U2 R","tag":"Fewest moves"},{"alg":"U R' U R U R' U2 R","tag":"R and U only"},{"alg":"U R' U R U2 R' U R","tag":"Also good"}]}}},{"n":28,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R U L U' R' U L' U'","opt":7,"algs":[{"alg":"U L U' R U L' U' R'","tag":"Best"},{"alg":"U' F' U2 L' U2 L F","tag":"Fewest moves"},{"alg":"U' R U' R' U2 R U' R'","tag":"R and U only"},{"alg":"U' R U' R' U' R U2 R'","tag":"Also good"}]},"FL":{"setup":"R' U L' U' R U L U","opt":7,"algs":[{"alg":"U' L' U' R' U L U' R","tag":"Best"},{"alg":"R' D R U' R' D' R","tag":"Fewest moves"},{"alg":"U L' U2 L U' L' U' L","tag":"L and U only"},{"alg":"U' F U' R U' R' U F'","tag":"Also good"}]},"BL":{"setup":"L U R U' L' U R' U'","opt":7,"algs":[{"alg":"U R U' L U R' U' L'","tag":"Best"},{"alg":"U2 L F U2 F' U2 L'","tag":"Fewest moves"},{"alg":"U' L U' L' U2 L U' L'","tag":"L and U only"},{"alg":"U' L U' L' U' L U2 L'","tag":"Also good"}]},"BR":{"setup":"L' U R' U' L U R U","opt":7,"algs":[{"alg":"U' R' U' L' U R U' L","tag":"Best"},{"alg":"U' R' U2 F' U2 F R","tag":"Fewest moves"},{"alg":"U R' U2 R U' R' U' R","tag":"R and U only"},{"alg":"U' R' U' R U2 R' U' R","tag":"Also good"}]}}},{"n":29,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"R U' R' U F' U F U'","opt":8,"algs":[{"alg":"U F' U' F U' R U R'","tag":"Best"},{"alg":"U2 F' U F U R U R'","tag":"Also good"},{"alg":"U2 F' U' F U R U' R'","tag":"Also good"},{"alg":"U2 F' U' F U2 R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U' F' U L' U L U'","opt":8,"algs":[{"alg":"U L' U' L U' F U F'","tag":"Best"},{"alg":"U2 L' U L U F U F'","tag":"Also good"},{"alg":"U2 L' U' L U F U' F'","tag":"Also good"},{"alg":"U2 L' U' L F' L F L'","tag":"Also good"}]},"BL":{"setup":"L U' L' U B' U B U'","opt":8,"algs":[{"alg":"U B' U' B U' L U L'","tag":"Best"},{"alg":"y U R' F R' F' R U' R","tag":"With a rotation"},{"alg":"U2 B' U B U L U L'","tag":"Also good"},{"alg":"U2 B' U' B U L U' L'","tag":"Also good"}]},"BR":{"setup":"R' U R' F R F' R U'","opt":8,"algs":[{"alg":"U R' F R' F' R U' R","tag":"Best"},{"alg":"R' F' U F R U R' U' R","tag":"Also good"},{"alg":"U R' U' R U' B U B'","tag":"Also good"},{"alg":"U2 R' U R U B U B'","tag":"Also good"}]}}},{"n":30,"group":"Edge in the slot, corner on top","slots":{"FR":{"setup":"F' U F U' R U' R' U","opt":8,"algs":[{"alg":"U' R U R' U F' U' F","tag":"Best"},{"alg":"U2 R U R' U' F' U F","tag":"Also good"},{"alg":"U2 R U' R' U' F' U' F","tag":"Also good"},{"alg":"U2 R U R' F R' F' R","tag":"Also good"}]},"FL":{"setup":"L' U L U' F U' F' U","opt":8,"algs":[{"alg":"U' F U F' U L' U' L","tag":"Best"},{"alg":"U2 F U F' U' L' U L","tag":"Also good"},{"alg":"U2 F U' F' U' L' U' L","tag":"Also good"},{"alg":"U' F R' F R F' U F'","tag":"Also good"}]},"BL":{"setup":"L U' L F' L' F L' U","opt":8,"algs":[{"alg":"U' L F' L F L' U L'","tag":"Best"},{"alg":"U' L U L' U B' U' B","tag":"Also good"},{"alg":"L F U' F' L' U' L U L'","tag":"Also good"},{"alg":"U2 L U L' U' B' U B","tag":"Also good"}]},"BR":{"setup":"R' U R U' B U' B' U","opt":8,"algs":[{"alg":"U' B U B' U R' U' R","tag":"Best"},{"alg":"U2 B U B' U' R' U R","tag":"Also good"},{"alg":"U2 B U' B' U' R' U' R","tag":"Also good"},{"alg":"R' U' R2 U2 F R' F' U2 R'","tag":"Also good"}]}}},{"n":31,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"R U R' U' R U R'","opt":6,"algs":[{"alg":"R U' R' U R U' R'","tag":"Best"},{"alg":"R U' R2 F R F'","tag":"Fewest moves"},{"alg":"F' U2 F R U2 R'","tag":"Also good"},{"alg":"R U' R' U2 R U2 R'","tag":"Also good"}]},"FL":{"setup":"F U2 F' L' U2 L","opt":6,"algs":[{"alg":"L' U2 L F U2 F'","tag":"Best"},{"alg":"U' F R U2 R' U F'","tag":"Also good"},{"alg":"L' U2 L U' F U' F'","tag":"Also good"},{"alg":"L' U' L U2 F U' F'","tag":"Also good"}]},"BL":{"setup":"L U L' U' L U L'","opt":6,"algs":[{"alg":"L U' L' U L U' L'","tag":"Best"},{"alg":"L U2 F' L F L2","tag":"Fewest moves"},{"alg":"L U' L' U2 L U2 L'","tag":"Also good"},{"alg":"U' L F U2 F' U L'","tag":"Also good"}]},"BR":{"setup":"R' F R' F' R U2 R","opt":6,"algs":[{"alg":"R' U2 R' F R F' R","tag":"Best"},{"alg":"R' U2 R B U2 B'","tag":"Fewest moves"},{"alg":"y R U' R' U R U' R'","tag":"With a rotation"},{"alg":"R' U2 R U' B U' B'","tag":"Also good"}]}}},{"n":32,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"R U' R' U R U' R'","opt":7,"algs":[{"alg":"R U R' U' R U R'","tag":"Best"},{"alg":"U2 F' U F R U R'","tag":"Also good"},{"alg":"U' F R' F' R2 U R'","tag":"Also good"},{"alg":"U' R U2 L U' R' U L'","tag":"Also good"}]},"FL":{"setup":"F R U2 R' U F' U","opt":7,"algs":[{"alg":"U' F U' R U2 R' F'","tag":"Best"},{"alg":"U2 L' U L F U F'","tag":"Also good"},{"alg":"F U F' U' F U F'","tag":"Also good"},{"alg":"U' F U' R U' R' U' F'","tag":"Also good"}]},"BL":{"setup":"L U' L' U L U' L'","opt":7,"algs":[{"alg":"L U L' U' L U L'","tag":"Best"},{"alg":"U' L U' F U2 F' L'","tag":"Also good"},{"alg":"U' L U2 R U' L' U R'","tag":"Also good"},{"alg":"U' L U' F U' F' U' L'","tag":"Also good"}]},"BR":{"setup":"B U' B' R' U' R U2","opt":7,"algs":[{"alg":"y R U R' U' R U R'","tag":"Best (with a rotation)"},{"alg":"U2 R' U R B U B'","tag":"Best without a rotation"},{"alg":"U' B U' L U2 L' B'","tag":"Also good"},{"alg":"U' B U' L U' L' U' B'","tag":"Also good"}]}}},{"n":33,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"F' U2 F R U2 R' U'","opt":7,"algs":[{"alg":"U R U2 R' F' U2 F","tag":"Best"},{"alg":"U' F' U' L' U' L U' F","tag":"Also good"},{"alg":"U2 F' L' U2 L U' F","tag":"Also good"},{"alg":"U R U R' U F' U2 F","tag":"Also good"}]},"FL":{"setup":"L' U' L U L' U' L U'","opt":7,"algs":[{"alg":"U L' U L U' L' U L","tag":"Best"},{"alg":"U F U2 F' L' U2 L","tag":"Fewest moves"},{"alg":"U' R' U L' U' R U2 L","tag":"Also good"},{"alg":"U L' U L2 F' L' F","tag":"Also good"}]},"BL":{"setup":"L F' L F L' U2 L' U'","opt":7,"algs":[{"alg":"y U R' U R U' R' U R","tag":"Best (with a rotation)"},{"alg":"U L U2 L F' L' F L'","tag":"Best without a rotation"},{"alg":"U2 B' R' U2 R U' B","tag":"Fewest moves"},{"alg":"U' B' U' R' U' R U' B","tag":"Also good"}]},"BR":{"setup":"R' U' R U R' U' R U'","opt":7,"algs":[{"alg":"U R' U R U' R' U R","tag":"Best"},{"alg":"U2 R' F' U2 F U' R","tag":"Fewest moves"},{"alg":"U' L' U R' U' L U2 R","tag":"Also good"},{"alg":"U' R' U' F' U' F U' R","tag":"Also good"}]}}},{"n":34,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"F' U F U2 R U2 R'","opt":7,"algs":[{"alg":"R U2 R' U2 F' U' F","tag":"Best"},{"alg":"U2 R U R' U' F' U' F","tag":"Also good"},{"alg":"U2 R U' R' U' F' U F","tag":"Also good"},{"alg":"U2 R U' R' F R' F' R","tag":"Also good"}]},"FL":{"setup":"F U2 R U R' U2 F'","opt":7,"algs":[{"alg":"F U2 R U' R' U2 F'","tag":"Best"},{"alg":"L U L U L2 U' L' U' L'","tag":"L and U only"},{"alg":"F U2 F' U2 L' U' L","tag":"Also good"},{"alg":"U2 F U F' U' L' U' L","tag":"Also good"}]},"BL":{"setup":"L U2 F U F' U2 L'","opt":7,"algs":[{"alg":"L U2 F U' F' U2 L'","tag":"Best"},{"alg":"U L' U2 F' L F U2 L","tag":"Also good"},{"alg":"L U2 L' U2 B' U' B","tag":"Also good"},{"alg":"L F U' F' L' U L U L'","tag":"Also good"}]},"BR":{"setup":"F R2 U R U' R2 F'","opt":7,"algs":[{"alg":"F R2 U R' U' R2 F'","tag":"Best"},{"alg":"R U R U R2 U' R' U' R'","tag":"R and U only"},{"alg":"U F R2 U R U' R2 F'","tag":"Also good"},{"alg":"U R U R U R U' R' U' R'","tag":"Also good"}]}}},{"n":35,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"F' U F R U R' U","opt":7,"algs":[{"alg":"U' R U' R' F' U' F","tag":"Best"},{"alg":"U2 F' U L' U2 L F","tag":"Also good"},{"alg":"U2 F' U L' U L U F","tag":"Also good"},{"alg":"U F' U' F U F' U' F","tag":"Also good"}]},"FL":{"setup":"L' U L F U F' U","opt":7,"algs":[{"alg":"U' F U' F' L' U' L","tag":"Best"},{"alg":"U L' U' L U L' U' L","tag":"L and U only"},{"alg":"U2 L' U2 R' U L U' R","tag":"Also good"},{"alg":"U2 F' L F L2 U' L","tag":"Also good"}]},"BL":{"setup":"B' U B L U L' U","opt":7,"algs":[{"alg":"U' L U' L' B' U' B","tag":"Best"},{"alg":"y U R' U' R U R' U' R","tag":"With a rotation"},{"alg":"U2 B' U R' U2 R B","tag":"Also good"},{"alg":"U2 B' U R' U R U B","tag":"Also good"}]},"BR":{"setup":"R' U R U' R' U R U'","opt":7,"algs":[{"alg":"U R' U' R U R' U' R","tag":"Best"},{"alg":"U2 R' U F' U2 F R","tag":"Fewest moves"},{"alg":"U' R2 F R F' U2 R","tag":"Also good"},{"alg":"U2 R' U2 L' U R U' L","tag":"Also good"}]}}},{"n":36,"group":"Corner in the slot, edge on top","slots":{"FR":{"setup":"R U R' U' F' U' F U","opt":7,"algs":[{"alg":"U' F' U F U R U' R'","tag":"Best"},{"alg":"F U2 L F' L' U2 F'","tag":"Fewest moves"},{"alg":"R' U' R' U' R' U R U R","tag":"R and U only"},{"alg":"U' F' U' F U R U R'","tag":"Also good"}]},"FL":{"setup":"F U F' U' L' U' L U","opt":7,"algs":[{"alg":"U' L' U L U F U' F'","tag":"Best"},{"alg":"F' U2 R' F' R U2 F","tag":"Fewest moves"},{"alg":"U' L' U' L U F U F'","tag":"Also good"},{"alg":"U' F U2 R U R' U2 F'","tag":"Also good"}]},"BL":{"setup":"L' U2 F' L F U2 L","opt":7,"algs":[{"alg":"L' U2 F' L' F U2 L","tag":"Best"},{"alg":"L' U' L' U' L' U L U L","tag":"L and U only"},{"alg":"F' L2 U' L' U L2 F","tag":"Also good"},{"alg":"U' L U2 F U F' U2 L'","tag":"Also good"}]},"BR":{"setup":"R U2 F R F' U2 R'","opt":7,"algs":[{"alg":"R U2 F R' F' U2 R'","tag":"Best"},{"alg":"U R' U2 F' U F U2 R","tag":"Also good"},{"alg":"U' R' U R U B U' B'","tag":"Also good"},{"alg":"U' R' U' R U B U B'","tag":"Also good"}]}}},{"n":37,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R U' R' F' L' U2 L F","opt":8,"algs":[{"alg":"F' L' U2 L F R U R'","tag":"Best"},{"alg":"R F U R U' R' F' U' R'","tag":"Also good"},{"alg":"F2 L' U' L U F U' F","tag":"Also good"},{"alg":"R U' R U B U' B' R2","tag":"Also good"}]},"FL":{"setup":"F R U2 R' F' L' U' L","opt":8,"algs":[{"alg":"L' U L F R U2 R' F'","tag":"Best"},{"alg":"F U' F U R U' R' F2","tag":"Also good"},{"alg":"L' U' F' L' U' L U F L","tag":"Also good"},{"alg":"F L U F U' F' L' U' F'","tag":"Also good"}]},"BL":{"setup":"L2 F U F' U' L' U L'","opt":8,"algs":[{"alg":"L U' L U F U' F' L2","tag":"Best"}]},"BR":{"setup":"R' U R' U' F' U F R2","opt":8,"algs":[{"alg":"R2 F' U' F U R U' R","tag":"Best"}]}}},{"n":38,"group":"Both pieces in the slot","slots":{"FR":{"setup":"F' L' U2 L F R U R'","opt":8,"algs":[{"alg":"R U' R' F' L' U2 L F","tag":"Best"},{"alg":"R U F R U R' U' F' R'","tag":"Also good"},{"alg":"F' U F' U' L' U L F2","tag":"Also good"},{"alg":"R2 B U B' U' R' U R'","tag":"Also good"}]},"FL":{"setup":"L' U L F R U2 R' F'","opt":8,"algs":[{"alg":"F R U2 R' F' L' U' L","tag":"Best"},{"alg":"F2 R U R' U' F' U F'","tag":"Also good"},{"alg":"L' F' U' L' U L F U L","tag":"Also good"},{"alg":"F U L F U F' U' L' F'","tag":"Also good"}]},"BL":{"setup":"L U' L U F U' F' L2","opt":8,"algs":[{"alg":"L2 F U F' U' L' U L'","tag":"Best"}]},"BR":{"setup":"R2 F' U' F U R U' R","opt":8,"algs":[{"alg":"R' U R' U' F' U F R2","tag":"Best"}]}}},{"n":39,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R2 U2 R' U' R U' R' U2 R'","opt":9,"algs":[{"alg":"R U2 R U R' U R U2 R2","tag":"Best"},{"alg":"R U R' U2 R U' R' U R U R'","tag":"Also good"}]},"FL":{"setup":"L' U2 L' U' L U' L' U2 L2","opt":9,"algs":[{"alg":"L2 U2 L U L' U L U2 L","tag":"Best"},{"alg":"L' U2 R' U2 R U R' U R L","tag":"Also good"},{"alg":"F U2 R U' R' U R U2 R' F'","tag":"Also good"},{"alg":"F R U2 R' U R U2 R' U F'","tag":"Also good"}]},"BL":{"setup":"L2 U2 L' U' L U' L' U2 L'","opt":9,"algs":[{"alg":"L U2 L U L' U L U2 L2","tag":"Best"},{"alg":"R L U R' U R U2 R' U2 L'","tag":"Also good"}]},"BR":{"setup":"R' U2 R' U' R U' R' U2 R2","opt":9,"algs":[{"alg":"R2 U2 R U R' U R U2 R","tag":"Best"},{"alg":"R' U R U R' U' R U R' U2 R","tag":"Also good"}]}}},{"n":40,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R2 U2 F R2 F' U2 R' U R'","opt":9,"algs":[{"alg":"R U' R U2 F R2 F' U2 R2","tag":"Best"},{"alg":"R2 U2 F R2 F' U2 R' U R'","tag":"Also good"},{"alg":"R F R' F' U2 R U R U' R2","tag":"Also good"},{"alg":"R2 U R' U' R' U2 F R F' R'","tag":"Also good"}]},"FL":{"setup":"L' U L' U2 F' L2 F U2 L2","opt":9,"algs":[{"alg":"L2 U2 F' L2 F U2 L U' L","tag":"Best"},{"alg":"L' U L' U2 F' L2 F U2 L2","tag":"Also good"},{"alg":"L2 U' L U L U2 F' L' F L","tag":"Also good"},{"alg":"L' F' L F U2 L' U' L' U L2","tag":"Also good"}]},"BL":{"setup":"L U' L' F' L' U' L2 U L' F","opt":9,"algs":[{"alg":"F' L U' L2 U L F L U L'","tag":"Best"},{"alg":"L U' L U2 B L2 B' U2 L2","tag":"Fewest moves"},{"alg":"L U' L' F' L' U' L2 U L' F","tag":"Also good"}]},"BR":{"setup":"F R' U R2 U' R' F' R' U' R","opt":9,"algs":[{"alg":"R' U R F R U R2 U' R F'","tag":"Best"},{"alg":"R2 U2 B' R2 B U2 R U' R","tag":"Fewest moves"},{"alg":"F R' U R2 U' R' F' R' U' R","tag":"Also good"}]}}},{"n":41,"group":"Both pieces in the slot","slots":{"FR":{"setup":"R U2 R U R' U R U2 R2","opt":9,"algs":[{"alg":"R2 U2 R' U' R U' R' U2 R'","tag":"Best"},{"alg":"R U R' U' R U2 R' U' R U R'","tag":"Also good"}]},"FL":{"setup":"L2 U2 L U L' U L U2 L","opt":9,"algs":[{"alg":"L' U2 L' U' L U' L' U2 L2","tag":"Best"},{"alg":"R' L' U' R U' R' U2 R U2 L","tag":"Also good"},{"alg":"F U' R U2 R' U' R U2 R' F'","tag":"Also good"},{"alg":"F R U2 R' U' R U R' U2 F'","tag":"Also good"}]},"BL":{"setup":"L U2 L U L' U L U2 L2","opt":9,"algs":[{"alg":"L2 U2 L' U' L U' L' U2 L'","tag":"Best"},{"alg":"L U2 R U2 R' U' R U' R' L'","tag":"Also good"}]},"BR":{"setup":"R2 U2 R U R' U R U2 R","opt":9,"algs":[{"alg":"R' U2 R' U' R U' R' U2 R2","tag":"Best"},{"alg":"R' U R U' R' U2 R U' R' U R","tag":"Also good"}]}}}];
 /*F2L_END*/
 if (typeof module !== 'undefined') module.exports = { F2L_CASES };
 
@@ -1419,7 +1549,7 @@ const store = {
   get(k, d){ try{ const v = localStorage.getItem('lld.'+k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k, v){ try{ localStorage.setItem('lld.'+k, JSON.stringify(v)); }catch(e){} }
 };
-const settings = Object.assign({ f2lReal:true, f2lAhead:1, f2lSlots:['FR','FL','BL','BR'], visible:true, snap:true, view:'drill', animate:true, show:false, random:true, auf:false, noRot:false, speed:6, mode:'oll' }, store.get('settings', {}));
+const settings = Object.assign({ f2lQuiz:false, quizAlg:true, quizOri:false, quizWatch:true, quizWho:'next', quizStats:{ n:0, ok:0, streak:0, best:0 }, f2lReal:true, f2lAhead:1, f2lSlots:['FR','FL','BL','BR'], visible:true, snap:true, view:'drill', animate:true, show:false, random:true, auf:false, noRot:false, speed:6, mode:'oll' }, store.get('settings', {}));
 const customAlgs = Object.assign({ oll:{}, pll:{}, f2l:{} }, store.get('custom', {}));
 if (!customAlgs.f2l) customAlgs.f2l = {};
 const enabled = Object.assign({ oll:null, pll:null, f2l:null }, store.get('enabled', {}));
@@ -1429,7 +1559,7 @@ const saveSettings = () => store.set('settings', settings);
 function buildCases(kind, list){
   const S = s => ({ y:'yiheng', u:'sheet', m:'mine' })[s] || 'standard';
   return list.map(([id, group, alg, src, alts]) => {
-    const algs = [{ alg, src: S(src) }, ...(alts || []).map(([a, s]) => ({ alg: a, src: S(s) }))];
+    const algs = [{ alg, src: S(src) }, ...(alts || []).map(([a, s, note]) => ({ alg: a, src: S(s), note }))];
     const c = { kind, id:String(id), group, algs, title: kind === 'oll' ? 'OLL ' + id : id + ' perm' };
     c.canonSetup = invertMoves(parseAlg(algs[0].alg).moves);
     return c;
@@ -1656,7 +1786,7 @@ async function runSolution(){
   const lis = $('moves').children;
   for (let i=0; i<all.length; i++){
     [...lis].forEach((li,j) => { li.classList.toggle('active', j===i); li.classList.toggle('past', j<i); });
-    const dbl = all[i].amount === 2 ? 1.45 : 1;
+    const dbl = [1, 1, 1.45, 1.8][Math.min(3, Math.abs(moveTurns(all[i])))];
     await turnAnimated(all[i], ms * dbl);
   }
   [...lis].forEach(li => { li.classList.remove('active'); li.classList.add('past'); });
@@ -1686,7 +1816,7 @@ function render(keepMoveClasses){
     const src = custom && !used ? 'mine' : used ? used.src : 'standard';
     $('caseSrc').hidden = false;
     $('caseSrc').className = 'src ' + (src === 'yiheng' || src === 'sheet' ? 'yiheng' : '');
-    $('caseSrc').textContent = (SRC_LABEL[src] || 'Standard alg') + ' · ' + rotNote(current.algText);
+    $('caseSrc').textContent = (SRC_LABEL[src] || 'Standard alg') + (used && used.note ? ' · ' + used.note : '') + ' · ' + rotNote(current.algText);
   }
   $('caseThumb').innerHTML = thumbSVG(current.customOnce ? 'pll' : c.kind, current.setup);
   $('setup').textContent = movesToString(current.setup) || '(nothing: already solved)';
@@ -1702,13 +1832,13 @@ function render(keepMoveClasses){
 
   // alternatives
   const alts = current.customOnce ? [] : c.algs.filter(a => a.alg !== current.algText);
-  $('alts').innerHTML = shown ? alts.map((a,i) => `<div class="alt"><span>${esc(a.alg)}</span><small>${({ yiheng:'Yiheng', sheet:'your sheet', mine:'yours' })[a.src] || 'standard'}</small><button class="btn ghost" data-alt="${esc(a.alg)}">Use this</button></div>`).join('') : '';
+  $('alts').innerHTML = shown ? alts.map((a,i) => `<div class="alt"><span>${esc(a.alg)}</span><small>${(({ yiheng:'Yiheng', sheet:'your sheet', mine:'yours' })[a.src] || 'standard') + (a.note ? ' · ' + esc(a.note) : '')}</small><button class="btn ghost" data-alt="${esc(a.alg)}">Use this</button></div>`).join('') : '';
 
   const willAnimate = settings.animate && phase === 'ready';
   $('mainAction').innerHTML = (phase === 'playing' ? 'Skip to end' : willAnimate ? 'Animate solution' : 'Next case') + ' <kbd>Space</kbd>';
   $('clearAlg').hidden = current.customOnce || !customAlgs[c.kind][c.id];
 }
-const SRC_LABEL = { yiheng:'Yiheng’s alg', sheet:'From your OLL sheet', mine:'Your saved alg', standard:'Standard alg' };
+const SRC_LABEL = { yiheng:'Yiheng’s alg', sheet:'From your sheet', mine:'Your saved alg', standard:'Standard alg' };
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
 
 /* ---------- custom algs ---------- */
@@ -1717,7 +1847,7 @@ let buffer = [], padTab = 0;
 const PAD_TABS = [['R','L','U','D','F','B'], ['r','l','u','d','f','b'], ['M','E','S','x','y','z']];
 function renderPad(){
   const faces = PAD_TABS[padTab];
-  $('pad').innerHTML = ['', "'", '2'].map(s => faces.map(f => `<button data-move="${f}${s}" aria-label="${f}${s}">${f}${s}</button>`).join('')).join('');
+  $('pad').innerHTML = ['', "'", '2', "2'", '3'].map(s => faces.map(f => `<button data-move="${f}${s}" aria-label="${f}${s}">${f}${s}</button>`).join('')).join('');
   [...$('padTabs').children].forEach((b, i) => b.setAttribute('aria-selected', i === padTab));
 }
 function renderBuffer(){ $('algBuffer').innerHTML = buffer.map(m => `<li>${esc(m)}</li>`).join(''); const r = checkText(buffer.join(' ')); if (r) msg($('algMsg'), r.text, r.ok ? 'ok' : 'err'); }
@@ -1740,7 +1870,7 @@ function saveTyped(){
   if (view === 'f2l'){
     const q = parseAlg(text); if (q.error) return msg(m, q.error + '.', 'err');
     if (!fv.c || !f2lSolves(fv.c, fv.slot, q.moves)) return msg(m, `That alg doesn’t solve ${fv.c.title} in the ${SLOT_NICE[fv.slot]} while keeping the cross and the other slots. Nothing was saved.`, 'err');
-    customAlgs.f2l[f2lKey(fv.c, fv.slot)] = movesToString(q.moves); store.set('custom', customAlgs);
+    customAlgs.f2l[f2lKey(fv.c, fv.slot)] = text.replace(/\s+/g, ' ').trim(); store.set('custom', customAlgs);
     loadF2L(fv.c, fv.slot); buffer = []; renderBuffer();
     return msg(m, `Saved. ${fv.c.title} in the ${SLOT_NICE[fv.slot]} now uses your alg, here and on the alg sheet.`, 'ok');
   }
@@ -1749,7 +1879,7 @@ function saveTyped(){
   if (current.customOnce) return msg(m, 'Pick a normal case first (press → for the next one).', 'err');
   const c = current.case;
   if (!solvesCase(c.kind, c.canonSetup, p.moves)) return msg(m, `That alg doesn’t solve ${c.title} (checked from all four angles). Nothing was saved.`, 'err');
-  customAlgs[c.kind][c.id] = movesToString(p.moves); store.set('custom', customAlgs);
+  customAlgs[c.kind][c.id] = text.replace(/\s+/g, ' ').trim(); store.set('custom', customAlgs);
   loadCase(c); buffer = []; renderBuffer();
   msg(m, `Saved. ${c.title} now uses your alg, here and in Solve mode.`, 'ok');
 }
@@ -1780,7 +1910,7 @@ function importSheet(){
                              : CASES.pll.find(x => x.id.toLowerCase() === id.toLowerCase());
     const p = parseAlg(alg);
     if (!c || p.error || !p.moves.length || !solvesCase(kind, c.canonSetup, p.moves)){ skipped.push(line.slice(0, 30)); continue; }
-    customAlgs[kind][c.id] = movesToString(p.moves); ok++;
+    customAlgs[kind][c.id] = alg.replace(/\s+/g, ' ').trim(); ok++;
   }
   store.set('custom', customAlgs);
   msg($('importMsg'), `Imported ${ok} alg${ok===1?'':'s'}.` + (skipped.length ? ` Skipped ${skipped.length} that didn’t parse or didn’t solve their case: ${skipped.slice(0,4).join(' / ')}${skipped.length>4?' …':''}` : ''), skipped.length && !ok ? 'err' : 'ok');
@@ -1836,10 +1966,10 @@ function exportPage(){
   const code = s => ({ yiheng:'y', sheet:'u', mine:'m' })[s] || 's';
   const rows = kind => CASES[kind].map(c => {
     const list = [], seen = new Set();
-    const add = (a, s) => { const k = a.replace(/\s+/g, ' ').trim(); if (!seen.has(k)){ seen.add(k); list.push([k, s]); } };
+    const add = (a, s, note) => { const k = a.replace(/\s+/g, ' ').trim(); if (!seen.has(k)){ seen.add(k); list.push(note ? [k, s, note] : [k, s]); } };
     const mine = customAlgs[kind][c.id], same = mine && c.algs.find(a => a.alg.replace(/\s+/g, ' ').trim() === mine.replace(/\s+/g, ' ').trim());
     if (mine) add(mine, same ? code(same.src) : 'm');
-    c.algs.forEach(a => add(a.alg, code(a.src)));
+    c.algs.forEach(a => add(a.alg, code(a.src), a.note));
     const [p, ...rest] = list;
     return [kind === 'oll' ? +c.id : c.id, c.group, p[0], p[1], rest];
   });
@@ -1945,6 +2075,14 @@ document.addEventListener('keydown', e => {
   const k = e.key;
   if (k === '3' && !e.repeat){ switchMode('solve'); return; }
   if (k === '4' && !e.repeat){ switchMode('f2l'); return; }
+  if (view === 'f2l' && settings.f2lQuiz){
+    if (k === ' ' || e.code === 'Space' || k === 'Enter'){ e.preventDefault(); if (!e.repeat) quizGo(); return; }
+    if (e.repeat) return;
+    if (k === 'n' || k === 'N') idle(nextF2L)();
+    else if (k === '1') switchMode('oll');
+    else if (k === '2') switchMode('pll');
+    return;
+  }
   if (view === 'f2l'){
     if (k === ' ' || e.code === 'Space'){ e.preventDefault(); if (!e.repeat) solveSpace(); return; }
     if (k === 'ArrowRight'){ e.preventDefault(); moveFwd(); return; }
@@ -2018,6 +2156,12 @@ function onWorker(e){
   }
 }
 const turnCount = ms => ms.filter(m => !'xyz'.includes(m.base)).length;
+function countLabel(ms){
+  if (!ms.length) return '';
+  const n = turnCount(ms), r = ms.filter(m => 'xyz'.includes(m.base)).map(moveToString);
+  if (!n) return 'rotation only';
+  return n + (n === 1 ? ' move' : ' moves') + (r.length ? ' + ' + r.join(' ') : '');
+}
 function scoreOf(r){
   const mv = s => parseAlg(s || '').moves;
   const cf = turnCount(mv(r.cross)) + r.pairs.reduce((a, p) => a + turnCount(mv(p.moves)), 0);
@@ -2031,7 +2175,13 @@ function bestFace(){
   return best;
 }
 function llAlgList(){
-  return { oll: CASES.oll.ordered.map(c => ({ id:c.id, alg:algFor(c) })), pll: CASES.pll.ordered.map(c => ({ id:c.id, alg:algFor(c) })) };
+  // PLL: also send the same-case algs for other angles ("from the back"), so the solver can skip a U2
+  const pll = [];
+  for (const c of CASES.pll.ordered){
+    const main = algFor(c); pll.push({ id:c.id, alg:main });
+    for (const a of c.algs) if (a.note && a.alg !== main) pll.push({ id:c.id, alg:a.alg, note:a.note });
+  }
+  return { oll: CASES.oll.ordered.map(c => ({ id:c.id, alg:algFor(c) })), pll };
 }
 let W = null;   // the walk on screen: Solve (sv) or F2L (fv)
 function flatten(o){
@@ -2088,12 +2238,12 @@ function buildSteps(r){
   const name = COLOUR_NAME[r.face];
   const steps = [{ title:'Inspection', sub: r.rotation ? `turn the cube so ${name.toLowerCase()} is on the bottom` : `${name.toLowerCase()} is already on the bottom`, moves: mv(r.rotation) }];
   steps.push({ title:'Cross', sub: `${name.toLowerCase()} cross`, moves: mv(r.cross) });
-  r.pairs.forEach((p, i) => steps.push({ title:`Pair ${i + 1}`, sub: SLOT_LABEL[p.slot] + (p.note ? ', already solved' : ''), moves: mv(p.moves), slot: p.slot }));
+  r.pairs.forEach((p, i) => steps.push({ title:`Pair ${i + 1}`, sub: SLOT_LABEL[p.heldSlot || p.slot] + (p.rot ? ', after a ' + p.rot + ' rotation' : '') + (p.note ? ', already solved' : ''), moves: mv(p.moves), slot: p.slot }));
   if (!r.oll || r.oll.id === 'skip') steps.push({ title:'OLL skip', sub:'already oriented', moves: [] });
   else { const c = CASES.oll.find(x => x.id === r.oll.id); steps.push({ title:`OLL ${r.oll.id}`, sub: c ? c.group : '', moves: mv(r.oll.auf + ' ' + r.oll.alg), aufFirst: !!r.oll.auf }); }
   if (!r.pll) steps.push({ title:'PLL', sub:'not found', moves: [] });
   else if (r.pll.id === 'skip') steps.push({ title:'PLL skip', sub: r.pll.post ? 'just line up the top' : 'already solved', moves: mv(r.pll.post), aufLast: !!r.pll.post });
-  else steps.push({ title:`${r.pll.id} perm`, sub: '', moves: mv(r.pll.auf + ' ' + r.pll.alg + ' ' + r.pll.post), aufFirst: !!r.pll.auf, aufLast: !!r.pll.post });
+  else steps.push({ title:`${r.pll.id} perm`, sub: r.pll.note || '', moves: mv(r.pll.auf + ' ' + r.pll.alg + ' ' + r.pll.post), aufFirst: !!r.pll.auf, aufLast: !!r.pll.post });
   return steps;
 }
 function selectFace(f, byUser){
@@ -2128,7 +2278,7 @@ function renderSolve(){
     const n = turnCount(s.moves);
     const chips = s.moves.map((m, j) => {
       const g = sv.starts[i] + j, cls = [];
-      if ((s.aufFirst && j === 0) || (s.aufLast && j === s.moves.length - 1)) cls.push('auf');
+      if ((s.aufFirst && j === 0) || (s.aufLast && j === s.moves.length - 1) || 'xyz'.includes(m.base)) cls.push('auf');
       if (g < sv.pos) cls.push('past'); else if (g === sv.pos) cls.push('active');
       return `<li class="${cls.join(' ')}">${moveToString(m)}</li>`;
     }).join('');
@@ -2142,7 +2292,7 @@ function renderSolve(){
       }
     }
     const done = sv.ends[i] <= sv.pos && s.moves.length;
-    return `<div class="step ${i === cur ? 'current' : ''} ${done ? 'past' : ''}" data-step="${i}"><div class="top"><b>${esc(s.title)}</b><span>${esc(s.sub)}</span><em>${!s.moves.length ? '' : n === 0 ? 'rotation only' : n + (n === 1 ? ' move' : ' moves')}</em></div>${where}<ol class="moves">${chips}</ol></div>`;
+    return `<div class="step ${i === cur ? 'current' : ''} ${done ? 'past' : ''}" data-step="${i}"><div class="top"><b>${esc(s.title)}</b><span>${esc(s.sub)}</span><em>${countLabel(s.moves)}</em></div>${where}<ol class="moves">${chips}</ol></div>`;
   }).join('');
   const sc = scoreOf(sv.results[sv.face]);
   $('totals').innerHTML = `cross + F2L <b>${sc.cf}</b> · total <b>${sc.total}</b>`;
@@ -2158,7 +2308,7 @@ function enqueue(fn){
   p.then(() => { if (solveQ === p){ playing = null; fastForward = false; } });
   return p;
 }
-const moveMs = m => (reduceMotion ? 0 : 1000 / settings.speed) * (m.amount === 2 ? 1.45 : 1);
+const moveMs = m => (reduceMotion ? 0 : 1000 / settings.speed) * [1, 1, 1.45, 1.8][Math.min(3, Math.abs(moveTurns(m)))];
 const inverseMove = m => ({ base: m.base, amount: (4 - m.amount) % 4 });
 function moveFwd(){ enqueue(async () => { if (!W || !W.flat || W.pos >= W.flat.length) return; const o = W, m = o.flat[o.pos]; await turnAnimated(m, moveMs(m)); o.pos++; o.render(); }); }
 function moveBack(){ enqueue(async () => { if (!W || !W.flat || W.pos <= 0) return; const o = W, m = inverseMove(o.flat[o.pos - 1]); await turnAnimated(m, moveMs(m)); o.pos--; o.render(); }); }
@@ -2242,9 +2392,12 @@ function loadF2L(c, slot){
 function buildF2LSteps(rest){
   fv.loading = false;
   fv.steps = [{ title: fv.c.title, sub: SLOT_NICE[fv.slot], moves: parseAlg(fv.alg).moves, slot: fv.slot, main: true },
-    ...rest.map((p, i) => ({ title: `Pair ${i + 2}`, sub: SLOT_NICE[p.slot] + (p.note ? ', already solved' : ''), moves: parseAlg(p.moves).moves, slot: p.slot }))];
-  flatten(fv); fv.lastStep = -1;
-  if (W === fv) setPos(0, fv); else renderF2L();
+    ...rest.map((p, i) => ({ title: `Pair ${i + 2}`, sub: SLOT_NICE[p.heldSlot || p.slot] + (p.rot ? ', after a ' + p.rot + ' rotation' : '') + (p.note ? ', already solved' : ''), moves: parseAlg(p.moves).moves, slot: p.slot }))];
+  flatten(fv); fv.lastStep = -1; qz.phase = 'idle';
+  if (W === fv){
+    if (settings.f2lQuiz){ fv.pos = 0; if (!quizStart(0)) return nextF2L(); }
+    else setPos(0, fv);
+  } else renderF2L();
 }
 function whereText(a, b){
   const h = p => isHidden(p) ? ' <span class="hid">(hidden from the front)</span>' : '';
@@ -2267,13 +2420,18 @@ function renderF2L(){
   $('optF2lReal').checked = !!settings.f2lReal;
   $('f2lToggleSol').innerHTML = (settings.show ? 'Hide' : 'Show') + ' <kbd>S</kbd>';
   if (view === 'f2l') $('clearAlg').hidden = !custom;
+  const quizOn = !!settings.f2lQuiz;
+  [...$('f2lMode').children].forEach((b, i) => b.setAttribute('aria-pressed', (i === 1) === quizOn));
+  $('quizBlock').hidden = !quizOn; $('f2lAheadBlock').hidden = quizOn; $('f2lWalkCtl').hidden = quizOn;
   if (W === fv) clearHalos();
+  if (!fv.steps.length){ $('quizQ').textContent = 'Making a scramble…'; $('quizSub').textContent = ''; $('quizMap').innerHTML = ''; $('quizOri').innerHTML = ''; $('quizFb').textContent = ''; $('quizPath').innerHTML = ''; }
   if (!fv.steps.length){ $('f2lSteps').innerHTML = '<div class="working">Making a scramble with the cross solved…</div>'; $('f2lTrack').innerHTML = ''; $('f2lAlts').innerHTML = ''; return; }
   const cur = stepAt(fv.pos, fv);
   if (cur !== fv.lastStep){ if (settings.snap && W === fv) resetView(); fv.lastStep = cur; }
   // look-ahead: this pair + the next N pairs that still need moves
   const scr = parseAlg(fv.scramble).moves, track = [];
-  if (cur < fv.steps.length){
+  if (quizOn) renderQuiz();
+  else if (cur < fv.steps.length){
     const ids = [cur]; for (let i = cur + 1; i < fv.steps.length && ids.length <= settings.f2lAhead; i++) if (fv.steps[i].moves.length) ids.push(i);
     const before = [...scr, ...fv.flat.slice(0, fv.starts[cur])], after = [...scr, ...fv.flat.slice(0, fv.ends[cur])];
     ids.forEach((i, j) => {
@@ -2288,15 +2446,17 @@ function renderF2L(){
   }
   $('f2lTrack').innerHTML = track.join('');
   $('f2lSteps').innerHTML = fv.steps.map((s, i) => {
-    const n = turnCount(s.moves), masked = !settings.show && fv.pos <= fv.starts[i] && s.moves.length;
-    const chips = s.moves.map((m, j) => { const g = fv.starts[i] + j; return `<li class="${g < fv.pos ? 'past' : g === fv.pos ? 'active' : ''}">${moveToString(m)}</li>`; }).join('');
+    const n = turnCount(s.moves);
+    const masked = quizOn ? (s.moves.length && fv.pos <= fv.starts[i] && (i !== qz.step || (!settings.quizAlg && qz.phase === 'ask')))
+                          : (!settings.show && fv.pos <= fv.starts[i] && s.moves.length);
+    const chips = s.moves.map((m, j) => { const g = fv.starts[i] + j; return `<li class="${'xyz'.includes(m.base) ? 'auf ' : ''}${g < fv.pos ? 'past' : g === fv.pos ? 'active' : ''}">${moveToString(m)}</li>`; }).join('');
     const done = fv.ends[i] <= fv.pos && s.moves.length;
-    return `<div class="step ${i === cur ? 'current' : ''} ${done ? 'past' : ''}" data-step="${i}"><div class="top"><b>${esc(s.title)}</b><span>${esc(s.sub)}</span><em>${s.moves.length ? n + (n === 1 ? ' move' : ' moves') : ''}</em></div><ol class="moves ${masked ? 'masked' : ''}">${chips}</ol></div>`;
+    return `<div class="step ${i === cur ? 'current' : ''} ${done ? 'past' : ''}" data-step="${i}"><div class="top"><b>${esc(s.title)}</b><span>${esc(s.sub)}</span><em>${countLabel(s.moves)}</em></div><ol class="moves ${masked ? 'masked' : ''}">${chips}</ol></div>`;
   }).join('') + (settings.f2lReal ? '' : '<div class="masknote">Turn on “Mix up the other pairs” to practise looking ahead.</div>');
   const label = cur >= fv.steps.length ? 'Next case' : (fv.pos > fv.starts[cur] ? 'Finish ' : 'Play ') + esc(fv.steps[cur].title);
   $('f2lPlay').innerHTML = label + ' <kbd>Space</kbd>';
   // other algs for this case
-  const shown = settings.show || fv.pos > 0;
+  const shown = !quizOn && (settings.show || fv.pos > 0);
   $('f2lAlts').innerHTML = shown ? slotAlgs.filter(a => a.alg !== (custom || slotAlgs[0].alg)).map(a =>
     `<div class="alt"><span>${esc(a.alg)}</span><small class="tag">${esc(a.tag)}</small><button class="btn ghost" data-f2lalt="${esc(a.alg)}">Use this</button></div>`).join('') : '';
 }
@@ -2308,7 +2468,7 @@ $('f2lPlayAll').onclick = () => { if (playing) return; fv.all = true; playStep()
 $('f2lPrevMove').onclick = moveBack; $('f2lNextMove').onclick = moveFwd;
 $('f2lPrevStep').onclick = stepBack; $('f2lNextStep').onclick = stepFwd;
 $('f2lToggleSol').onclick = () => { settings.show = !settings.show; saveSettings(); renderF2L(); };
-$('f2lSteps').addEventListener('click', e => { const b = e.target.closest('[data-step]'); if (b) enqueue(() => jumpTo(+b.dataset.step)); });
+$('f2lSteps').addEventListener('click', e => { if (settings.f2lQuiz) return; const b = e.target.closest('[data-step]'); if (b) enqueue(() => jumpTo(+b.dataset.step)); });
 $('f2lAhead').addEventListener('click', e => { const b = e.target.closest('[data-ahead]'); if (!b) return; settings.f2lAhead = +b.dataset.ahead; saveSettings(); renderF2L(); });
 $('f2lSlots').addEventListener('click', idle(e => {
   const b = e.target.closest('[data-slot]'); if (!b) return;
@@ -2322,6 +2482,168 @@ $('f2lAlts').addEventListener('click', idle(e => {
   customAlgs.f2l[f2lKey(fv.c, fv.slot)] = b.dataset.f2lalt; store.set('custom', customAlgs); loadF2L(fv.c, fv.slot);
   msg($('algMsg'), `${fv.c.title} in the ${SLOT_NICE[fv.slot]} now uses that alg.`, 'ok');
 }));
+
+/* ---------- F2L look-ahead quiz ---------- */
+const qz = { step: -1, piece: null, pick: null, ori: null, phase: 'idle' };
+const DRILL_COLOUR = { U:'yellow', D:'white', F:'green', B:'blue', R:'orange', L:'red' };
+const DIRS = [['up', [0,1,0]], ['front', [0,0,1]], ['right', [1,0,0]], ['down', [0,-1,0]], ['back', [0,0,-1]], ['left', [-1,0,0]]];
+const dirName = n => (DIRS.find(([, v]) => v.every((x, i) => x === n[i])) || ['?'])[0];
+function trackSticker(p, n, moves){
+  p = p.slice(); n = n.slice();
+  for (const m of moves){ const [axis, layers, sign] = BASE[m.base]; const ai = { x:0, y:1, z:2 }[axis];
+    if (layers.includes(p[ai])){ p = rotVec(p, axis, sign * m.amount); n = rotVec(n, axis, sign * m.amount); } }
+  return [p, n];
+}
+function shortPos(p){
+  const [x, y, z] = p, fb = z === 1 ? 'F' : z === -1 ? 'B' : '', lr = x === 1 ? 'R' : x === -1 ? 'L' : '';
+  if (y === 1) return 'U' + fb + lr;
+  if (y === 0) return fb + lr + ' slot';
+  return 'D' + fb + lr;
+}
+function spotVec(key){
+  const slot = key.endsWith(' slot'), s = key.replace(' slot', '');
+  const y = slot ? 0 : s[0] === 'U' ? 1 : -1, rest = slot ? s : s.slice(1);
+  return [rest.includes('R') ? 1 : rest.includes('L') ? -1 : 0, y, rest.includes('F') ? 1 : rest.includes('B') ? -1 : 0];
+}
+function laterPairs(i){ const out = []; for (let j = i + 1; j < fv.steps.length; j++) if (fv.steps[j].moves.length && fv.steps[j].slot) out.push(j); return out; }
+function quizStart(i){
+  while (i < fv.steps.length && !(fv.steps[i].moves.length && laterPairs(i).length)) i++;
+  if (i >= fv.steps.length) return false;
+  const scr = parseAlg(fv.scramble).moves;
+  const before = [...scr, ...fv.flat.slice(0, fv.starts[i])], during = fv.flat.slice(fv.starts[i], fv.ends[i]);
+  let later = laterPairs(i); if (settings.quizWho === 'next') later = later.slice(0, 1);
+  const cands = [];
+  for (const j of later){
+    const [ch, eh] = F2L_SLOT_HOME[fv.steps[j].slot];
+    cands.push({ type:'corner', home: ch, n: [0, -1, 0], colour:'white', j });
+    cands.push({ type:'edge', home: eh, n: [0, 0, eh[2]], colour: DRILL_COLOUR[eh[2] === 1 ? 'F' : 'B'], j });
+  }
+  for (const c of cands){
+    [c.p0, c.n0] = trackSticker(c.home, c.n, before);
+    [c.p1, c.n1] = trackSticker(c.p0, c.n0, during);
+    c.path = []; let p = c.p0, n = c.n0;
+    for (const m of during){ [p, n] = trackSticker(p, n, [m]); c.path.push({ m, pos: shortPos(p) }); }
+    c.moved = c.p0.join() !== c.p1.join() || c.n0.join() !== c.n1.join();
+  }
+  const moving = cands.filter(c => c.moved);
+  const pool = moving.length && Math.random() < 0.85 ? moving : cands;
+  qz.piece = pool[Math.floor(Math.random() * pool.length)];
+  qz.step = i; qz.pick = null; qz.ori = null; qz.phase = 'ask';
+  setPos(fv.starts[i], fv);
+  return true;
+}
+function quizMapSVG(){
+  const pc = qz.piece, rev = qz.phase === 'reveal', type = pc.type;
+  const E = [['UB', 110, 72], ['UL', 72, 110], ['UR', 148, 110], ['UF', 110, 148]];
+  const Cn = [['UBL', 72, 72], ['UBR', 148, 72], ['UFL', 72, 148], ['UFR', 148, 148]];
+  const SL = [['BL', 26, 30], ['BR', 194, 30], ['FL', 26, 194], ['FR', 194, 194]];
+  const spots = [];
+  const add = (key, x, y, label, on) => spots.push({ key, x, y, label, on });
+  E.forEach(([k, x, y]) => add(k, x, y, k, type === 'edge'));
+  Cn.forEach(([k, x, y]) => add(k, x, y, k, type === 'corner'));
+  SL.forEach(([k, x, y]) => add(type === 'edge' ? k + ' slot' : 'D' + k, x, y, k + ' slot', true));
+  const answer = shortPos(pc.p1), now = shortPos(pc.p0);
+  let out = `<text x="110" y="12">back</text><text x="110" y="232">front (facing you)</text><text x="8" y="114" style="text-anchor:start">left</text><text x="212" y="114" style="text-anchor:end">right</text>`;
+  out += `<rect x="52" y="52" width="116" height="116" rx="10" fill="none" stroke="var(--line)" stroke-width="1.5"/>`;
+  out += `<rect x="95" y="95" width="30" height="30" rx="6" fill="${HEX.U}" stroke="#141820" stroke-width="1.5"/>`;
+  for (const s of spots){
+    const cls = ['spot'];
+    if (!s.on) cls.push('off');
+    if (qz.pick === s.key) cls.push('picked');
+    if (rev && s.key === answer) cls.push('right');
+    else if (rev && qz.pick === s.key) cls.push('wrong');
+    const w = 30;
+    out += `<g class="${cls.join(' ')}" data-key="${s.key}" role="button" aria-label="${s.label}"><rect x="${s.x - w / 2}" y="${s.y - w / 2}" width="${w}" height="${w}" rx="6"/><text x="${s.x}" y="${s.y + 3.5}">${s.label.replace(' slot', '')}</text></g>`;
+    if (s.key === now && s.on) out += `<rect class="now" x="${s.x - 19}" y="${s.y - 19}" width="38" height="38" rx="9"/>`;
+  }
+  out += `<text x="26" y="58">slot</text><text x="194" y="58">slot</text><text x="26" y="222">slot</text><text x="194" y="222">slot</text>`;
+  return out;
+}
+function renderQuiz(){
+  const pc = qz.piece, stats = settings.quizStats;
+  $('quizStats').innerHTML = stats.n ? `<b>${stats.ok}</b> of ${stats.n} right (${Math.round(100 * stats.ok / stats.n)}%) · streak <b>${stats.streak}</b> · best ${stats.best}` : 'Your score shows here.';
+  if (!pc || qz.step < 0 || !fv.steps.length){ return; }
+  const s = fv.steps[qz.step], owner = fv.steps[pc.j], what = pc.type === 'corner' ? 'corner' : 'edge';
+  if (W === fv){
+    const [ch, eh] = F2L_SLOT_HOME[s.slot];
+    addHalo(ch, 0x3D7BFF); addHalo(eh, 0x3D7BFF); addHalo(pc.home, 0xB14CFF);
+  }
+  $('quizQ').textContent = `Where will the purple ${what} be after ${s.title}?`;
+  $('quizSub').innerHTML = `It belongs to ${esc(owner.title)} (${esc(owner.sub)}). Right now it’s at <b>${esc(placeName(pc.p0))}</b>${isHidden(pc.p0) ? ' <span class="hid">(hidden from the front)</span>' : ''}. The blue pieces are the pair you’re solving: ${settings.quizAlg ? 'its moves are in the steps below.' : 'work out the moves yourself.'}`;
+  $('quizMap').innerHTML = quizMapSVG();
+  const rev = qz.phase === 'reveal';
+  if (settings.quizOri){
+    const right = dirName(pc.n1);
+    $('quizOri').innerHTML = `<div class="dirs"><p>Which way will its ${pc.colour} sticker face?</p>` + DIRS.map(([d]) => {
+      const cls = rev && d === right ? 'right' : rev && qz.ori === d ? 'wrong' : '';
+      return `<button data-dir="${d}" aria-pressed="${qz.ori === d}" class="${cls}">${d[0].toUpperCase() + d.slice(1)}</button>`;
+    }).join('') + '</div>';
+  } else $('quizOri').innerHTML = '';
+  if (rev){
+    const posOk = qz.pick === shortPos(pc.p1), oriOk = !settings.quizOri || qz.ori === dirName(pc.n1);
+    const from = placeName(pc.p0), to = placeName(pc.p1);
+    const pickedName = qz.pick ? placeName(spotVec(qz.pick)) : '';
+    let txt = (posOk && oriOk ? '✓ Right. ' : '✗ Not quite. ') + (from === to && pc.n0.join() === pc.n1.join() ? `It stays at ${to}.` : `It goes from ${from} to ${to}.`) + (posOk ? '' : ` You picked ${pickedName}.`);
+    if (settings.quizOri) txt += ` Its ${pc.colour} sticker ends up facing ${dirName(pc.n1)}${oriOk ? '' : ` (you said ${qz.ori})`}.`;
+    msg($('quizFb'), txt, posOk && oriOk ? 'ok' : 'err');
+    $('quizPath').innerHTML = `<div class="masknote" style="margin-top:6px">Where it is after each move:</div><ol class="qpath"><li><b>start</b><span>${esc(shortPos(pc.p0))}</span></li>` +
+      pc.path.map((st, k) => `<li class="${k === 0 ? (st.pos !== shortPos(pc.p0) ? 'moved' : '') : (st.pos !== pc.path[k - 1].pos ? 'moved' : '')}"><b>${moveToString(st.m)}</b><span>${esc(st.pos)}</span></li>`).join('') + '</ol>';
+    const more = laterPairs(qz.step).length > 0 && quizNextIndex() >= 0;
+    $('quizGo').innerHTML = (more ? 'Next question' : 'Next scramble') + ' <kbd>Space</kbd>';
+  } else {
+    msg($('quizFb'), qz.phase === 'playing' ? 'Watch the purple piece…' : '');
+    $('quizPath').innerHTML = '';
+    $('quizGo').innerHTML = (qz.phase === 'playing' ? 'Skip to the answer' : 'Check') + ' <kbd>Space</kbd>';
+  }
+}
+function quizNextIndex(){ for (let i = qz.step + 1; i < fv.steps.length; i++) if (fv.steps[i].moves.length && laterPairs(i).length) return i; return -1; }
+function quizGo(){
+  if (!qz.piece) return;
+  if (qz.phase === 'playing'){ fastForward = true; return; }
+  if (qz.phase === 'reveal'){
+    const nx = quizNextIndex();
+    if (nx >= 0) enqueue(() => { setPos(fv.ends[qz.step], fv); quizStart(nx); });
+    else idle(nextF2L)();
+    return;
+  }
+  if (!qz.pick){ msg($('quizFb'), 'Tap the spot on the map where you think it ends up.', 'err'); return; }
+  if (settings.quizOri && !qz.ori){ msg($('quizFb'), 'Pick which way the sticker faces too.', 'err'); return; }
+  const pc = qz.piece, posOk = qz.pick === shortPos(pc.p1), oriOk = !settings.quizOri || qz.ori === dirName(pc.n1);
+  const st = settings.quizStats; st.n++; if (posOk && oriOk){ st.ok++; st.streak++; st.best = Math.max(st.best, st.streak); } else st.streak = 0; saveSettings();
+  const i = qz.step;
+  if (!settings.quizWatch){ qz.phase = 'reveal'; enqueue(() => setPos(fv.ends[i], fv)); return; }
+  qz.phase = 'playing'; renderF2L();
+  enqueue(async () => {
+    while (fv.pos < fv.ends[i] && W === fv){ const m = fv.flat[fv.pos]; await turnAnimated(m, moveMs(m)); fv.pos++; if (fv.pos === fv.ends[i]) qz.phase = 'reveal'; renderF2L(); }
+    qz.phase = 'reveal'; renderF2L();
+  });
+}
+$('quizMap').addEventListener('click', e => {
+  const g = e.target.closest('[data-key]'); if (!g || qz.phase !== 'ask' || g.classList.contains('off')) return;
+  qz.pick = g.dataset.key; msg($('quizFb'), ''); renderF2L();
+});
+$('quizOri').addEventListener('click', e => { const b = e.target.closest('[data-dir]'); if (!b || qz.phase !== 'ask') return; qz.ori = b.dataset.dir; renderF2L(); });
+$('quizGo').onclick = quizGo;
+$('f2lMode').addEventListener('click', idle(e => {
+  const b = e.target.closest('[data-qm]'); if (!b) return;
+  const on = b.dataset.qm === '1'; if (on === !!settings.f2lQuiz) return;
+  settings.f2lQuiz = on; saveSettings();
+  if (on && !settings.f2lReal){ settings.f2lReal = true; saveSettings(); if (fv.c) return loadF2L(fv.c, fv.slot); }
+  if (!fv.c) return nextF2L();
+  if (on){ if (fv.loading) return renderF2L(); if (!quizStart(0)) nextF2L(); }
+  else { qz.phase = 'idle'; setPos(0, fv); }
+}));
+const syncQuizSettings = () => {
+  $('optQuizAlg').checked = !!settings.quizAlg; $('optQuizOri').checked = !!settings.quizOri; $('optQuizWatch').checked = !!settings.quizWatch;
+  [...$('quizWho').children].forEach(b => b.setAttribute('aria-pressed', b.dataset.who === settings.quizWho));
+};
+syncQuizSettings();
+[['optQuizAlg', 'quizAlg'], ['optQuizOri', 'quizOri'], ['optQuizWatch', 'quizWatch']].forEach(([id, k]) =>
+  $(id).addEventListener('change', e => { settings[k] = e.target.checked; saveSettings(); if (qz.phase === 'ask' && k === 'quizOri') qz.ori = null; renderF2L(); }));
+$('quizWho').addEventListener('click', idle(e => { const b = e.target.closest('[data-who]'); if (!b) return; settings.quizWho = b.dataset.who; saveSettings(); syncQuizSettings(); if (qz.phase === 'ask') quizStart(qz.step); }));
+$('quizReset').onclick = () => { settings.quizStats = { n:0, ok:0, streak:0, best:0 }; saveSettings(); renderF2L(); };
+// the F2L "Mix up the other pairs" switch can't be off during the quiz
+$('optF2lReal').addEventListener('change', e => { if (!e.target.checked && settings.f2lQuiz){ settings.f2lQuiz = false; saveSettings(); } });
 
 /* ---------- start ---------- */
 initScene();

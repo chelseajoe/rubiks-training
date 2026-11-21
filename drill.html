@@ -239,6 +239,7 @@ const BASE = {
 function normalizeAlgText(text) {
   return String(text)
     .replace(/[’‘`´′ʼ]/g, "'")
+    .replace(/[·•]/g, ' ')
     .replace(/[()\[\],]/g, ' ')
     .replace(/\/\/.*$/gm, ' ');
 }
@@ -264,18 +265,23 @@ function parseAlg(text) {
     let amount = num * (m[3] ? -1 : 1);
     amount = ((amount % 4) + 4) % 4; // 1,2,3
     if (amount === 0) { i = re.lastIndex; continue; }
-    moves.push({ base: face, amount });
+    // keep the move exactly as written (R3 stays R3, R2' stays R2') for display and animation
+    moves.push({ base: face, amount, raw: m[0], q: num * (m[3] ? -1 : 1) });
     i = re.lastIndex;
   }
   return { moves, error: null };
 }
 
 function moveToString(mv) {
+  if (mv.raw) return mv.raw;
   return mv.base + (mv.amount === 1 ? '' : mv.amount === 2 ? '2' : "'");
 }
+function invertRaw(raw) { return raw.endsWith("'") ? raw.slice(0, -1) : /2$/.test(raw) ? raw : raw + "'"; }
 function movesToString(moves) { return moves.map(moveToString).join(' '); }
 function invertMoves(moves) {
-  return moves.slice().reverse().map(m => ({ base: m.base, amount: (4 - m.amount) % 4 }));
+  return moves.slice().reverse().map(m => m.raw
+    ? { base: m.base, amount: (4 - m.amount) % 4, raw: invertRaw(m.raw), q: -m.q }
+    : { base: m.base, amount: (4 - m.amount) % 4 });
 }
 function invertAlg(text) {
   const p = parseAlg(text);
@@ -284,6 +290,7 @@ function invertAlg(text) {
 // quarter turns signed for animation (-2..2)
 function moveTurns(mv) {
   const sign = BASE[mv.base][2];
+  if (mv.q) return sign * mv.q;   // as written: R3 is a real triple turn
   if (mv.amount === 1) return sign;
   if (mv.amount === 3) return -sign;
   return 2 * sign;
@@ -496,8 +503,8 @@ const PLL_CASES = [
  ["Ab","Corners only","x' R U' R D2 R' U R D2 R2 x","y",[["x R2 D2 R U R' D2 R U' R x'","y"],["R B' R F2 R' B R F2 R2","s"]]],
  ["E","Corners only","x' R U' R' D R U R' D' R U R' D R U' R' D' x","y",[["R B' R' F R B R' F' R B R' F R B' R' F'","s"]]],
  ["H","Edges only","M2 U M2 U2 M2 U M2","y",[["M2 U2 M2 U M2 U2 M2","y"]]],
- ["Ua","Edges only","R U' R U R U R U' R' U' R2","y",[]],
- ["Ub","Edges only","R2 U R U R' U' R' U' R' U R'","y",[["R' U R' U' R' U' R' U R U R2","y"]]],
+ ["Ua", "Edges only", "R U' R U R·U R U' R' U' R2", "y", [["R U R' U R' U' R2 U' R' U R' U R", "u", "from the back"], ["R U' R U R U R U' R' U' R2", "y"]]],
+ ["Ub", "Edges only", "R2' U R U R' U' R3 U' R' U R'", "y", [["R' U R' U' R3 U' R' U R U R2", "u", "from the back"], ["R2 U R U R' U' R' U' R' U R'", "y"]]],
  ["Z","Edges only","M' U M2 U M2 U M' U2 M2","y",[]],
  ["T","Adjacent swap","R U R' U' R' F R2 U' R' U' R U R' F'","y",[]],
  ["F","Adjacent swap","R' U' F' R U R' U' R' F R2 U' R' U' R U R' U R","y",[]],
@@ -538,7 +545,7 @@ const saveSettings = () => store.set('settings', settings);
 function buildCases(kind, list){
   const S = s => ({ y:'yiheng', u:'sheet', m:'mine' })[s] || 'standard';
   return list.map(([id, group, alg, src, alts]) => {
-    const algs = [{ alg, src: S(src) }, ...(alts || []).map(([a, s]) => ({ alg: a, src: S(s) }))];
+    const algs = [{ alg, src: S(src) }, ...(alts || []).map(([a, s, note]) => ({ alg: a, src: S(s), note }))];
     const c = { kind, id:String(id), group, algs, title: kind === 'oll' ? 'OLL ' + id : id + ' perm' };
     c.canonSetup = invertMoves(parseAlg(algs[0].alg).moves);
     return c;
@@ -754,7 +761,7 @@ async function runSolution(){
   const lis = $('moves').children;
   for (let i=0; i<all.length; i++){
     [...lis].forEach((li,j) => { li.classList.toggle('active', j===i); li.classList.toggle('past', j<i); });
-    const dbl = all[i].amount === 2 ? 1.45 : 1;
+    const dbl = [1, 1, 1.45, 1.8][Math.min(3, Math.abs(moveTurns(all[i])))];
     await turnAnimated(all[i], ms * dbl);
   }
   [...lis].forEach(li => { li.classList.remove('active'); li.classList.add('past'); });
@@ -784,7 +791,7 @@ function render(keepMoveClasses){
     const src = custom && !used ? 'mine' : used ? used.src : 'standard';
     $('caseSrc').hidden = false;
     $('caseSrc').className = 'src ' + (src === 'yiheng' || src === 'sheet' ? 'yiheng' : '');
-    $('caseSrc').textContent = (SRC_LABEL[src] || 'Standard alg') + ' · ' + rotNote(current.algText);
+    $('caseSrc').textContent = (SRC_LABEL[src] || 'Standard alg') + (used && used.note ? ' · ' + used.note : '') + ' · ' + rotNote(current.algText);
   }
   $('caseThumb').innerHTML = thumbSVG(current.customOnce ? 'pll' : c.kind, current.setup);
   $('setup').textContent = movesToString(current.setup) || '(nothing: already solved)';
@@ -800,13 +807,13 @@ function render(keepMoveClasses){
 
   // alternatives
   const alts = current.customOnce ? [] : c.algs.filter(a => a.alg !== current.algText);
-  $('alts').innerHTML = shown ? alts.map((a,i) => `<div class="alt"><span>${esc(a.alg)}</span><small>${({ yiheng:'Yiheng', sheet:'your sheet', mine:'yours' })[a.src] || 'standard'}</small><button class="btn ghost" data-alt="${esc(a.alg)}">Use this</button></div>`).join('') : '';
+  $('alts').innerHTML = shown ? alts.map((a,i) => `<div class="alt"><span>${esc(a.alg)}</span><small>${(({ yiheng:'Yiheng', sheet:'your sheet', mine:'yours' })[a.src] || 'standard') + (a.note ? ' · ' + esc(a.note) : '')}</small><button class="btn ghost" data-alt="${esc(a.alg)}">Use this</button></div>`).join('') : '';
 
   const willAnimate = settings.animate && phase === 'ready';
   $('mainAction').innerHTML = (phase === 'playing' ? 'Skip to end' : willAnimate ? 'Animate solution' : 'Next case') + ' <kbd>Space</kbd>';
   $('clearAlg').hidden = current.customOnce || !customAlgs[c.kind][c.id];
 }
-const SRC_LABEL = { yiheng:'Yiheng’s alg', sheet:'From your OLL sheet', mine:'Your saved alg', standard:'Standard alg' };
+const SRC_LABEL = { yiheng:'Yiheng’s alg', sheet:'From your sheet', mine:'Your saved alg', standard:'Standard alg' };
 const esc = s => String(s).replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch]));
 
 /* ---------- custom algs ---------- */
@@ -819,7 +826,7 @@ function saveTyped(){
   if (current.customOnce) return msg(m, 'Pick a normal case first (press → for the next one).', 'err');
   const c = current.case;
   if (!solvesCase(c.kind, c.canonSetup, p.moves)) return msg(m, `That alg doesn’t solve ${c.title} (checked from all four angles). Nothing was saved.`, 'err');
-  customAlgs[c.kind][c.id] = movesToString(p.moves); store.set('custom', customAlgs);
+  customAlgs[c.kind][c.id] = text.replace(/\s+/g, ' ').trim(); store.set('custom', customAlgs);
   msg(m, `Saved. ${c.title} now uses your alg.`, 'ok');
   loadCase(c);
 }
@@ -849,7 +856,7 @@ function importSheet(){
                              : CASES.pll.find(x => x.id.toLowerCase() === id.toLowerCase());
     const p = parseAlg(alg);
     if (!c || p.error || !p.moves.length || !solvesCase(kind, c.canonSetup, p.moves)){ skipped.push(line.slice(0, 30)); continue; }
-    customAlgs[kind][c.id] = movesToString(p.moves); ok++;
+    customAlgs[kind][c.id] = alg.replace(/\s+/g, ' ').trim(); ok++;
   }
   store.set('custom', customAlgs);
   msg($('importMsg'), `Imported ${ok} alg${ok===1?'':'s'}.` + (skipped.length ? ` Skipped ${skipped.length} that didn’t parse or didn’t solve their case: ${skipped.slice(0,4).join(' / ')}${skipped.length>4?' …':''}` : ''), skipped.length && !ok ? 'err' : 'ok');
@@ -895,10 +902,10 @@ function exportPage(){
   const code = s => ({ yiheng:'y', sheet:'u', mine:'m' })[s] || 's';
   const rows = kind => CASES[kind].map(c => {
     const list = [], seen = new Set();
-    const add = (a, s) => { const k = a.replace(/\s+/g, ' ').trim(); if (!seen.has(k)){ seen.add(k); list.push([k, s]); } };
+    const add = (a, s, note) => { const k = a.replace(/\s+/g, ' ').trim(); if (!seen.has(k)){ seen.add(k); list.push(note ? [k, s, note] : [k, s]); } };
     const mine = customAlgs[kind][c.id], same = mine && c.algs.find(a => a.alg.replace(/\s+/g, ' ').trim() === mine.replace(/\s+/g, ' ').trim());
     if (mine) add(mine, same ? code(same.src) : 'm');
-    c.algs.forEach(a => add(a.alg, code(a.src)));
+    c.algs.forEach(a => add(a.alg, code(a.src), a.note));
     const [p, ...rest] = list;
     return [kind === 'oll' ? +c.id : c.id, c.group, p[0], p[1], rest];
   });
